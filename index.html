@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>進擊的帳目：這筆錢我真的不知道 | Ko FactCheck</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        fontFamily: { sans: ['"Noto Sans TC"','sans-serif'], mono: ['"Space Mono"','monospace'] }
+      }}
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    html { cursor: none; }
+    body {
+      background: #07070f;
+      color: #f1f5f9;
+      font-family: 'Noto Sans TC', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Grain ── */
+    body::after {
+      content:'';
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index:9998;
+      opacity:.028;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size:180px 180px;
+    }
+
+    /* ── Custom Cursor ── */
+    #cur-dot {
+      position:fixed; width:12px; height:12px;
+      background:#fff; border-radius:50%;
+      pointer-events:none; z-index:10003;
+      mix-blend-mode:difference;
+      transform:translate(-50%,-50%);
+      transition:width .25s, height .25s;
+    }
+    #cur-ring {
+      position:fixed; width:38px; height:38px;
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:50%; pointer-events:none;
+      z-index:10002; mix-blend-mode:difference;
+      transform:translate(-50%,-50%);
+      transition:width .3s, height .3s, opacity .3s;
+    }
+    body.cur-hover #cur-dot  { width:44px; height:44px; }
+    body.cur-hover #cur-ring { opacity:0; }
+
+    /* ── Guide Lines ── */
+    .guide { position:fixed; top:0; bottom:0; width:1px; background:rgba(255,255,255,.022); pointer-events:none; z-index:1; }
+
+    /* ── GOLD 1px Beam Border ── */
+    .beam { position:relative; border:1px solid rgba(255,255,255,.07); overflow:hidden; }
+    .beam::before {
+      content:''; position:absolute;
+      top:0; left:-60%; width:40%; height:1px;
+      background:linear-gradient(90deg,transparent,rgba(212,160,23,.9),transparent);
+      animation:beamH 3.5s linear infinite;
+      pointer-events:none;
+    }
+    .beam::after {
+      content:''; position:absolute;
+      top:-60%; right:0; width:1px; height:40%;
+      background:linear-gradient(180deg,transparent,rgba(212,160,23,.9),transparent);
+      animation:beamV 3.5s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes beamH { 0%{left:-60%} 100%{left:160%} }
+    @keyframes beamV { 0%{top:-60%} 100%{top:160%} }
+
+    /* ── Gold Pulse Dot ── */
+    .gold-dot {
+      width:8px; height:8px;
+      background:#d4a017;
+      border-radius:50%;
+      animation:goldPulse 2s ease-in-out infinite;
+      box-shadow:0 0 8px rgba(212,160,23,.6);
+    }
+    @keyframes goldPulse {
+      0%,100% { opacity:1; box-shadow:0 0 8px rgba(212,160,23,.6); }
+      50%      { opacity:.5; box-shadow:0 0 16px rgba(212,160,23,1); }
+    }
+
+    /* ── Char Animation ── */
+    .char-wrap { display:inline-block; overflow:hidden; vertical-align:bottom; }
+    .char { display:inline-block; transform:translateY(110%); }
+
+    /* ── Status Badges ── */
+    .badge-false   { background:rgba(239,68,68,.12);  border:1px solid rgba(239,68,68,.4);  color:#fca5a5; }
+    .badge-ongoing { background:rgba(245,158,11,.12); border:1px solid rgba(245,158,11,.4); color:#fcd34d; }
+    .badge-pending { background:rgba(56,189,248,.12); border:1px solid rgba(56,189,248,.4); color:#7dd3fc; }
+
+    /* ── Section Label ── */
+    .sec-label {
+      font-family:'Space Mono',monospace;
+      font-size:.68rem; letter-spacing:.15em;
+      color:#ededed;
+      opacity:.55;
+    }
+
+    /* ── Case Cards ── */
+    .case-card {
+      background:#0d0d1c;
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:1rem;
+      cursor:pointer;
+      transition:border-color .3s, transform .3s, box-shadow .3s;
+    }
+    .case-card:hover {
+      transform:translateY(-3px);
+      box-shadow:0 16px 48px rgba(0,0,0,.5);
+      border-color:rgba(255,255,255,.16);
+    }
+
+    /* ── Case Number (always visible) ── */
+    .case-num {
+      font-family:'Space Mono',monospace;
+      font-size:2.8rem;
+      font-weight:700;
+      line-height:1;
+      color:rgba(237,237,237,.22);
+    }
+
+    /* ── Category Tag ── */
+    .cat-tag {
+      display:inline-flex; align-items:center;
+      padding:.25rem .65rem;
+      border-radius:.35rem;
+      border:1px solid rgba(237,237,237,.2);
+      font-size:.72rem;
+      font-family:'Space Mono',monospace;
+      letter-spacing:.04em;
+      color:#ededed;
+      background:rgba(237,237,237,.06);
+    }
+
+    /* ── Claim section (always visible) ── */
+    .claim-section {
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:.6rem;
+      padding:.75rem;
+    }
+    .claim-label {
+      font-family:'Space Mono',monospace;
+      font-size:.6rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(237,237,237,.4);
+      margin-bottom:.3rem;
+    }
+    .claim-text {
+      font-size:.82rem;
+      color:rgba(237,237,237,.72);
+      line-height:1.6;
+    }
+
+    /* ── Truth Accordion ── */
+    .truth-toggle {
+      display:flex; align-items:center; gap:.5rem;
+      padding:.6rem .75rem;
+      border-radius:.6rem;
+      border:1px solid rgba(212,160,23,.2);
+      background:rgba(212,160,23,.06);
+      cursor:pointer;
+      transition:background .2s, border-color .2s;
+      margin-top:.75rem;
+    }
+    .truth-toggle:hover { background:rgba(212,160,23,.12); border-color:rgba(212,160,23,.4); }
+    .truth-toggle-label {
+      font-family:'Space Mono',monospace;
+      font-size:.6rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(212,160,23,.85);
+      flex:1;
+    }
+    .truth-body {
+      max-height:0; overflow:hidden;
+      transition:max-height .45s cubic-bezier(.4,0,.2,1);
+    }
+    .truth-body.open { max-height:200px; }
+    .truth-body-inner {
+      padding:.75rem;
+      border:1px solid rgba(212,160,23,.15);
+      border-top:none;
+      border-radius:0 0 .6rem .6rem;
+      background:rgba(212,160,23,.04);
+    }
+    .truth-text {
+      font-size:.82rem;
+      color:rgba(255,255,255,.82);
+      line-height:1.65;
+    }
+    .chev { transition:transform .35s ease; }
+    .chev.open { transform:rotate(180deg); }
+
+    /* ── Filter Buttons ── */
+    .flt-btn {
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:999px;
+      padding:.3rem 1rem;
+      font-family:'Space Mono',monospace;
+      font-size:.68rem; letter-spacing:.08em;
+      text-transform:uppercase;
+      color:rgba(237,237,237,.4);
+      cursor:none;
+      transition:color .2s, border-color .2s, background .2s;
+    }
+    .flt-btn:hover       { color:rgba(237,237,237,.75); border-color:rgba(237,237,237,.25); }
+    .flt-btn.active      { color:#ededed; border-color:rgba(237,237,237,.5); background:rgba(237,237,237,.06); }
+    .flt-btn[data-f="false"]          { border-color:rgba(239,68,68,.3); color:#f87171; }
+    .flt-btn[data-f="false"].active   { background:rgba(239,68,68,.12); border-color:rgba(239,68,68,.6); color:#fca5a5; }
+    .flt-btn[data-f="ongoing"]        { border-color:rgba(245,158,11,.3); color:#fbbf24; }
+    .flt-btn[data-f="ongoing"].active { background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.6); color:#fcd34d; }
+    .flt-btn[data-f="pending"]        { border-color:rgba(56,189,248,.3); color:#38bdf8; }
+    .flt-btn[data-f="pending"].active { background:rgba(56,189,248,.12); border-color:rgba(56,189,248,.6); color:#7dd3fc; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width:3px; }
+    ::-webkit-scrollbar-track { background:#07070f; }
+    ::-webkit-scrollbar-thumb { background:rgba(212,160,23,.55); border-radius:2px; }
+
+    /* ── Glow blobs ── */
+    .glow-blob { position:absolute; border-radius:50%; pointer-events:none; filter:blur(80px); }
+
+    /* ── Stat Numbers ── */
+    .stat-num {
+      font-family:'Space Mono',monospace;
+      font-size:2.6rem; font-weight:700; line-height:1;
+    }
+
+    /* ── Magnetic Button ── */
+    .mag-btn {
+      display:inline-flex; align-items:center; gap:.6rem;
+      padding:.85rem 2rem;
+      border-radius:.75rem;
+      font-weight:700; font-size:.95rem;
+      cursor:none;
+      transition:box-shadow .3s;
+      will-change:transform;
+    }
+    .mag-btn-primary {
+      background:linear-gradient(135deg,#c9a227 0%,#8b6d10 100%);
+      color:#07070f;
+    }
+    .mag-btn-primary:hover { box-shadow:0 0 36px rgba(201,162,39,.55); }
+    .mag-btn-ghost {
+      border:1px solid rgba(255,255,255,.15);
+      color:rgba(255,255,255,.6);
+    }
+    .mag-btn-ghost:hover { border-color:rgba(255,255,255,.35); color:#fff; }
+
+    /* ── Legend Cards ── */
+    .legend-card {
+      border-radius:1rem;
+      padding:1.5rem;
+    }
+
+    /* ── Progress Bar ── */
+    .prog-track { height:4px; background:rgba(255,255,255,.07); border-radius:2px; overflow:hidden; margin-top:1rem; }
+    .prog-fill  { height:100%; border-radius:2px; transform:scaleX(0); transform-origin:left; transition:transform 1.2s cubic-bezier(.4,0,.2,1); }
+
+    /* ── Concept Cards ── */
+    .concept-card {
+      background:#0d0d1c;
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:.9rem;
+      padding:1.25rem;
+      transition:border-color .3s;
+    }
+    .concept-card:hover { border-color:rgba(212,160,23,.3); }
+    .concept-num {
+      font-family:'Space Mono',monospace;
+      font-size:.62rem; letter-spacing:.12em;
+      color:rgba(212,160,23,.6);
+      text-transform:uppercase;
+      margin-bottom:.6rem;
+    }
+
+    /* ── Hero Grid ── */
+    #hero-bg-grid {
+      position:absolute; inset:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:60px 60px;
+      pointer-events:none;
+    }
+
+    /* ── Canvas ── */
+    #hero-canvas {
+      display:block;
+      width:100%; height:100%;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width:640px) {
+      .stat-num { font-size:2rem; }
+      .mag-btn  { padding:.75rem 1.4rem; font-size:.88rem; }
+    }
+
+    /* ════ SHARE MODAL ════ */
+    #share-modal {
+      position:fixed; inset:0;
+      background:rgba(7,7,15,.88);
+      z-index:10001;
+      display:flex; align-items:center; justify-content:center;
+      padding:1rem;
+      opacity:0; pointer-events:none;
+      transition:opacity .35s ease;
+      backdrop-filter:blur(10px);
+    }
+    #share-modal.open { opacity:1; pointer-events:all; }
+    #sc-wrapper {
+      display:flex; flex-direction:column; align-items:center; gap:.85rem;
+      position:relative;
+      transform:scale(.9) translateY(24px);
+      transition:transform .45s cubic-bezier(.34,1.56,.64,1);
+    }
+    #share-modal.open #sc-wrapper { transform:scale(1) translateY(0); }
+
+    /* The downloadable card */
+    #sc-card {
+      width:360px; max-width:calc(100vw - 2rem);
+      background:#07070f;
+      border:1px solid rgba(212,160,23,.4);
+      border-radius:1.25rem;
+      overflow:hidden;
+      position:relative;
+      font-family:'Noto Sans TC',sans-serif;
+    }
+    /* Scanlines */
+    #sc-card::after {
+      content:''; position:absolute; inset:0; pointer-events:none; z-index:8;
+      background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px);
+      border-radius:1.25rem;
+    }
+    /* Gold corner accents */
+    .sc-corner { position:absolute; width:18px; height:18px; border-color:rgba(212,160,23,.45); border-style:solid; }
+    .sc-tl { top:8px; left:8px;  border-width:1px 0 0 1px; }
+    .sc-tr { top:8px; right:8px; border-width:1px 1px 0 0; }
+    .sc-bl { bottom:8px; left:8px;  border-width:0 0 1px 1px; }
+    .sc-br { bottom:8px; right:8px; border-width:0 1px 1px 0; }
+
+    /* Header: pixel art area */
+    .sc-header {
+      position:relative; height:155px; overflow:hidden;
+      background:linear-gradient(135deg,#0d0d1c 0%,#12122e 100%);
+      border-bottom:1px solid rgba(212,160,23,.18);
+      display:flex; align-items:center; gap:1rem; padding:0 1.25rem;
+    }
+    .sc-header-grid {
+      position:absolute; inset:0; pointer-events:none;
+      background-image:
+        linear-gradient(rgba(212,160,23,.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(212,160,23,.04) 1px,transparent 1px);
+      background-size:18px 18px;
+    }
+    #sc-canvas {
+      position:relative; z-index:2;
+      width:140px; height:140px;
+      image-rendering:pixelated;
+      image-rendering:-moz-crisp-edges;
+      flex-shrink:0;
+    }
+    .sc-brand { position:relative; z-index:2; flex:1; min-width:0; }
+    .sc-brand-title {
+      font-family:'Space Mono',monospace;
+      font-size:1rem; font-weight:700;
+      color:#f0c040; letter-spacing:.06em; line-height:1.1;
+      margin-bottom:.5rem;
+    }
+    .sc-brand-sub {
+      font-family:'Space Mono',monospace;
+      font-size:.55rem; letter-spacing:.14em;
+      color:rgba(212,160,23,.45); text-transform:uppercase;
+      margin-bottom:.85rem;
+    }
+    .sc-badge-row { display:flex; align-items:center; gap:.5rem; }
+
+    /* Body */
+    .sc-body { padding:1rem 1.25rem .75rem; }
+    .sc-num-row { display:flex; align-items:center; gap:.65rem; margin-bottom:.5rem; }
+    .sc-num {
+      font-family:'Space Mono',monospace;
+      font-size:2.2rem; font-weight:700;
+      color:rgba(237,237,237,.18); line-height:1;
+    }
+    .sc-status-badge {
+      font-size:.68rem; font-weight:500;
+      padding:.2rem .65rem; border-radius:999px;
+    }
+    .sc-title-text { font-size:.95rem; font-weight:700; color:#f1f5f9; margin-bottom:.3rem; }
+    .sc-cat-tag {
+      display:inline-flex; align-items:center;
+      padding:.15rem .55rem; border-radius:.3rem;
+      border:1px solid rgba(237,237,237,.18);
+      font-family:'Space Mono',monospace; font-size:.6rem; letter-spacing:.05em;
+      color:rgba(237,237,237,.45); margin-bottom:.85rem;
+    }
+    .sc-section-lbl {
+      font-family:'Space Mono',monospace;
+      font-size:.58rem; letter-spacing:.14em; text-transform:uppercase;
+      margin-bottom:.3rem;
+    }
+    .sc-section-lbl.claim { color:rgba(237,237,237,.32); }
+    .sc-section-lbl.truth { color:rgba(212,160,23,.7); }
+    .sc-text { font-size:.77rem; line-height:1.62; margin-bottom:.65rem; }
+    .sc-text.claim { color:rgba(237,237,237,.58); }
+    .sc-text.truth  { color:rgba(237,237,237,.85); }
+    .sc-divider { height:1px; background:rgba(255,255,255,.06); margin:.65rem 0; }
+
+    /* Footer */
+    .sc-footer {
+      padding:.55rem 1.25rem;
+      border-top:1px solid rgba(255,255,255,.05);
+      background:rgba(255,255,255,.02);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .sc-footer-brand {
+      display:flex; align-items:center; gap:.4rem;
+      font-family:'Space Mono',monospace; font-size:.55rem;
+      letter-spacing:.12em; color:rgba(212,160,23,.5); text-transform:uppercase;
+    }
+    .sc-footer-url {
+      font-family:'Space Mono',monospace; font-size:.55rem;
+      color:rgba(255,255,255,.2); letter-spacing:.04em;
+    }
+
+    /* Close button */
+    #sc-close-btn {
+      position:absolute; top:-10px; right:-10px;
+      width:30px; height:30px; border-radius:50%;
+      background:#1a1a38; border:1px solid rgba(212,160,23,.3);
+      color:rgba(255,255,255,.55); font-size:.75rem; cursor:none;
+      display:flex; align-items:center; justify-content:center;
+      transition:background .2s, color .2s; z-index:10;
+    }
+    #sc-close-btn:hover { background:rgba(212,160,23,.25); color:#fff; }
+
+    /* Action buttons */
+    .sc-actions { display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; }
+    .sc-action-btn {
+      display:inline-flex; align-items:center; gap:.4rem;
+      padding:.5rem 1rem; border-radius:.6rem;
+      font-family:'Space Mono',monospace; font-size:.65rem; letter-spacing:.06em;
+      cursor:none; transition:all .2s;
+      border:1px solid rgba(255,255,255,.12);
+      color:rgba(255,255,255,.6); background:rgba(255,255,255,.04);
+    }
+    .sc-action-btn:hover { border-color:rgba(212,160,23,.4); color:#f0c040; background:rgba(212,160,23,.08); }
+    .sc-action-btn.gold {
+      background:linear-gradient(135deg,#c9a227,#8b6d10);
+      border-color:transparent; color:#07070f; font-weight:700;
+    }
+    .sc-action-btn.gold:hover { box-shadow:0 0 20px rgba(201,162,39,.45); }
+
+    /* Case card share button */
+    .share-card-btn {
+      display:inline-flex; align-items:center; gap:.3rem;
+      padding:.28rem .6rem; border-radius:.35rem;
+      font-size:.65rem; color:rgba(212,160,23,.55);
+      border:1px solid rgba(212,160,23,.18); background:transparent;
+      cursor:none; transition:color .2s, border-color .2s, background .2s;
+    }
+    .share-card-btn:hover {
+      color:#f0c040; border-color:rgba(212,160,23,.5); background:rgba(212,160,23,.08);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Cursor -->
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+
+  <!-- Guides -->
+  <div class="guide" style="left:12.5%"></div>
+  <div class="guide" style="left:87.5%"></div>
+  <div class="guide" style="left:50%"></div>
+
+  <!-- ════ HEADER ════ -->
+  <header id="site-header" class="fixed top-0 left-0 right-0 z-50 px-6 py-4"
+          style="background:rgba(7,7,15,0);backdrop-filter:blur(0px);transition:background .4s,backdrop-filter .4s,border-color .4s;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="gold-dot"></div>
+        <span class="font-mono text-xs tracking-widest text-white/35 uppercase">Ko Truth Lab</span>
+      </div>
+      <div class="hidden sm:flex items-center gap-5 font-mono text-xs text-white/25 tracking-wider">
+        <span>CASES: 20</span>
+        <span class="text-white/10">|</span>
+        <span>2026.03.11</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ════ HERO ════ -->
+  <section id="hero" class="relative min-h-screen flex items-center overflow-hidden pt-20 pb-10">
+    <div id="hero-bg-grid"></div>
+
+    <!-- Glow blobs -->
+    <div class="glow-blob" style="width:650px;height:650px;top:-180px;left:-100px;background:radial-gradient(circle,rgba(212,160,23,0.08) 0%,transparent 65%);"></div>
+    <div class="glow-blob" style="width:450px;height:450px;bottom:-120px;right:-80px;background:radial-gradient(circle,rgba(56,189,248,0.05) 0%,transparent 65%);"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto w-full px-6 grid lg:grid-cols-2 gap-12 items-center">
+
+      <!-- LEFT: Text -->
+      <div>
+        <!-- Pill -->
+        <div id="hero-pill" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 opacity-0"
+             style="background:rgba(212,160,23,.07);border:1px solid rgba(212,160,23,.2);">
+          <div class="gold-dot" style="width:6px;height:6px;animation-duration:1.5s;"></div>
+          <span class="font-mono text-xs tracking-widest text-yellow-400/60 uppercase">法治素養闢謠計畫 · Ko FactCheck Project</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 id="hero-h1" class="font-black leading-tight tracking-tight mb-6 select-none">
+          <span id="line1" class="block text-5xl sm:text-6xl lg:text-7xl text-white mb-2"></span>
+          <span id="line2" class="block text-xl sm:text-2xl lg:text-3xl font-bold"
+                style="background:linear-gradient(135deg,#f0c040 0%,#c9a227 40%,#f0c040 80%);-webkit-background-clip:text;background-clip:text;color:transparent;">這筆錢我真的不知道</span>
+        </h1>
+
+        <!-- Sub -->
+        <p id="hero-sub" class="text-base sm:text-lg text-white/45 mb-10 max-w-lg leading-relaxed opacity-0">
+          20 筆爭議資金 × 20 種說詞對照 ── 硬核實測法庭鐵證
+        </p>
+
+        <!-- Stats -->
+        <div id="stat-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10 opacity-0">
+          <div class="beam rounded-2xl p-4 text-center" style="background:rgba(13,13,28,.9);backdrop-filter:blur(12px);">
+            <div class="stat-num text-white mb-1">20</div>
+            <div class="text-xs text-white/35 tracking-wider">爭議案件</div>
+          </div>
+          <div class="beam rounded-2xl p-4 text-center" style="background:rgba(13,13,28,.9);backdrop-filter:blur(12px);">
+            <div class="stat-num text-red-400 mb-1">05</div>
+            <div class="text-xs text-white/35 tracking-wider">已證實不符</div>
+          </div>
+          <div class="beam rounded-2xl p-4 text-center" style="background:rgba(13,13,28,.9);backdrop-filter:blur(12px);">
+            <div class="stat-num text-amber-400 mb-1">12</div>
+            <div class="text-xs text-white/35 tracking-wider">合理攻防中</div>
+          </div>
+          <div class="beam rounded-2xl p-4 text-center" style="background:rgba(13,13,28,.9);backdrop-filter:blur(12px);">
+            <div class="stat-num text-sky-400 mb-1">03</div>
+            <div class="text-xs text-white/35 tracking-wider">待法官定奪</div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div id="cta-row" class="flex flex-col sm:flex-row gap-3 opacity-0">
+          <a href="#cases" class="mag-btn mag-btn-primary" id="cta-primary">
+            <iconify-icon icon="mdi:magnify-scan"></iconify-icon>
+            立即解鎖真相
+          </a>
+          <a href="#legend" class="mag-btn mag-btn-ghost" id="cta-ghost">
+            <iconify-icon icon="mdi:information-outline"></iconify-icon>
+            判讀方法
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT: Canvas Network -->
+      <div class="hidden lg:block relative" style="height:520px;">
+        <!-- [主腦決定：金流網絡圖 — 以柯文哲為中心，8大金主為衛星節點，金色動態流線，hover高亮互動] -->
+        <canvas id="hero-canvas"></canvas>
+        <!-- Edge gradient to blend left side -->
+        <div style="position:absolute;top:0;left:0;bottom:0;width:30%;background:linear-gradient(90deg,#07070f,transparent);pointer-events:none;"></div>
+        <!-- Label -->
+        <div style="position:absolute;bottom:12px;right:12px;" class="font-mono text-[10px] text-white/20 tracking-widest uppercase">金流關係網絡 · 主要涉案人</div>
+      </div>
+
+    </div>
+
+    <!-- Scroll hint -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-20 pointer-events-none">
+      <span class="font-mono text-[10px] tracking-widest uppercase text-white/60">Scroll</span>
+      <div class="w-px h-10 bg-gradient-to-b from-white/60 to-transparent"></div>
+    </div>
+  </section>
+
+  <!-- ════ LEGEND ════ -->
+  <section id="legend" class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="flex items-center gap-4 mb-14">
+        <span class="sec-label">// 01</span>
+        <h2 class="text-2xl font-bold text-white">判讀指南</h2>
+        <div class="flex-1 h-px bg-white/[0.06]"></div>
+      </div>
+
+      <!-- Top row: 3 legend cards + donut chart -->
+      <div class="grid lg:grid-cols-[1fr_1fr_1fr_auto] gap-5 items-start mb-10">
+
+        <!-- Card: False -->
+        <div class="legend-card border border-red-500/20" style="background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(13,13,28,1));">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(239,68,68,.15);">
+              <iconify-icon icon="mdi:close-circle" class="text-red-400 text-xl"></iconify-icon>
+            </div>
+            <div>
+              <div class="font-bold text-red-300 text-sm">已證實不符</div>
+              <div class="font-mono text-[10px] text-red-500/55 tracking-wider">DEBUNKED</div>
+            </div>
+          </div>
+          <p class="text-sm text-white/55 leading-relaxed">辯方主張已被法庭證人證詞或客觀卷證所推翻，無法再主張「不知真假」或「缺乏實據」。</p>
+          <div class="prog-track mt-4">
+            <div class="prog-fill bg-red-500" style="width:100%;" data-target="25"></div>
+          </div>
+          <div class="flex justify-between mt-1.5">
+            <span class="font-mono text-[10px] text-red-400/50">5 案件</span>
+            <span class="font-mono text-[10px] text-white/20">25%</span>
+          </div>
+        </div>
+
+        <!-- Card: Ongoing -->
+        <div class="legend-card border border-amber-500/20" style="background:linear-gradient(135deg,rgba(245,158,11,.07),rgba(13,13,28,1));">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(245,158,11,.15);">
+              <iconify-icon icon="mdi:scale-balance" class="text-amber-400 text-xl"></iconify-icon>
+            </div>
+            <div>
+              <div class="font-bold text-amber-300 text-sm">合理法庭攻防</div>
+              <div class="font-mono text-[10px] text-amber-500/55 tracking-wider">IN TRIAL</div>
+            </div>
+          </div>
+          <p class="text-sm text-white/55 leading-relaxed">雙方就法律定性、資金流向或對價關係存在爭議，屬正常司法程序，尚無定論。</p>
+          <div class="prog-track mt-4">
+            <div class="prog-fill bg-amber-500" style="width:100%;" data-target="60"></div>
+          </div>
+          <div class="flex justify-between mt-1.5">
+            <span class="font-mono text-[10px] text-amber-400/50">12 案件</span>
+            <span class="font-mono text-[10px] text-white/20">60%</span>
+          </div>
+        </div>
+
+        <!-- Card: Pending -->
+        <div class="legend-card border border-sky-500/20" style="background:linear-gradient(135deg,rgba(56,189,248,.07),rgba(13,13,28,1));">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(56,189,248,.15);">
+              <iconify-icon icon="mdi:gavel" class="text-sky-400 text-xl"></iconify-icon>
+            </div>
+            <div>
+              <div class="font-bold text-sky-300 text-sm">等待法官定奪</div>
+              <div class="font-mono text-[10px] text-sky-500/55 tracking-wider">VERDICT PENDING</div>
+            </div>
+          </div>
+          <p class="text-sm text-white/55 leading-relaxed">關鍵事實已進入法官審認階段，判決結果將決定最終法律責任歸屬。</p>
+          <div class="prog-track mt-4">
+            <div class="prog-fill bg-sky-500" style="width:100%;" data-target="15"></div>
+          </div>
+          <div class="flex justify-between mt-1.5">
+            <span class="font-mono text-[10px] text-sky-400/50">3 案件</span>
+            <span class="font-mono text-[10px] text-white/20">15%</span>
+          </div>
+        </div>
+
+        <!-- Donut Chart -->
+        <div class="flex flex-col items-center gap-4 px-4">
+          <svg id="donut-svg" viewBox="0 0 200 200" class="w-44 h-44" style="overflow:visible;">
+            <!-- Background ring -->
+            <circle cx="100" cy="100" r="68" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="22"/>
+            <!-- false: 25%, starts at 0 — dashoffset=0 → solid appears at top -->
+            <circle id="seg-false" cx="100" cy="100" r="68" fill="none" stroke="#ef4444" stroke-width="22"
+              stroke-dasharray="0 427" stroke-dashoffset="0"
+              transform="rotate(-90 100 100)"
+              style="transition:stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1)"/>
+            <!-- ongoing: 60%, starts at 25%=107px — dashoffset = C-107 = 320 -->
+            <circle id="seg-ongoing" cx="100" cy="100" r="68" fill="none" stroke="#f59e0b" stroke-width="22"
+              stroke-dasharray="0 427" stroke-dashoffset="320"
+              transform="rotate(-90 100 100)"
+              style="transition:stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1) .15s"/>
+            <!-- pending: 15%, starts at 85%=363px — dashoffset = C-363 = 64 -->
+            <circle id="seg-pending" cx="100" cy="100" r="68" fill="none" stroke="#38bdf8" stroke-width="22"
+              stroke-dasharray="0 427" stroke-dashoffset="64"
+              transform="rotate(-90 100 100)"
+              style="transition:stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1) .3s"/>
+            <!-- Center -->
+            <text x="100" y="93" text-anchor="middle" fill="white"
+                  font-size="26" font-weight="700" font-family="Space Mono,monospace">20</text>
+            <text x="100" y="113" text-anchor="middle" fill="rgba(255,255,255,0.35)"
+                  font-size="9" font-family="Noto Sans TC,sans-serif">總案件數</text>
+          </svg>
+          <!-- Legend labels -->
+          <div class="flex flex-col gap-1.5 text-xs">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-red-500 shrink-0"></span><span class="text-white/55">已證實不符 25%</span></div>
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-amber-500 shrink-0"></span><span class="text-white/55">合理攻防 60%</span></div>
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-sky-500 shrink-0"></span><span class="text-white/55">待定奪 15%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom row: 3 core legal concepts -->
+      <div class="mt-4">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="sec-label">核心法律爭點</span>
+          <div class="flex-1 h-px bg-white/[0.08]"></div>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="concept-card">
+            <div class="concept-num">爭點 01 · Quid Pro Quo</div>
+            <h4 class="font-bold text-white text-sm mb-2">對價關係</h4>
+            <p class="text-xs text-white/50 leading-relaxed">賄賂罪的核心要件。檢方需證明：金主給錢，與市府給出的行政利益（如容積率放行），兩者之間存在明確的事先約定或默契。無對價關係則不構成賄賂。</p>
+          </div>
+          <div class="concept-card">
+            <div class="concept-num">爭點 02 · Reservoir Theory</div>
+            <h4 class="font-bold text-white text-sm mb-2">大水庫理論</h4>
+            <p class="text-xs text-white/50 leading-relaxed">辯方核心主張：所有現金流入一個「共同水庫」，統一用於選舉活動支出，並非流入個人口袋。若成立，則為漏報政治獻金的行政瑕疵，而非貪污侵占。</p>
+          </div>
+          <div class="concept-card">
+            <div class="concept-num">爭點 03 · Public Benefit Fraud</div>
+            <h4 class="font-bold text-white text-sm mb-2">公益侵占</h4>
+            <p class="text-xs text-white/50 leading-relaxed">公職人員以商業合約名義（如肖像授權、顧問費），將公務機關資源或公益捐款導入私人帳戶的行為。即使有合約包裝，仍可能構成「公益侵占罪」。</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════ FILTER BAR ════ -->
+  <div class="sticky top-[60px] z-40 px-6 py-3 border-b border-white/[0.05]"
+       style="background:rgba(7,7,15,.9);backdrop-filter:blur(20px);">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center gap-2">
+      <span class="sec-label mr-1">Filter:</span>
+      <button class="flt-btn active" data-f="all"     onclick="filterCases('all')">All</button>
+      <button class="flt-btn"        data-f="false"   onclick="filterCases('false')">已證實不符</button>
+      <button class="flt-btn"        data-f="ongoing" onclick="filterCases('ongoing')">合理攻防</button>
+      <button class="flt-btn"        data-f="pending" onclick="filterCases('pending')">待法官定奪</button>
+      <span id="case-counter" class="ml-auto font-mono text-xs text-white/25">20 / 20</span>
+    </div>
+  </div>
+
+  <!-- ════ CASES GRID ════ -->
+  <section id="cases" class="py-20 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex items-center gap-4 mb-14">
+        <span class="sec-label">// 02</span>
+        <h2 class="text-2xl font-bold text-white">案件解碼</h2>
+        <div class="flex-1 h-px bg-white/[0.06]"></div>
+      </div>
+      <div id="cases-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+  </section>
+
+  <!-- ════ FOOTER ════ -->
+  <footer class="py-14 px-6 border-t border-white/[0.05]">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-2.5 mb-3">
+          <div class="gold-dot" style="width:6px;height:6px;"></div>
+          <span class="font-mono text-xs tracking-widest text-white/35 uppercase">Ko Truth Lab · 法治素養闢謠計畫</span>
+        </div>
+        <p class="text-xs text-white/22 max-w-sm leading-relaxed">本頁資料根據公開庭審記錄整理，僅供法治素養教育目的，不代表任何政治立場。所有資料以法院公開審判記錄為準。</p>
+      </div>
+      <div class="text-right shrink-0">
+        <div class="font-mono text-[10px] text-white/18 mb-1 uppercase tracking-widest">Last Update</div>
+        <div class="font-mono text-xl text-white/35">2026.03.11</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ════ SHARE MODAL ════ -->
+  <div id="share-modal" onclick="if(event.target===this)closeShareCard();">
+    <div id="sc-wrapper">
+      <!-- Close -->
+      <button id="sc-close-btn" onclick="closeShareCard();">
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+
+      <!-- Capturable card -->
+      <div id="sc-card">
+        <div class="sc-corner sc-tl"></div>
+        <div class="sc-corner sc-tr"></div>
+        <div class="sc-corner sc-bl"></div>
+        <div class="sc-corner sc-br"></div>
+
+        <!-- Header: pixel art + brand -->
+        <div class="sc-header">
+          <div class="sc-header-grid"></div>
+          <canvas id="sc-canvas" width="140" height="140"></canvas>
+<div class="sc-brand">
+            <div class="sc-brand-title">KO<br>FACTCHECK</div>
+            <div class="sc-brand-sub">法治素養闢謠計畫</div>
+            <div class="sc-badge-row">
+              <span id="sc-badge" class="sc-status-badge badge-false">已證實不符</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="sc-body">
+          <div class="sc-num-row">
+            <span id="sc-num" class="sc-num">01</span>
+          </div>
+          <div id="sc-title" class="sc-title-text"></div>
+          <div><span id="sc-cat" class="sc-cat-tag"></span></div>
+          <div class="sc-section-lbl claim">辯方主張</div>
+          <p id="sc-claim" class="sc-text claim"></p>
+          <div class="sc-divider"></div>
+          <div class="sc-section-lbl truth">法庭事實</div>
+          <p id="sc-truth" class="sc-text truth"></p>
+        </div>
+
+        <!-- Footer -->
+        <div class="sc-footer">
+          <div class="sc-footer-brand">
+            <span style="width:5px;height:5px;border-radius:50%;background:#d4a017;display:inline-block;flex-shrink:0;"></span>
+            Ko FactCheck Project
+          </div>
+          <span class="sc-footer-url">ko-factcheck.app</span>
+        </div>
+      </div>
+
+      <!-- Action buttons (not in download) -->
+      <div class="sc-actions">
+        <button class="sc-action-btn gold" onclick="downloadShareCard(this)">
+          <iconify-icon icon="mdi:download-outline"></iconify-icon>
+          下載圖片
+        </button>
+        <button id="sc-copy-btn" class="sc-action-btn" onclick="copyShareLink()">
+          <iconify-icon icon="mdi:link-variant"></iconify-icon>
+          複製連結
+        </button>
+        <button class="sc-action-btn" onclick="nativeShare()">
+          <iconify-icon icon="mdi:share-variant-outline"></iconify-icon>
+          分享
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ CITATION STRIP ════ -->
+  <div class="px-6 py-5 border-t border-white/[0.04]" style="background:rgba(255,255,255,0.015);">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
+      <span class="font-mono text-[10px] tracking-widest text-white/25 uppercase shrink-0">資料來源</span>
+      <div class="w-px h-3 bg-white/10 hidden sm:block shrink-0"></div>
+      <div class="flex flex-wrap gap-x-5 gap-y-1.5">
+        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">北檢起訴書</span>
+        <span class="text-white/10 text-[10px]">·</span>
+        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">鏡週刊</span>
+        <span class="text-white/10 text-[10px]">·</span>
+        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">法律白話文</span>
+        <span class="text-white/10 text-[10px]">·</span>
+        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">公視新聞網</span>
+        <span class="text-white/10 text-[10px]">·</span>
+        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">苗博雅 YT</span>
+        <span class="text-white/10 text-[10px]">·</span>
+        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">風傳媒</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ JAVASCRIPT ════ -->
+  <script>
+  /* ─── Case Data ─── */
+  const CASES = [
+    { id:1,  num:'01', title:'博弈大亨 陳盈助',          amount:'300 萬',   category:'政治獻金', status:'false',
+      claim:'工作簿不知真假，在庭訊中證稱不認識柯文哲，沒有捐款。',
+      truth:'【證人已打臉】其親信邱清章已作證，親自拿300萬現金到市長室，交給正在踩飛輪的柯文哲。' },
+    { id:2,  num:'02', title:'東森集團 王令麟',           amount:'500 萬',   category:'政治獻金', status:'false',
+      claim:'工作簿不知真假，尚無公開報導顯示承認捐款。',
+      truth:'【證人已打臉】王令麟已親自出庭作證，承認面對柯文哲金錢需求時，請朋友代為捐款。' },
+    { id:3,  num:'03', title:'東森電視主張 高祥',         amount:'150 萬',   category:'政治獻金', status:'false',
+      claim:'工作簿不知真假，尚無公開報導顯示承認捐款。',
+      truth:'【客觀卷證】檢方傳喚USB名單上13人皆具結證實數字即金額，柯方放棄詰問形同默認。' },
+    { id:4,  num:'04', title:'名醫 林志郎',               amount:'500 萬',   category:'政治獻金', status:'false',
+      claim:'工作簿不知真假，尚無公開報導顯示承認捐款。',
+      truth:'【客觀卷證】名單金主皆具結證實數字為真，並非不知真假。柯方同樣放棄詰問。' },
+    { id:5,  num:'05', title:'前都發局長 黃景茂筆錄',     amount:'—',        category:'程序爭議', status:'false',
+      claim:'檢方捏造黃景茂「明知違法」的偵訊筆錄。',
+      truth:'【法庭勘驗】當庭勘驗影片確認黃花了22分鐘逐字閱讀並修改後才簽名，無捏造情事。' },
+    { id:6,  num:'06', title:'木可涉侵占罪爛帳',          amount:'6,234 萬', category:'侵占爭議', status:'ongoing',
+      claim:'負責人亂帳調查中，木可400萬轉入為柯文哲肖像權金。',
+      truth:'【檢辯攻防】檢方起訴假藉商業授權將公款洗入私人口袋涉「公益侵占」；辯方主張為合理商業模式。' },
+    { id:7,  num:'07', title:'挪用民眾黨基金會',          amount:'827 萬',   category:'背信爭議', status:'ongoing',
+      claim:'財務運作仍在接受調查與監督，尚未有最終結論。',
+      truth:'【檢辯攻防】檢方起訴挪用公款支付黨務薪資涉「背信罪」；辯方主張為內部資源調度。' },
+    { id:8,  num:'08', title:'悟覺妙天',                  amount:'1,000 萬', category:'侵占爭議', status:'ongoing',
+      claim:'行李箱內1000萬，存入新故鄉協會與協會零用金。',
+      truth:'【檢辯攻防】確實有收受現金，雙方就此款項是否構成違法侵占進行法律攻防。' },
+    { id:9,  num:'09', title:'勤業眾信會計師 范有偉',     amount:'500 萬',   category:'政治獻金', status:'ongoing',
+      claim:'偵訊時有說就是政治獻金。',
+      truth:'【檢辯攻防】范坦承在地下室親交500萬現金；辯方主張為單純政治獻金，無對價關係。' },
+    { id:10, num:'10', title:'謝國樑母親',                amount:'200 萬',   category:'大水庫理論', status:'ongoing',
+      claim:'捐給民眾黨，交給高虹安及賴香伶競選用。',
+      truth:'【檢辯攻防】證人邱佩琳證實拿現金到市長室；辯方主打「大水庫理論」（錢用於選舉非私用）。' },
+    { id:11, num:'11', title:'信義房屋董娘 王美文',       amount:'200 萬',   category:'大水庫理論', status:'ongoing',
+      claim:'捐給民眾黨，交給高虹安及賴香伶競選用。',
+      truth:'【檢辯攻防】款項確實存在，辯方主張為漏報政治獻金的行政瑕疵，而非貪污侵占。' },
+    { id:12, num:'12', title:'文華東方負責人 林命群',     amount:'200 萬',   category:'大水庫理論', status:'ongoing',
+      claim:'捐給民眾黨，交給高虹安及賴香伶競選用。',
+      truth:'【檢辯攻防】雙方就「政治獻金漏報」與「侵占公款」界線進行攻防。' },
+    { id:13, num:'13', title:'和泰興業董事長 蘇一仲',     amount:'30 萬',    category:'大水庫理論', status:'ongoing',
+      claim:'捐給賴香伶競選的政治獻金。',
+      truth:'【檢辯攻防】證實有錢流入，定罪取決於資金最終去向認定。' },
+    { id:14, num:'14', title:'富裔實業董事長 祝文定',     amount:'30 萬',    category:'大水庫理論', status:'ongoing',
+      claim:'捐給賴香伶競選的政治獻金。',
+      truth:'【檢辯攻防】大水庫理論適用性攻防，資金最終流向爭議持續。' },
+    { id:15, num:'15', title:'和泰車董事長 黃南光',       amount:'20 萬',    category:'大水庫理論', status:'ongoing',
+      claim:'捐給賴香伶競選的政治獻金。',
+      truth:'【檢辯攻防】大水庫理論適用性攻防，資金最終流向爭議持續。' },
+    { id:16, num:'16', title:'20% 容積獎勵適法性',        amount:'—',        category:'京華城',   status:'ongoing',
+      claim:'依都市計畫法第24條，市府與都委會有裁量權給予獎勵。',
+      truth:'【檢辯攻防】檢方指控京華城非都更案，違法「準用」都更獎勵；辯方主張法無明文不代表違法。' },
+    { id:17, num:'17', title:'秘書橘子 (許芷瑜) 角色',   amount:'1,500 萬', category:'京華城',   status:'ongoing',
+      claim:'人沒回來、錢沒扣到，缺乏直接金流實體證據。',
+      truth:'【檢辯攻防】檢方控橘子經手1500萬賄款並潛逃出境；辯方採「車手抗辯」質疑無實體金流。' },
+    { id:18, num:'18', title:'威京集團主席 沈慶京',       amount:'1,500 萬', category:'京華城',   status:'pending',
+      claim:'都說沒有金流了！',
+      truth:'【待法官定奪】檢方查出提領1600萬現金紀錄與USB帳冊；法官需判定是否與容積率放行具「對價關係」。' },
+    { id:19, num:'19', title:'鼎越前負責人 朱亞虎',       amount:'210 萬',   category:'京華城',   status:'pending',
+      claim:'政治獻金，朱亞虎自己揣測和京華城有關。',
+      truth:'【待法官定奪】朱在庭上認罪行賄「打通關」；辯方反控檢方脅迫取供，法官需裁定自白證據能力。' },
+    { id:20, num:'20', title:'彭振聲、邵琇珮認罪',        amount:'—',        category:'京華城',   status:'pending',
+      claim:'遭檢方疲勞轟炸、欺騙才認罪。',
+      truth:'【待法官定奪】兩名核心高官已在庭上承認「圖利罪」並求緩刑；法官需定奪其認罪是否牽連柯文哲。' },
+  ];
+
+  const S = {
+    false:   { label:'已證實不符',   icon:'mdi:close-circle',  badge:'badge-false',   text:'text-red-400',   glow:'rgba(239,68,68,.06)' },
+    ongoing: { label:'合理法庭攻防', icon:'mdi:scale-balance', badge:'badge-ongoing', text:'text-amber-400', glow:'rgba(245,158,11,.06)' },
+    pending: { label:'等待法官定奪', icon:'mdi:gavel',          badge:'badge-pending', text:'text-sky-400',   glow:'rgba(56,189,248,.06)' },
+  };
+
+  /* ─── Render Cases ─── */
+  function renderCases(filter) {
+    const list = filter === 'all' ? CASES : CASES.filter(c => c.status === filter);
+    document.getElementById('case-counter').textContent = `${list.length} / ${CASES.length}`;
+
+    document.getElementById('cases-grid').innerHTML = list.map(c => {
+      const s = S[c.status];
+      const hasAmt = c.amount !== '—';
+      return `
+      <div class="case-card p-5" style="background:linear-gradient(145deg,${s.glow},#0d0d1c);">
+
+        <!-- num + badge -->
+        <div class="flex items-start justify-between mb-3">
+          <span class="case-num">${c.num}</span>
+          <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium ${s.badge}">
+            <iconify-icon icon="${s.icon}" class="text-sm leading-none"></iconify-icon>
+            ${s.label}
+          </span>
+        </div>
+
+        <!-- title + amount -->
+        <h3 class="font-bold text-white text-[0.95rem] leading-snug mb-1">${c.title}</h3>
+        ${hasAmt
+          ? `<div class="font-mono text-lg font-bold ${s.text} mb-3">${c.amount}</div>`
+          : `<div class="font-mono text-sm text-white/25 mb-3">—</div>`}
+
+        <!-- category tag -->
+        <div class="mb-3"><span class="cat-tag">${c.category}</span></div>
+
+        <!-- claim: ALWAYS VISIBLE -->
+        <div class="claim-section mb-0">
+          <div class="claim-label">辯方主張</div>
+          <p class="claim-text">${c.claim}</p>
+        </div>
+
+        <!-- truth: toggle -->
+        <div class="truth-toggle" onclick="toggleTruth(${c.id}, event)">
+          <iconify-icon icon="mdi:shield-search" class="text-yellow-500/70"></iconify-icon>
+          <span class="truth-toggle-label">法庭事實</span>
+          <iconify-icon icon="mdi:chevron-down" id="chev-${c.id}" class="chev text-yellow-500/60 text-base"></iconify-icon>
+        </div>
+        <div id="truth-${c.id}" class="truth-body">
+          <div class="truth-body-inner">
+            <p class="truth-text">${c.truth}</p>
+          </div>
+        </div>
+
+        <!-- Share button -->
+        <div class="flex justify-end mt-2 pt-2 border-t border-white/[0.05]">
+          <button class="share-card-btn" onclick="openShareCard(${c.id}); event.stopPropagation();">
+            <iconify-icon icon="mdi:share-variant-outline" class="text-[11px] leading-none"></iconify-icon>
+            分享此案
+          </button>
+        </div>
+
+      </div>`;
+    }).join('');
+
+    gsap.from('#cases-grid .case-card', {
+      opacity:0, y:22, stagger:.04, duration:.42, ease:'power2.out', clearProps:'all',
+    });
+    bindHover();
+  }
+
+  function toggleTruth(id, e) {
+    e && e.stopPropagation();
+    const body = document.getElementById(`truth-${id}`);
+    const chev = document.getElementById(`chev-${id}`);
+    const open = body.classList.toggle('open');
+    chev.classList.toggle('open', open);
+  }
+
+  function filterCases(f) {
+    document.querySelectorAll('.flt-btn').forEach(b => b.classList.toggle('active', b.dataset.f === f));
+    renderCases(f);
+  }
+
+  /* ─── Custom Cursor ─── */
+  const curDot = document.getElementById('cur-dot');
+  const curRing = document.getElementById('cur-ring');
+  let mx=0, my=0, rx=0, ry=0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    curDot.style.left = mx+'px'; curDot.style.top = my+'px';
+  });
+  (function loop() {
+    rx += (mx-rx)*.12; ry += (my-ry)*.12;
+    curRing.style.left = rx+'px'; curRing.style.top = ry+'px';
+    requestAnimationFrame(loop);
+  })();
+
+  function bindHover() {
+    document.querySelectorAll('a,button,.case-card,.mag-btn,.flt-btn,.truth-toggle,.share-card-btn,.sc-action-btn,#sc-close-btn').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cur-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cur-hover'));
+    });
+  }
+  bindHover();
+
+  /* ─── Magnetic Buttons ─── */
+  function initMagnetic() {
+    document.querySelectorAll('.mag-btn').forEach(btn => {
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        gsap.to(btn, { x:(e.clientX-r.left-r.width/2)*.28, y:(e.clientY-r.top-r.height/2)*.28, duration:.3, ease:'power2.out' });
+      });
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { x:0, y:0, duration:.6, ease:'elastic.out(1,.5)' });
+      });
+    });
+  }
+
+  /* ─── Split Text ─── */
+  function splitChars(el, text) {
+    el.innerHTML = text.split('').map(ch =>
+      ch===' ' ? '<span class="char-wrap"><span class="char">&nbsp;</span></span>'
+               : `<span class="char-wrap"><span class="char">${ch}</span></span>`
+    ).join('');
+    return el.querySelectorAll('.char');
+  }
+
+  /* ─── Hero Canvas: Money Flow Network ─── */
+  function initHeroCanvas() {
+    const canvas = document.getElementById('hero-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, t=0, hovered=-1;
+
+    /* Node definitions — polar coords around center */
+    const NODES = [
+      { label:'柯文哲', sub:'被告',    type:'center', angle:0,   r:0   },
+      { label:'陳盈助', sub:'300萬',   type:'false',  angle:0,   r:155 },
+      { label:'王令麟', sub:'500萬',   type:'false',  angle:45,  r:158 },
+      { label:'沈慶京', sub:'1500萬',  type:'pending',angle:90,  r:168 },
+      { label:'悟覺妙天',sub:'1000萬', type:'ongoing',angle:135, r:158 },
+      { label:'木可',   sub:'6234萬',  type:'ongoing',angle:180, r:162 },
+      { label:'林志郎', sub:'500萬',   type:'false',  angle:225, r:155 },
+      { label:'范有偉', sub:'500萬',   type:'ongoing',angle:270, r:155 },
+      { label:'朱亞虎', sub:'210萬',   type:'pending',angle:315, r:160 },
+    ];
+
+    const COLORS = { center:'#f0c040', false:'#ef4444', ongoing:'#f59e0b', pending:'#38bdf8' };
+
+    function resize() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      W = canvas.width  = rect.width  * window.devicePixelRatio;
+      H = canvas.height = rect.height * window.devicePixelRatio;
+      canvas.style.width  = rect.width  + 'px';
+      canvas.style.height = rect.height + 'px';
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+
+    function pos(n, rw, rh) {
+      if (n.r === 0) return { x: rw/2, y: rh/2 };
+      const a  = (n.angle - 90) * Math.PI / 180;
+      const sc = Math.min(rw, rh) / 420;
+      return { x: rw/2 + Math.cos(a)*n.r*sc, y: rh/2 + Math.sin(a)*n.r*sc };
+    }
+
+    function draw() {
+      const rw = W / window.devicePixelRatio;
+      const rh = H / window.devicePixelRatio;
+      ctx.clearRect(0, 0, rw, rh);
+
+      /* Connections */
+      NODES.slice(1).forEach((n, i) => {
+        const src = pos(NODES[0], rw, rh);
+        const dst = pos(n, rw, rh);
+        const col = COLORS[n.type];
+        const isHov = hovered === i+1 || hovered === 0;
+
+        /* Base line */
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(src.x, src.y); ctx.lineTo(dst.x, dst.y);
+        ctx.strokeStyle = col; ctx.globalAlpha = isHov ? .3 : .1;
+        ctx.lineWidth = isHov ? 2 : 1; ctx.stroke(); ctx.restore();
+
+        /* Animated dashes — money flowing inward */
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(src.x, src.y); ctx.lineTo(dst.x, dst.y);
+        ctx.strokeStyle = col; ctx.globalAlpha = isHov ? .9 : .45;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 10]);
+        ctx.lineDashOffset = -(t * .7) + i * 8;
+        ctx.stroke(); ctx.restore();
+      });
+
+      /* Nodes */
+      NODES.forEach((n, i) => {
+        const p = pos(n, rw, rh);
+        const col = COLORS[n.type];
+        const isCenter = n.r === 0;
+        const isHov = hovered === i;
+        const pulse = Math.sin(t * .035 + i * .9) * .12 + 1;
+        const baseR = isCenter ? 24 : 11;
+        const nr = baseR * pulse * (isHov ? 1.35 : 1);
+
+        /* Glow */
+        const grd = ctx.createRadialGradient(p.x, p.y, nr*.3, p.x, p.y, nr*3);
+        grd.addColorStop(0, col + (isHov ? '40' : '22'));
+        grd.addColorStop(1, col + '00');
+        ctx.beginPath(); ctx.arc(p.x, p.y, nr*3, 0, Math.PI*2);
+        ctx.fillStyle = grd; ctx.fill();
+
+        /* Circle */
+        ctx.beginPath(); ctx.arc(p.x, p.y, nr, 0, Math.PI*2);
+        ctx.fillStyle = isCenter ? col : col + 'cc';
+        ctx.shadowColor = col; ctx.shadowBlur = isHov ? 22 : 10;
+        ctx.fill(); ctx.shadowBlur = 0;
+
+        /* Label */
+        ctx.save(); ctx.textAlign = 'center';
+        if (isCenter) {
+          ctx.font = '700 12px "Noto Sans TC",sans-serif';
+          ctx.fillStyle = '#07070f';
+          ctx.fillText(n.label, p.x, p.y - 1);
+          ctx.font = '400 9px "Space Mono",monospace';
+          ctx.fillStyle = 'rgba(7,7,15,.65)';
+          ctx.fillText(n.sub, p.x, p.y + 11);
+        } else {
+          const ly = p.y + nr + 14;
+          ctx.font = `500 11px "Noto Sans TC",sans-serif`;
+          ctx.fillStyle = isHov ? '#fff' : 'rgba(255,255,255,.65)';
+          ctx.fillText(n.label, p.x, ly);
+          ctx.font = `700 9.5px "Space Mono",monospace`;
+          ctx.fillStyle = col + (isHov ? 'ff' : 'bb');
+          ctx.fillText(n.sub, p.x, ly + 13);
+        }
+        ctx.restore();
+      });
+
+      t++; requestAnimationFrame(draw);
+    }
+
+    /* Mouse events on canvas */
+    canvas.addEventListener('mousemove', e => {
+      const rect  = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      const rw = rect.width; const rh = rect.height;
+      hovered = -1;
+      NODES.forEach((n, i) => {
+        const p = pos(n, rw, rh);
+        if (Math.hypot(p.x - mx, p.y - my) < 32) hovered = i;
+      });
+      document.body.classList.toggle('cur-hover', hovered !== -1);
+    });
+    canvas.addEventListener('mouseleave', () => {
+      hovered = -1; document.body.classList.remove('cur-hover');
+    });
+
+    window.addEventListener('resize', () => { ctx.resetTransform(); resize(); });
+    resize(); draw();
+  }
+
+  /* ─── Donut Chart Animation ─── */
+  function animateDonut() {
+    // C = 2π×68 ≈ 427.26
+    // dasharray = "solid_length gap_length" where solid+gap = C
+    // dashoffset (set in HTML) positions each segment's start on the arc
+    const C = 2 * Math.PI * 68;
+    document.getElementById('seg-false').setAttribute('stroke-dasharray',   `${C*.25} ${C*.75}`);
+    document.getElementById('seg-ongoing').setAttribute('stroke-dasharray', `${C*.60} ${C*.40}`);
+    document.getElementById('seg-pending').setAttribute('stroke-dasharray', `${C*.15} ${C*.85}`);
+  }
+
+  /* ─── GSAP + ScrollTrigger ─── */
+  gsap.registerPlugin(ScrollTrigger);
+
+  window.addEventListener('DOMContentLoaded', () => {
+
+    /* Hero sequence */
+    const tl = gsap.timeline({ delay:.15 });
+    tl.to('#hero-pill', { opacity:1, duration:.55, ease:'power2.out' });
+    const c1 = splitChars(document.getElementById('line1'), '進擊的帳目');
+    tl.to(c1, { y:0, opacity:1, stagger:.07, duration:.55, ease:'power3.out' }, '-=.2');
+    // line2: gradient text — cannot splitChars (background-clip:text breaks on nested spans)
+    // Animate the whole element instead
+    gsap.set('#line2', { opacity:0, y:20 });
+    tl.to('#line2', { opacity:1, y:0, duration:.6, ease:'power3.out' }, '-=.35');
+    tl.to('#hero-sub',  { opacity:1, duration:.5, ease:'power2.out' }, '-=.2');
+    tl.to('#stat-grid', { opacity:1, duration:.5, ease:'power2.out' }, '-=.25');
+    tl.to('#cta-row',   { opacity:1, duration:.45, ease:'power2.out' }, '-=.2');
+
+    initMagnetic();
+    initHeroCanvas();
+
+    /* Header scroll */
+    const hdr = document.getElementById('site-header');
+    ScrollTrigger.create({
+      start:'80px top',
+      onToggle: ({ isActive }) => {
+        hdr.style.background      = isActive ? 'rgba(7,7,15,.92)' : 'rgba(7,7,15,0)';
+        hdr.style.backdropFilter  = isActive ? 'blur(20px)' : 'blur(0px)';
+        hdr.style.borderBottom    = isActive ? '1px solid rgba(255,255,255,.05)' : 'none';
+      },
+    });
+
+    /* Legend: progress bars + donut on scroll */
+    ScrollTrigger.create({
+      trigger:'#legend', start:'top 72%', once:true,
+      onEnter: () => {
+        document.querySelectorAll('.prog-fill').forEach(bar => {
+          bar.style.transform = 'scaleX(1)';
+        });
+        animateDonut();
+      },
+    });
+
+    /* Initial render */
+    renderCases('all');
+  });
+
+  /* ════ PIXEL ART SHARE CARD ════ */
+
+  // ── Palette ──
+  const PP = {
+    '.':null,
+    'H':'#0a0a1a',  // dark outline / hair
+    'K':'#dfc4a0',  // skin light
+    'k':'#c4a882',  // skin shadow
+    'W':'#f0f0f0',  // white (shirt, glasses lens)
+    'F':'#1a1a30',  // dark glasses frame
+    'T':'#2a5cba',  // blue tie
+    'G':'#f0c040',  // gold (shoes, belt, lapels)
+    'g':'#c9a227',  // gold mid
+    'S':'#12122e',  // suit / pants dark
+    'n':'#1e3050',  // navy pants
+  };
+
+  // ════ THREE POSES ════
+
+  // ── Pose 2: 扎眼 (standing, idle blinking) ──
+  const SPR_STAND_OPEN = [
+    '....HHHHHHHH....',
+    '...HHHHHHHHHH...',
+    '..HKKKKKKKKkH...',
+    '.HKKKKKKKKKKkH..',
+    '.HKFFFFkKFFFFH..',  // top glasses frame
+    '.HKFWWFkKFWWFH..',  // white lenses open
+    '.HKFFFFkKFFFFH..',  // bottom glasses frame
+    '..HKKKkKKKkH....',
+    '...HSWWWWSSH....',
+    '..HSSgTTgSSH....',
+    '.HSSSSSSSSSSSH..',
+    '.HSSSSSSSSSSSH..',
+    '.HGGGGGGGGGgH...',  // gold belt = high-waist
+    '.HnnnnnnnnnnH...',
+    '..Hnnnn..nnH....',
+    '..GGG....GGG....',
+  ];
+  const SPR_STAND_BLINK = [
+    '....HHHHHHHH....',
+    '...HHHHHHHHHH...',
+    '..HKKKKKKKKkH...',
+    '.HKKKKKKKKKKkH..',
+    '.HKFFFFkKFFFFH..',
+    '.HKFFFFkKFFFFH..',  // blink: no white lens
+    '.HKFFFFkKFFFFH..',
+    '..HKKKkKKKkH....',
+    '...HSWWWWSSH....',
+    '..HSSgTTgSSH....',
+    '.HSSSSSSSSSSSH..',
+    '.HSSSSSSSSSSSH..',
+    '.HGGGGGGGGGgH...',
+    '.HnnnnnnnnnnH...',
+    '..Hnnnn..nnH....',
+    '..GGG....GGG....',
+  ];
+
+  // ── Pose 0: 採飛輪 (on spinning bike) ──
+  const SPR_BIKE = [
+    '....HHHHHHHH....',
+    '...HHHHHHHHHH...',
+    '..HKKKKKKKKkH...',
+    '.HKKKKKKKKKKkH..',
+    '.HKFFFFkKFFFFH..',
+    '.HKFWWFkKFWWFH..',
+    '.HKFFFFkKFFFFH..',
+    '..HKKKkKKKkH....',
+    'GGGGGGGGGGGGGGGG',  // HANDLEBAR — gold full-width bar
+    'KS..HSSgSSH..SK.',  // hands (K=skin) gripping + torso
+    '.SS.HSSSSSH.SS..',  // arms + body
+    '....HSSSSSH.....',
+    '....SSSSSSS.....',
+    '....SS...SS.....',
+    '...GGG...GGG....',  // pedaling shoes
+    '..GG.....GG.....',
+  ];
+
+  // ── Pose 1: 手擦汗 (wiping sweat, right arm raised) ──
+  const SPR_WIPE = [
+    '....HHHHHHHH....',
+    '...HHHHHHHHHH...',
+    '..HKKKKKKKKkH...',
+    '.HKKKKKKKKKKkHSS',  // face + sleeve going up (SS = arm)
+    '.HKFFFFkKFFFFHKS',  // glasses + K(hand) wiping brow + S(sleeve)
+    '.HKFWWFkKFWWFHKS',  // white lens + hand at forehead
+    '.HKFFFFkKFFFFH.S',  // glasses + sleeve
+    '..HKKKkKKKkH..SS',  // chin + sleeve
+    '...HSWWWWSSH.SS.',  // collar + arm
+    '..HSSgTTgSSH.SS.',  // lapels/tie + arm
+    '.HSSSSSSSSSSSH..',
+    '.HSSSSSSSSSSSH..',
+    '.HGGGGGGGGGgH...',
+    '.HnnnnnnnnnnH...',
+    '..Hnnnn..nnH....',
+    '..GGG....GGG....',
+  ];
+  const SPR_WIPE_BLINK = [
+    '....HHHHHHHH....',
+    '...HHHHHHHHHH...',
+    '..HKKKKKKKKkH...',
+    '.HKKKKKKKKKKkHSS',
+    '.HKFFFFkKFFFFHKS',
+    '.HKFFFFkKFFFFHKS',  // blink: no white lens, arm still raised
+    '.HKFFFFkKFFFFH.S',
+    '..HKKKkKKKkH..SS',
+    '...HSWWWWSSH.SS.',
+    '..HSSgTTgSSH.SS.',
+    '.HSSSSSSSSSSSH..',
+    '.HSSSSSSSSSSSH..',
+    '.HGGGGGGGGGgH...',
+    '.HnnnnnnnnnnH...',
+    '..Hnnnn..nnH....',
+    '..GGG....GGG....',
+  ];
+
+  const POSES = [
+    { label:'採飛輪', sprO: SPR_BIKE,       sprB: SPR_BIKE       },
+    { label:'手擦汗', sprO: SPR_WIPE,       sprB: SPR_WIPE_BLINK },
+    { label:'扎　眼', sprO: SPR_STAND_OPEN, sprB: SPR_STAND_BLINK },
+  ];
+  let currentPose = 2;
+
+  function drawSpr(ctx, rows, scale, ox, oy) {
+    for (let r = 0; r < rows.length; r++) {
+      const row = rows[r];
+      for (let c = 0; c < row.length; c++) {
+        const col = PP[row[c]];
+        if (!col) continue;
+        ctx.fillStyle = col;
+        ctx.fillRect(ox + c * scale, oy + r * scale, scale, scale);
+      }
+    }
+  }
+
+  // ── Particles (pose-aware) ──
+  let scParts = [];
+  function initParts(W, H, pose) {
+    if (pose === 0) {
+      // BIKE: speed lines sweeping left
+      scParts = Array.from({length: 16}, (_, i) => ({
+        x: Math.random() * W * 1.5,
+        y: 28 + Math.random() * (H - 56),
+        len: Math.random() * 22 + 10,
+        vx: -(Math.random() * 3.5 + 2),
+        alpha: Math.random() * 0.35 + 0.1,
+        color: ['#80c0ff','#a8d8ff','#ffffff','#60a0f0'][i % 4],
+        W, H,
+      }));
+    } else if (pose === 1) {
+      // WIPE: sweat drops arcing from upper-right
+      scParts = Array.from({length: 10}, () => {
+        const p = {
+          x:0, y:0, vx:0, vy:0, gravity:0.06,
+          alpha: Math.random() * 0.55 + 0.2,
+          color: ['#a0e8ff','#c8f4ff','#ffffff'][Math.floor(Math.random()*3)],
+          W, H,
+          reset() {
+            this.x = W * 0.58 + Math.random() * 18;
+            this.y = H * 0.18 + Math.random() * 22;
+            this.vx = Math.random() * 1.4 + 0.4;
+            this.vy = -(Math.random() * 1.8 + 0.2);
+          },
+        };
+        p.reset(); return p;
+      });
+    } else {
+      // STAND: gold particles floating up
+      scParts = Array.from({length: 22}, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        size: Math.random() * 2.5 + .6,
+        vy: -(Math.random() * .38 + .12),
+        vx: (Math.random() - .5) * .25,
+        alpha: Math.random() * .4 + .08,
+        color: ['#f0c040','#c9a227','#d4a017'][Math.floor(Math.random()*3)],
+        H,
+      }));
+    }
+  }
+  function updateParts(ctx, W, pose) {
+    if (pose === 0) {
+      scParts.forEach(p => {
+        p.x += p.vx;
+        if (p.x + p.len < 0) { p.x = p.W + p.len; p.y = 28 + Math.random() * (p.H - 56); }
+        ctx.save(); ctx.globalAlpha = p.alpha; ctx.strokeStyle = p.color;
+        ctx.lineWidth = 1.5; ctx.beginPath();
+        ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + p.len, p.y); ctx.stroke();
+        ctx.restore();
+      });
+    } else if (pose === 1) {
+      scParts.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.vy += p.gravity;
+        if (p.y > p.H || p.x > p.W) p.reset();
+        ctx.save(); ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      });
+    } else {
+      scParts.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.y < -4) { p.y = p.H + 4; p.x = Math.random() * W; }
+        if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+        ctx.save(); ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
+        ctx.fillRect(p.x|0, p.y|0, p.size|0, p.size|0); ctx.restore();
+      });
+    }
+  }
+
+  // ── Animation loop ──
+  let scRAF = null, scT = 0;
+  function startShareAnim(pose) {
+    pose = (pose !== undefined) ? pose : currentPose;
+    const canvas = document.getElementById('sc-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const CW = canvas.width, CH = canvas.height;
+    const SCALE = 7, SW = 16 * SCALE, OX = (CW - SW) / 2;
+    const po = POSES[pose];
+
+    initParts(CW, CH, pose);
+    scT = 0;
+
+    function frame() {
+      ctx.clearRect(0, 0, CW, CH);
+      updateParts(ctx, CW, pose);
+
+      const grd = ctx.createRadialGradient(CW/2, CH/2, 18, CW/2, CH/2, 72);
+      grd.addColorStop(0, 'rgba(201,162,39,.14)');
+      grd.addColorStop(1, 'rgba(201,162,39,0)');
+      ctx.fillStyle = grd; ctx.fillRect(0, 0, CW, CH);
+
+      if (pose === 0) {
+        const bob = Math.round(Math.sin(scT * .1) * 2);
+        drawSpr(ctx, po.sprO, SCALE, OX, (CH - SW)/2 + bob);
+      } else if (pose === 1) {
+        const sway = Math.round(Math.sin(scT * .025) * 1.5);
+        const blink = (scT % 180 >= 165 && scT % 180 <= 168);
+        drawSpr(ctx, blink ? po.sprB : po.sprO, SCALE, OX + sway, (CH - SW)/2);
+      } else {
+        const bob = Math.round(Math.sin(scT * .04) * 2.5);
+        const blink = (scT % 220 >= 200 && scT % 220 <= 204);
+        drawSpr(ctx, blink ? po.sprB : po.sprO, SCALE, OX, (CH - SW)/2 + bob);
+      }
+
+      scT++;
+      scRAF = requestAnimationFrame(frame);
+    }
+    if (scRAF) cancelAnimationFrame(scRAF);
+    frame();
+  }
+
+  // ── Open / Close ──
+  function openShareCard(caseId) {
+    const c = CASES.find(x => x.id === caseId);
+    if (!c) return;
+    const s = S[c.status];
+
+    // Fill content
+    document.getElementById('sc-num').textContent   = c.num;
+    document.getElementById('sc-title').textContent = c.title;
+    document.getElementById('sc-cat').textContent   = c.category;
+    document.getElementById('sc-claim').textContent = c.claim;
+    document.getElementById('sc-truth').textContent = c.truth;
+
+    const badge = document.getElementById('sc-badge');
+    badge.textContent = s.label;
+    badge.className   = `sc-status-badge ${s.badge}`;
+
+    // Pick a random pose each time the card is opened
+    currentPose = Math.floor(Math.random() * 3);
+
+    document.getElementById('share-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    startShareAnim(currentPose);
+  }
+
+  function closeShareCard() {
+    document.getElementById('share-modal').classList.remove('open');
+    document.body.style.overflow = '';
+    if (scRAF) { cancelAnimationFrame(scRAF); scRAF = null; }
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeShareCard(); });
+
+  // ── Download ──
+  async function downloadShareCard(btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<iconify-icon icon="mdi:loading"></iconify-icon> 處理中...';
+    if (scRAF) { cancelAnimationFrame(scRAF); scRAF = null; }
+
+    try {
+      const card = document.getElementById('sc-card');
+      const snap = await html2canvas(card, {
+        backgroundColor: '#07070f',
+        scale: 2.5,
+        useCORS: true,
+        logging: false,
+        allowTaint: true,
+      });
+      const a = document.createElement('a');
+      a.download = `ko-factcheck-${Date.now()}.png`;
+      a.href = snap.toDataURL('image/png');
+      a.click();
+    } catch(e) {
+      alert('下載失敗，請截圖儲存。');
+    } finally {
+      btn.innerHTML = orig;
+      startShareAnim(currentPose);  // restart animation
+    }
+  }
+
+  // ── Copy link ──
+  function copyShareLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const btn = document.getElementById('sc-copy-btn');
+      const orig = btn.innerHTML;
+      btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> 已複製！';
+      setTimeout(() => { btn.innerHTML = orig; }, 2000);
+    }).catch(() => { prompt('請手動複製：', window.location.href); });
+  }
+
+  // ── Native share ──
+  function nativeShare() {
+    if (navigator.share) {
+      navigator.share({
+        title: '進擊的帳目：這筆錢我真的不知道',
+        text: '20 筆爭議資金 × 法庭鐵證解碼 | Ko FactCheck Project',
+        url: window.location.href,
+      }).catch(()=>{});
+    } else {
+      copyShareLink();
+    }
+  }
+
+  </script>
+
+</body>
+</html>
