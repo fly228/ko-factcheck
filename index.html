@@ -240,6 +240,63 @@
     ::-webkit-scrollbar-track { background:#07070f; }
     ::-webkit-scrollbar-thumb { background:rgba(212,160,23,.55); border-radius:2px; }
 
+    /* ── Verdict Countdown ── */
+    .vcd-num {
+      font-family:'Space Mono',monospace;
+      font-size:3.2rem; font-weight:700; line-height:1;
+      color:#f0c040;
+      text-shadow:0 0 32px rgba(240,192,64,.45);
+    }
+    @media(min-width:640px){ .vcd-num{ font-size:4.5rem; } }
+    .vcd-lbl { font-size:.6rem; color:rgba(255,255,255,.3); letter-spacing:.12em; margin-top:.35rem; text-transform:uppercase; }
+    .vcd-sep { font-family:'Space Mono',monospace; font-size:3rem; color:rgba(240,192,64,.35); align-self:flex-start; padding-top:.1rem; line-height:1; }
+    @media(min-width:640px){ .vcd-sep{ font-size:4rem; } }
+
+    /* ── Countdown Share Modal ── */
+    #vcd-modal {
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      padding:1rem; background:rgba(7,7,15,.88); backdrop-filter:blur(10px);
+      z-index:10001; opacity:0; pointer-events:none; transition:opacity .35s ease;
+    }
+    #vcd-modal.open { opacity:1; pointer-events:all; }
+    #vcd-card {
+      position:relative; width:340px; max-width:calc(100vw - 2rem);
+      background:#07070f; border:1px solid rgba(212,160,23,.4);
+      border-radius:1.25rem; overflow:hidden;
+      font-family:'Noto Sans TC',sans-serif;
+    }
+    #vcd-card::after {
+      content:''; position:absolute; inset:0; pointer-events:none; z-index:8; border-radius:1.25rem;
+      background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px);
+    }
+    .vcd-card-header {
+      padding:1.5rem 1.5rem 1rem;
+      background:linear-gradient(135deg,rgba(240,192,64,.06) 0%,rgba(7,7,15,0) 60%);
+      text-align:center; border-bottom:1px solid rgba(212,160,23,.12);
+    }
+    .vcd-card-title { font-family:'Space Mono',monospace; font-size:.65rem; letter-spacing:.18em; color:rgba(212,160,23,.6); text-transform:uppercase; margin-bottom:.5rem; }
+    .vcd-card-case { font-size:1.1rem; font-weight:700; color:#ededed; margin-bottom:.25rem; }
+    .vcd-card-date { font-family:'Space Mono',monospace; font-size:.7rem; color:rgba(240,192,64,.7); }
+    .vcd-card-nums {
+      display:flex; justify-content:center; align-items:flex-start; gap:.5rem;
+      padding:1.25rem 1rem;
+    }
+    .vcd-card-unit { text-align:center; min-width:56px; }
+    .vcd-card-n {
+      font-family:'Space Mono',monospace; font-size:2.4rem; font-weight:700; line-height:1;
+      color:#f0c040; text-shadow:0 0 20px rgba(240,192,64,.5);
+    }
+    .vcd-card-l { font-size:.55rem; color:rgba(255,255,255,.3); letter-spacing:.1em; margin-top:.2rem; }
+    .vcd-card-colon { font-family:'Space Mono',monospace; font-size:2rem; color:rgba(240,192,64,.3); padding-top:.3rem; line-height:1; }
+    .vcd-card-snap { font-family:'Space Mono',monospace; font-size:.55rem; color:rgba(255,255,255,.18); text-align:center; padding-bottom:.8rem; letter-spacing:.05em; }
+    .vcd-card-foot {
+      padding:.55rem 1.25rem; border-top:1px solid rgba(255,255,255,.05);
+      display:flex; align-items:center; justify-content:space-between;
+      background:rgba(255,255,255,.02);
+    }
+    .vcd-card-brand { font-family:'Space Mono',monospace; font-size:.5rem; letter-spacing:.12em; color:rgba(212,160,23,.45); text-transform:uppercase; }
+    .vcd-card-url   { font-family:'Space Mono',monospace; font-size:.5rem; color:rgba(255,255,255,.18); }
+
     /* ── Glow blobs ── */
     .glow-blob { position:absolute; border-radius:50%; pointer-events:none; filter:blur(80px); }
 
@@ -739,14 +796,15 @@
 
   <!-- ════ FILTER BAR ════ -->
   <div class="sticky top-[60px] z-40 px-6 py-3 border-b border-white/[0.05]"
-       style="background:rgba(7,7,15,.9);backdrop-filter:blur(20px);">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center gap-2">
-      <span class="sec-label mr-1">Filter:</span>
-      <button class="flt-btn active" data-f="all"     onclick="filterCases('all')">All</button>
-      <button class="flt-btn"        data-f="false"   onclick="filterCases('false')">已證實不符</button>
-      <button class="flt-btn"        data-f="ongoing" onclick="filterCases('ongoing')">合理攻防</button>
-      <button class="flt-btn"        data-f="pending" onclick="filterCases('pending')">待法官定奪</button>
-      <span id="case-counter" class="ml-auto font-mono text-xs text-white/25">20 / 20</span>
+       style="background:rgba(7,7,15,.97);backdrop-filter:blur(20px);">
+    <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto"
+         style="scrollbar-width:none;-ms-overflow-style:none;">
+      <span class="sec-label mr-1 shrink-0">Filter:</span>
+      <button class="flt-btn active shrink-0" data-f="all"     onclick="filterCases('all')">All</button>
+      <button class="flt-btn shrink-0"         data-f="false"   onclick="filterCases('false')">已證實不符</button>
+      <button class="flt-btn shrink-0"         data-f="ongoing" onclick="filterCases('ongoing')">合理攻防</button>
+      <button class="flt-btn shrink-0"         data-f="pending" onclick="filterCases('pending')">待法官定奪</button>
+      <span id="case-counter" class="ml-auto font-mono text-xs text-white/25 shrink-0 pl-2">20 / 20</span>
     </div>
   </div>
 
@@ -759,6 +817,33 @@
         <div class="flex-1 h-px bg-white/[0.06]"></div>
       </div>
       <div id="cases-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+  </section>
+
+  <!-- ════ VERDICT COUNTDOWN ════ -->
+  <section class="py-20 px-6 border-t border-white/[0.05] text-center" style="background:linear-gradient(180deg,rgba(7,7,15,0) 0%,rgba(13,10,5,.6) 100%);">
+    <div class="max-w-3xl mx-auto">
+      <div class="font-mono text-[10px] tracking-[.22em] text-white/30 uppercase mb-3">⏳ 距離宣判倒數</div>
+      <h2 class="text-2xl sm:text-3xl font-bold text-white/80 mb-1">柯文哲京華城案</h2>
+      <p class="font-mono text-sm text-amber-400/65 mb-12 tracking-wider">2026 年 3 月 26 日 · 台灣台北地方法院</p>
+
+      <!-- Countdown digits -->
+      <div id="vcd-expired-msg" class="hidden font-mono text-2xl text-amber-400 tracking-widest mb-10">⚖️ 本案已宣判</div>
+      <div id="vcd-display" class="flex justify-center items-start gap-3 sm:gap-6 mb-12">
+        <div class="text-center"><div id="vcd-d" class="vcd-num">--</div><div class="vcd-lbl">天</div></div>
+        <div class="vcd-sep">:</div>
+        <div class="text-center"><div id="vcd-h" class="vcd-num">--</div><div class="vcd-lbl">時</div></div>
+        <div class="vcd-sep">:</div>
+        <div class="text-center"><div id="vcd-m" class="vcd-num">--</div><div class="vcd-lbl">分</div></div>
+        <div class="vcd-sep">:</div>
+        <div class="text-center"><div id="vcd-s" class="vcd-num">--</div><div class="vcd-lbl">秒</div></div>
+      </div>
+
+      <button onclick="openCountdownCard()"
+              class="mag-btn beam inline-flex items-center gap-2 px-7 py-3 rounded-full font-mono text-sm tracking-wider"
+              style="background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.4);color:#f0c040;cursor:none;">
+        <iconify-icon icon="mdi:share-variant"></iconify-icon> 分享此倒數
+      </button>
     </div>
   </section>
 
@@ -844,6 +929,60 @@
         <button class="sc-action-btn" onclick="nativeShare()">
           <iconify-icon icon="mdi:share-variant-outline"></iconify-icon>
           分享
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ COUNTDOWN SHARE MODAL ════ -->
+  <div id="vcd-modal" onclick="if(event.target===this)closeCountdownCard();">
+    <div style="position:relative;">
+      <button onclick="closeCountdownCard();"
+              style="position:absolute;top:-10px;right:-10px;width:30px;height:30px;border-radius:50%;
+                     background:rgba(7,7,15,.9);border:1px solid rgba(255,255,255,.12);
+                     color:rgba(255,255,255,.55);font-size:.75rem;cursor:none;
+                     display:flex;align-items:center;justify-content:center;z-index:10;">
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+
+      <!-- Capturable card -->
+      <div id="vcd-card">
+        <div class="vcd-card-header">
+          <div class="vcd-card-title">⏳ 距宣判倒數 · 快照</div>
+          <div class="vcd-card-case">柯文哲京華城案</div>
+          <div class="vcd-card-date">2026.03.26 · 台北地方法院</div>
+        </div>
+        <div class="vcd-card-nums">
+          <div class="vcd-card-unit"><div id="vcd-snap-d" class="vcd-card-n">00</div><div class="vcd-card-l">天</div></div>
+          <div class="vcd-card-colon">:</div>
+          <div class="vcd-card-unit"><div id="vcd-snap-h" class="vcd-card-n">00</div><div class="vcd-card-l">時</div></div>
+          <div class="vcd-card-colon">:</div>
+          <div class="vcd-card-unit"><div id="vcd-snap-m" class="vcd-card-n">00</div><div class="vcd-card-l">分</div></div>
+          <div class="vcd-card-colon">:</div>
+          <div class="vcd-card-unit"><div id="vcd-snap-s" class="vcd-card-n">00</div><div class="vcd-card-l">秒</div></div>
+        </div>
+        <div class="vcd-card-snap" id="vcd-snap-time">快照時間 · ──</div>
+        <div class="vcd-card-foot">
+          <div class="vcd-card-brand">Ko FactCheck · 法治素養闢謠計畫</div>
+          <div class="vcd-card-url">ko-factcheck.org</div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:.6rem;margin-top:.85rem;justify-content:center;">
+        <button onclick="downloadCountdownCard(this)"
+                style="display:flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;
+                       border-radius:999px;font-size:.75rem;font-family:'Space Mono',monospace;
+                       background:rgba(212,160,23,.15);border:1px solid rgba(212,160,23,.45);
+                       color:#f0c040;cursor:none;transition:background .2s;">
+          <iconify-icon icon="mdi:download"></iconify-icon> 下載
+        </button>
+        <button onclick="nativeShare()"
+                style="display:flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;
+                       border-radius:999px;font-size:.75rem;font-family:'Space Mono',monospace;
+                       background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+                       color:rgba(237,237,237,.6);cursor:none;transition:background .2s;">
+          <iconify-icon icon="mdi:share-variant-outline"></iconify-icon> 分享
         </button>
       </div>
     </div>
@@ -1504,6 +1643,66 @@
     }
     if (scRAF) cancelAnimationFrame(scRAF);
     frame();
+  }
+
+  /* ════ VERDICT COUNTDOWN ════ */
+  const VERDICT = new Date('2026-03-26T02:00:00Z'); // 10:00 AM Taiwan time (UTC+8)
+
+  function pad(n) { return String(n).padStart(2,'0'); }
+
+  function tickCountdown() {
+    const now  = new Date();
+    const diff = VERDICT - now;
+    const disp = document.getElementById('vcd-display');
+    const exp  = document.getElementById('vcd-expired-msg');
+    if (diff <= 0) {
+      if (disp) disp.classList.add('hidden');
+      if (exp)  exp.classList.remove('hidden');
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000)  / 60000);
+    const s = Math.floor((diff % 60000)    / 1000);
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = pad(v); };
+    set('vcd-d', d); set('vcd-h', h); set('vcd-m', m); set('vcd-s', s);
+  }
+  tickCountdown();
+  setInterval(tickCountdown, 1000);
+
+  function openCountdownCard() {
+    const now  = new Date();
+    const diff = VERDICT - now;
+    const d = diff > 0 ? Math.floor(diff / 86400000) : 0;
+    const h = diff > 0 ? Math.floor((diff % 86400000) / 3600000) : 0;
+    const m = diff > 0 ? Math.floor((diff % 3600000) / 60000) : 0;
+    const s = diff > 0 ? Math.floor((diff % 60000) / 1000) : 0;
+    document.getElementById('vcd-snap-d').textContent = pad(d);
+    document.getElementById('vcd-snap-h').textContent = pad(h);
+    document.getElementById('vcd-snap-m').textContent = pad(m);
+    document.getElementById('vcd-snap-s').textContent = pad(s);
+    // Snapshot timestamp
+    const fmt = now.toLocaleString('zh-TW', {timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    document.getElementById('vcd-snap-time').textContent = '快照時間 · ' + fmt;
+    document.getElementById('vcd-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCountdownCard() {
+    document.getElementById('vcd-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  async function downloadCountdownCard(btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<iconify-icon icon="mdi:loading"></iconify-icon> 處理中...';
+    try {
+      const card = document.getElementById('vcd-card');
+      const snap = await html2canvas(card, { backgroundColor:'#07070f', scale:2.5, useCORS:true, logging:false });
+      const a = document.createElement('a');
+      a.download = `ko-verdict-countdown-${Date.now()}.png`;
+      a.href = snap.toDataURL('image/png');
+      a.click();
+    } catch(e) { alert('下載失敗，請截圖儲存。'); }
+    finally { btn.innerHTML = orig; }
   }
 
   // ── Open / Close ──
