@@ -795,7 +795,7 @@
   </section>
 
   <!-- ════ FILTER BAR ════ -->
-  <div id="filter-bar" class="fixed left-0 right-0 z-[49] px-6 py-3 border-b border-white/[0.05]"
+  <div id="filter-bar" class="sticky z-[49] px-6 py-3 border-b border-white/[0.05]"
        style="background:#07070f;top:52px;">
     <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto"
          style="scrollbar-width:none;-ms-overflow-style:none;">
@@ -807,9 +807,6 @@
       <span id="case-counter" class="ml-auto font-mono text-xs text-white/25 shrink-0 pl-2">20 / 20</span>
     </div>
   </div>
-
-  <!-- Spacer: takes up height of fixed filter bar so cases grid isn't hidden behind it -->
-  <div id="filter-bar-spacer" style="height:0px;"></div>
 
   <!-- ════ CASES GRID ════ -->
   <section id="cases" class="py-20 px-6">
@@ -1380,13 +1377,9 @@
     /* Header scroll */
     const hdr = document.getElementById('site-header');
     const filterBar = document.getElementById('filter-bar');
-    const filterBarSpacer = document.getElementById('filter-bar-spacer');
 
     function syncFilterBar() {
-      const hdrH = hdr.offsetHeight;
-      const fbH  = filterBar.offsetHeight;
-      filterBar.style.top = hdrH + 'px';
-      filterBarSpacer.style.height = fbH + 'px';
+      filterBar.style.top = hdr.offsetHeight + 'px';
     }
     syncFilterBar();
     window.addEventListener('resize', syncFilterBar);
