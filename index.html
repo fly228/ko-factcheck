@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="scroll-smooth">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1360,8 +1360,12 @@
   history.scrollRestoration = 'manual';
 
   /* ─── Fix bfcache (Threads/in-app browser restores frozen page at last scroll pos) ─── */
-  window.addEventListener('pageshow', (e) => {
+  window.addEventListener('pageshow', () => {
+    document.documentElement.style.scrollBehavior = 'auto';
     window.scrollTo(0, 0);
+    requestAnimationFrame(() => {
+      document.documentElement.style.scrollBehavior = '';
+    });
   });
 
   /* ─── GSAP + ScrollTrigger ─── */
@@ -1419,17 +1423,15 @@
     renderCases('all');
 
     /* Force scroll to top AFTER all GSAP/ScrollTrigger init */
-    document.documentElement.style.scrollBehavior = 'auto';
     window.scrollTo(0, 0);
-    requestAnimationFrame(() => {
-      window.scrollTo(0, 0);
-      document.documentElement.style.scrollBehavior = '';
-    });
   });
 
-  /* Belt-and-suspenders: also force top on full page load */
+  /* Belt-and-suspenders: force top on full page load, then enable smooth scrolling */
   window.addEventListener('load', () => {
     window.scrollTo(0, 0);
+    setTimeout(() => {
+      document.documentElement.classList.add('scroll-smooth');
+    }, 100);
   });
 
   /* ════ PIXEL ART SHARE CARD ════ */
