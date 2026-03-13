@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="scroll-smooth">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1020,6 +1020,10 @@
 
   <!-- ════ JAVASCRIPT ════ -->
   <script>
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+
   /* ─── Case Data ─── */
   const CASES = [
     { id:1,  num:'01', title:'博弈大亨 陳盈助',          amount:'300 萬',   category:'政治獻金', status:'false',
@@ -1361,6 +1365,8 @@
 
   /* ─── GSAP + ScrollTrigger ─── */
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.clearScrollMemory();
+  window.history.scrollRestoration = "manual";
 
   window.addEventListener('DOMContentLoaded', () => {
 
@@ -1420,6 +1426,10 @@
   /* Fresh load: ensure top */
   window.addEventListener('load', () => {
     window.scrollTo(0, 0);
+    // Add scroll-smooth class after load to prevent programmatic scroll bug
+    setTimeout(() => {
+      document.documentElement.classList.add('scroll-smooth');
+    }, 100);
   });
 
   /* ════ PIXEL ART SHARE CARD ════ */
