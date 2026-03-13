@@ -1356,9 +1356,8 @@
     document.getElementById('seg-pending').setAttribute('stroke-dasharray', `${C*.15} ${C*.85}`);
   }
 
-  /* ─── Force scroll to top on load (prevents mobile browser scroll restoration) ─── */
+  /* ─── Prevent browser scroll restoration ─── */
   history.scrollRestoration = 'manual';
-  window.scrollTo(0, 0);
 
   /* ─── GSAP + ScrollTrigger ─── */
   gsap.registerPlugin(ScrollTrigger);
@@ -1413,6 +1412,19 @@
 
     /* Initial render */
     renderCases('all');
+
+    /* Force scroll to top AFTER all GSAP/ScrollTrigger init */
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.style.scrollBehavior = '';
+    });
+  });
+
+  /* Belt-and-suspenders: also force top on full page load */
+  window.addEventListener('load', () => {
+    window.scrollTo(0, 0);
   });
 
   /* ════ PIXEL ART SHARE CARD ════ */
