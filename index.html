@@ -1356,11 +1356,8 @@
     document.getElementById('seg-pending').setAttribute('stroke-dasharray', `${C*.15} ${C*.85}`);
   }
 
-  /* ─── Prevent browser scroll restoration ─── */
-  history.scrollRestoration = 'manual';
-
-  /* ─── Scroll to top before page is cached (so bfcache stores top position) ─── */
-  window.addEventListener('pagehide', () => { window.scrollTo(0, 0); });
+  /* ─── Disable bfcache so browser always does a fresh load (starts at top) ─── */
+  window.addEventListener('unload', () => {});
 
   /* ─── GSAP + ScrollTrigger ─── */
   gsap.registerPlugin(ScrollTrigger);
