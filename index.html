@@ -64,6 +64,11 @@
     }
     body.cur-hover #cur-dot  { width:44px; height:44px; }
     body.cur-hover #cur-ring { opacity:0; }
+    /* Hide custom cursor on touch/mobile devices */
+    @media (hover: none) and (pointer: coarse) {
+      html { cursor: auto !important; }
+      #cur-dot, #cur-ring { display: none !important; }
+    }
 
     /* ── Guide Lines ── */
     .guide { position:fixed; top:0; bottom:0; width:1px; background:rgba(255,255,255,.022); pointer-events:none; z-index:1; }
@@ -611,15 +616,15 @@
           </div>
           <div class="beam rounded-2xl p-4 text-center" style="background:rgba(13,13,28,.9);backdrop-filter:blur(12px);">
             <div class="stat-num text-red-400 mb-1">05</div>
-            <div class="text-xs text-white/35 tracking-wider">已證實不符</div>
+            <div class="text-xs text-white/35 tracking-wider">鐵證確立</div>
           </div>
           <div class="beam rounded-2xl p-4 text-center" style="background:rgba(13,13,28,.9);backdrop-filter:blur(12px);">
             <div class="stat-num text-amber-400 mb-1">12</div>
-            <div class="text-xs text-white/35 tracking-wider">合理攻防中</div>
+            <div class="text-xs text-white/35 tracking-wider">檢辯攻防中</div>
           </div>
           <div class="beam rounded-2xl p-4 text-center" style="background:rgba(13,13,28,.9);backdrop-filter:blur(12px);">
             <div class="stat-num text-sky-400 mb-1">03</div>
-            <div class="text-xs text-white/35 tracking-wider">待法官定奪</div>
+            <div class="text-xs text-white/35 tracking-wider">靜候宣判</div>
           </div>
         </div>
 
@@ -675,11 +680,11 @@
               <iconify-icon icon="mdi:close-circle" class="text-red-400 text-xl"></iconify-icon>
             </div>
             <div>
-              <div class="font-bold text-red-300 text-sm">已證實不符</div>
+              <div class="font-bold text-red-300 text-sm">鐵證確立</div>
               <div class="font-mono text-[10px] text-red-500/55 tracking-wider">DEBUNKED</div>
             </div>
           </div>
-          <p class="text-sm text-white/55 leading-relaxed">辯方主張已被法庭證人證詞或客觀卷證所推翻，無法再主張「不知真假」或「缺乏實據」。</p>
+          <p class="text-sm text-white/55 leading-relaxed">柯Ｐ辯方已無法再主張「不知真假」或「缺乏實據」——法庭證人證詞與客觀卷證已確實推翻其說法。</p>
           <div class="prog-track mt-4">
             <div class="prog-fill bg-red-500" style="width:100%;" data-target="25"></div>
           </div>
@@ -696,7 +701,7 @@
               <iconify-icon icon="mdi:scale-balance" class="text-amber-400 text-xl"></iconify-icon>
             </div>
             <div>
-              <div class="font-bold text-amber-300 text-sm">合理法庭攻防</div>
+              <div class="font-bold text-amber-300 text-sm">檢辯攻防中</div>
               <div class="font-mono text-[10px] text-amber-500/55 tracking-wider">IN TRIAL</div>
             </div>
           </div>
@@ -717,7 +722,7 @@
               <iconify-icon icon="mdi:gavel" class="text-sky-400 text-xl"></iconify-icon>
             </div>
             <div>
-              <div class="font-bold text-sky-300 text-sm">等待法官定奪</div>
+              <div class="font-bold text-sky-300 text-sm">靜候宣判</div>
               <div class="font-mono text-[10px] text-sky-500/55 tracking-wider">VERDICT PENDING</div>
             </div>
           </div>
@@ -759,9 +764,9 @@
           </svg>
           <!-- Legend labels -->
           <div class="flex flex-col gap-1.5 text-xs">
-            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-red-500 shrink-0"></span><span class="text-white/55">已證實不符 25%</span></div>
-            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-amber-500 shrink-0"></span><span class="text-white/55">合理攻防 60%</span></div>
-            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-sky-500 shrink-0"></span><span class="text-white/55">待定奪 15%</span></div>
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-red-500 shrink-0"></span><span class="text-white/55">鐵證確立 25%</span></div>
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-amber-500 shrink-0"></span><span class="text-white/55">檢辯攻防中 60%</span></div>
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-sky-500 shrink-0"></span><span class="text-white/55">靜候宣判 15%</span></div>
           </div>
         </div>
       </div>
@@ -801,9 +806,9 @@
          style="scrollbar-width:none;-ms-overflow-style:none;">
       <span class="sec-label mr-1 shrink-0">Filter:</span>
       <button class="flt-btn active shrink-0" data-f="all"     onclick="filterCases('all')">All</button>
-      <button class="flt-btn shrink-0"         data-f="false"   onclick="filterCases('false')">已證實不符</button>
-      <button class="flt-btn shrink-0"         data-f="ongoing" onclick="filterCases('ongoing')">合理攻防</button>
-      <button class="flt-btn shrink-0"         data-f="pending" onclick="filterCases('pending')">待法官定奪</button>
+      <button class="flt-btn shrink-0"         data-f="false"   onclick="filterCases('false')">鐵證確立</button>
+      <button class="flt-btn shrink-0"         data-f="ongoing" onclick="filterCases('ongoing')">檢辯攻防中</button>
+      <button class="flt-btn shrink-0"         data-f="pending" onclick="filterCases('pending')">靜候宣判</button>
       <span id="case-counter" class="ml-auto font-mono text-xs text-white/25 shrink-0 pl-2">20 / 20</span>
     </div>
   </div>
@@ -892,7 +897,7 @@
             <div class="sc-brand-title">KO<br>FACTCHECK</div>
             <div class="sc-brand-sub">法治素養闢謠計畫</div>
             <div class="sc-badge-row">
-              <span id="sc-badge" class="sc-status-badge badge-false">已證實不符</span>
+              <span id="sc-badge" class="sc-status-badge badge-false">鐵證確立</span>
             </div>
           </div>
         </div>
@@ -904,7 +909,6 @@
           </div>
           <div id="sc-title" class="sc-title-text"></div>
           <div><span id="sc-cat" class="sc-cat-tag"></span></div>
-          <div class="sc-section-lbl claim">辯方主張</div>
           <p id="sc-claim" class="sc-text claim"></p>
           <div class="sc-divider"></div>
           <div class="sc-section-lbl truth">法庭事實</div>
@@ -1081,9 +1085,9 @@
   ];
 
   const S = {
-    false:   { label:'已證實不符',   icon:'mdi:close-circle',  badge:'badge-false',   text:'text-red-400',   glow:'rgba(239,68,68,.06)' },
-    ongoing: { label:'合理法庭攻防', icon:'mdi:scale-balance', badge:'badge-ongoing', text:'text-amber-400', glow:'rgba(245,158,11,.06)' },
-    pending: { label:'等待法官定奪', icon:'mdi:gavel',          badge:'badge-pending', text:'text-sky-400',   glow:'rgba(56,189,248,.06)' },
+    false:   { label:'鐵證確立',   icon:'mdi:close-circle',  badge:'badge-false',   text:'text-red-400',   glow:'rgba(239,68,68,.06)' },
+    ongoing: { label:'檢辯攻防中', icon:'mdi:scale-balance', badge:'badge-ongoing', text:'text-amber-400', glow:'rgba(245,158,11,.06)' },
+    pending: { label:'靜候宣判',   icon:'mdi:gavel',          badge:'badge-pending', text:'text-sky-400',   glow:'rgba(56,189,248,.06)' },
   };
 
   /* ─── Render Cases ─── */
@@ -1117,7 +1121,6 @@
 
         <!-- claim: ALWAYS VISIBLE -->
         <div class="claim-section mb-0">
-          <div class="claim-label">辯方主張</div>
           <p class="claim-text">${c.claim}</p>
         </div>
 
@@ -1352,6 +1355,10 @@
     document.getElementById('seg-ongoing').setAttribute('stroke-dasharray', `${C*.60} ${C*.40}`);
     document.getElementById('seg-pending').setAttribute('stroke-dasharray', `${C*.15} ${C*.85}`);
   }
+
+  /* ─── Force scroll to top on load (prevents mobile browser scroll restoration) ─── */
+  history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
 
   /* ─── GSAP + ScrollTrigger ─── */
   gsap.registerPlugin(ScrollTrigger);
