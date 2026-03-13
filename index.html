@@ -1359,6 +1359,11 @@
   /* ─── Prevent browser scroll restoration ─── */
   history.scrollRestoration = 'manual';
 
+  /* ─── Fix bfcache (Threads/in-app browser restores frozen page at last scroll pos) ─── */
+  window.addEventListener('pageshow', (e) => {
+    window.scrollTo(0, 0);
+  });
+
   /* ─── GSAP + ScrollTrigger ─── */
   gsap.registerPlugin(ScrollTrigger);
 
