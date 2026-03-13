@@ -32,7 +32,10 @@
       font-family: 'Noto Sans TC', sans-serif;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      opacity: 0; /* Hidden initially to prevent FOUC mid-page */
+      transition: opacity 0.4s ease;
     }
+    body.ready { opacity: 1; }
 
     /* ── Grain ── */
     body::after {
@@ -1423,13 +1426,36 @@
     window.scrollTo(0, 0);
   });
 
-  /* Fresh load: ensure top */
-  window.addEventListener('load', () => {
+  /* Aggressive scroll to top and show body */
+  // It handles tricky mobile browsers that delay their scroll restoration
+  function forceTopAndShow() {
     window.scrollTo(0, 0);
-    // Add scroll-smooth class after load to prevent programmatic scroll bug
+    document.body.classList.add('ready');
+    // Add scroll-smooth class back
     setTimeout(() => {
       document.documentElement.classList.add('scroll-smooth');
     }, 100);
+  }
+
+  // We fire on both DOMContentLoaded and load to be safe,
+  // but we also use requestAnimationFrame to fight the browser's own delayed scroll restoration.
+  let scrollChecks = 0;
+  function enforceScrollTop() {
+    window.scrollTo(0, 0);
+    scrollChecks++;
+    if (scrollChecks < 15) {
+      requestAnimationFrame(enforceScrollTop);
+    } else {
+      forceTopAndShow();
+    }
+  }
+
+  // Fire as soon as JS parses
+  enforceScrollTop();
+
+  window.addEventListener('load', () => {
+    scrollChecks = 0;
+    enforceScrollTop();
   });
 
   /* ════ PIXEL ART SHARE CARD ════ */
