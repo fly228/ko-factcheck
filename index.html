@@ -1359,14 +1359,8 @@
   /* ─── Prevent browser scroll restoration ─── */
   history.scrollRestoration = 'manual';
 
-  /* ─── Fix bfcache: only fires when Threads/in-app browser restores a frozen page ─── */
-  window.addEventListener('pageshow', (e) => {
-    if (e.persisted) {
-      document.documentElement.style.scrollBehavior = 'auto';
-      window.scrollTo(0, 0);
-      document.documentElement.style.scrollBehavior = '';
-    }
-  });
+  /* ─── Scroll to top before page is cached (so bfcache stores top position) ─── */
+  window.addEventListener('pagehide', () => { window.scrollTo(0, 0); });
 
   /* ─── GSAP + ScrollTrigger ─── */
   gsap.registerPlugin(ScrollTrigger);
