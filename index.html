@@ -100,6 +100,22 @@
 
     @media(max-width:640px){html{cursor:auto;}#cursor-dot,#cursor-ring{display:none;}}
 
+    /* ── Mobile: Explainer 底部標籤 ── */
+    @media(max-width:640px){
+      .exp-num-label{display:none;}
+      .exp-num{justify-content:flex-end !important;}
+    }
+
+    /* ── Mobile: Money Flow 直向排列 ── */
+    @media(max-width:768px){
+      .mf-grid{grid-template-columns:1fr !important;gap:0 !important;}
+      .mf-hub-wrap{padding:10px 0;margin:6px 0;border-top:1px solid rgba(245,158,11,.15);border-bottom:1px solid rgba(245,158,11,.15);}
+      .mf-hub-wrap > div{margin:0 auto;}
+      #mf-svg-0,#mf-svg-1{display:none !important;}
+      .mf-source-node,.mf-result-node{padding:10px 12px;}
+      #mf-src-0,#mf-src-1,#mf-res-0,#mf-res-1{gap:8px !important;}
+    }
+
     /* ── Share button ── */
     .share-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .62rem;border-radius:.4rem;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.04em;color:rgba(245,158,11,.5);border:1px solid rgba(245,158,11,.18);background:transparent;cursor:pointer;transition:all .2s;}
     .share-btn:hover{color:#f59e0b;border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.07);}
@@ -524,7 +540,7 @@
   <div class="mf-panel" id="mf-panel-0" style="position:relative;">
     <svg id="mf-svg-0" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible;"></svg>
 
-    <div style="display:grid;grid-template-columns:1fr 150px 1fr;gap:0;align-items:center;position:relative;z-index:2;">
+    <div class="mf-grid" style="display:grid;grid-template-columns:1fr 150px 1fr;gap:0;align-items:center;position:relative;z-index:2;">
 
       <!-- LEFT: Sources -->
       <div style="display:flex;flex-direction:column;gap:10px;" id="mf-src-0">
@@ -560,7 +576,7 @@
       </div>
 
       <!-- CENTER HUB -->
-      <div style="display:flex;justify-content:center;">
+      <div class="mf-hub-wrap" style="display:flex;justify-content:center;">
         <div class="mf-hub" style="background:rgba(10,10,28,1);border:2px solid rgba(245,158,11,.55);border-radius:16px;padding:22px 14px;text-align:center;min-width:110px;box-shadow:0 0 28px rgba(245,158,11,.12),0 0 60px rgba(245,158,11,.06);z-index:3;position:relative;">
           <iconify-icon icon="mdi:account-circle" style="color:#f59e0b;font-size:2rem;display:block;margin-bottom:6px;"></iconify-icon>
           <div style="font-weight:900;color:#f3f4f6;font-size:.95rem;line-height:1.2;margin-bottom:4px;">柯文哲</div>
@@ -625,7 +641,7 @@
   <div class="mf-panel" id="mf-panel-1" style="display:none;position:relative;">
     <svg id="mf-svg-1" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible;"></svg>
 
-    <div style="display:grid;grid-template-columns:1fr 150px 1fr;gap:0;align-items:center;position:relative;z-index:2;">
+    <div class="mf-grid" style="display:grid;grid-template-columns:1fr 150px 1fr;gap:0;align-items:center;position:relative;z-index:2;">
 
       <!-- LEFT: Bribers -->
       <div style="display:flex;flex-direction:column;gap:10px;" id="mf-src-1">
@@ -661,7 +677,7 @@
       </div>
 
       <!-- CENTER HUB -->
-      <div style="display:flex;justify-content:center;">
+      <div class="mf-hub-wrap" style="display:flex;justify-content:center;">
         <div class="mf-hub" style="background:rgba(10,10,28,1);border:2px solid rgba(139,92,246,.55);border-radius:16px;padding:22px 14px;text-align:center;min-width:110px;box-shadow:0 0 28px rgba(139,92,246,.12),0 0 60px rgba(139,92,246,.06);z-index:3;position:relative;">
           <iconify-icon icon="mdi:office-building-outline" style="color:#8b5cf6;font-size:2rem;display:block;margin-bottom:6px;"></iconify-icon>
           <div style="font-weight:900;color:#f3f4f6;font-size:.9rem;line-height:1.2;margin-bottom:4px;">市府裁量</div>
@@ -1194,6 +1210,8 @@ renderCards('all');
   }
 
   function startHoverAdvance(dir) {
+    // 手機觸控裝置不啟動 hover 自動滑動
+    if (!window.matchMedia('(hover: hover)').matches) return;
     clearHoverTimer();
     // Visual feedback: glow the button
     const btn = dir < 0 ? btnPrev : btnNext;
@@ -1611,6 +1629,13 @@ document.querySelectorAll('.exp-num').forEach(el => {
   const cardBody  = bodyEl  ? bodyEl.innerText || bodyEl.textContent : '';
   const isLegal   = cardLabel.includes('LEGAL');
 
+  // 把標籤文字包進 span，讓手機可用 CSS 隱藏
+  if (el.firstChild && el.firstChild.nodeType === Node.TEXT_NODE) {
+    const span = document.createElement('span');
+    span.className = 'exp-num-label';
+    span.textContent = el.firstChild.textContent;
+    el.replaceChild(span, el.firstChild);
+  }
   el.style.cssText += ';display:flex;justify-content:space-between;align-items:center;';
   const btn = document.createElement('button');
   btn.className = 'share-btn';
