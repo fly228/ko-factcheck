@@ -3,1855 +3,1828 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>進擊的帳目：這筆錢我真的不知道 | Ko FactCheck</title>
-
+  <title>他不知道，但帳冊知道 | Ko FactCheck</title>
+  <meta name="description" content="柯文哲一審判決解析：20筆爭議金流，逐筆破解常見說法。" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: { extend: {
-        fontFamily: { sans: ['"Noto Sans TC"','sans-serif'], mono: ['"Space Mono"','monospace'] }
-      }}
-    };
-  </script>
+  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['"Noto Sans TC"','sans-serif'],mono:['"Space Mono"','monospace']}}}};</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
-    /* ── Reset ── */
-    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
-    html { cursor: none; }
-    body {
-      background: #07070f;
-      color: #f1f5f9;
-      font-family: 'Noto Sans TC', sans-serif;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      opacity: 0; /* Hidden initially to prevent FOUC mid-page */
-      transition: opacity 0.4s ease;
-    }
-    body.ready { opacity: 1; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{cursor:none;scroll-behavior:smooth;}
+    body{background:#07070f;color:#e5e7eb;font-family:'Noto Sans TC',sans-serif;overflow-x:hidden;}
 
-    /* ── Grain ── */
-    body::after {
-      content:'';
-      position:fixed; inset:0;
-      pointer-events:none;
-      z-index:9998;
-      opacity:.028;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size:180px 180px;
-    }
+    /* Grain */
+    body::before{content:'';position:fixed;inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events:none;z-index:9999;opacity:0.3;}
 
-    /* ── Custom Cursor ── */
-    #cur-dot {
-      position:fixed; width:12px; height:12px;
-      background:#fff; border-radius:50%;
-      pointer-events:none; z-index:10003;
-      mix-blend-mode:difference;
-      transform:translate(-50%,-50%);
-      transition:width .25s, height .25s;
-    }
-    #cur-ring {
-      position:fixed; width:38px; height:38px;
-      border:1px solid rgba(255,255,255,.35);
-      border-radius:50%; pointer-events:none;
-      z-index:10002; mix-blend-mode:difference;
-      transform:translate(-50%,-50%);
-      transition:width .3s, height .3s, opacity .3s;
-    }
-    body.cur-hover #cur-dot  { width:44px; height:44px; }
-    body.cur-hover #cur-ring { opacity:0; }
-    /* Hide custom cursor on touch/mobile devices */
-    @media (hover: none) and (pointer: coarse) {
-      html { cursor: auto !important; }
-      #cur-dot, #cur-ring { display: none !important; }
-    }
+    /* Cursor */
+    #cursor-dot{position:fixed;width:8px;height:8px;background:#f59e0b;border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);}
+    #cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid rgba(245,158,11,0.5);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .25s,height .25s,border-color .25s;}
 
-    /* ── Guide Lines ── */
-    .guide { position:fixed; top:0; bottom:0; width:1px; background:rgba(255,255,255,.022); pointer-events:none; z-index:1; }
-
-    /* ── GOLD 1px Beam Border ── */
-    .beam { position:relative; border:1px solid rgba(255,255,255,.07); overflow:hidden; }
-    .beam::before {
-      content:''; position:absolute;
-      top:0; left:-60%; width:40%; height:1px;
-      background:linear-gradient(90deg,transparent,rgba(212,160,23,.9),transparent);
-      animation:beamH 3.5s linear infinite;
-      pointer-events:none;
-    }
-    .beam::after {
-      content:''; position:absolute;
-      top:-60%; right:0; width:1px; height:40%;
-      background:linear-gradient(180deg,transparent,rgba(212,160,23,.9),transparent);
-      animation:beamV 3.5s linear infinite;
-      pointer-events:none;
-    }
-    @keyframes beamH { 0%{left:-60%} 100%{left:160%} }
-    @keyframes beamV { 0%{top:-60%} 100%{top:160%} }
-
-    /* ── Gold Pulse Dot ── */
-    .gold-dot {
-      width:8px; height:8px;
-      background:#d4a017;
-      border-radius:50%;
-      animation:goldPulse 2s ease-in-out infinite;
-      box-shadow:0 0 8px rgba(212,160,23,.6);
-    }
-    @keyframes goldPulse {
-      0%,100% { opacity:1; box-shadow:0 0 8px rgba(212,160,23,.6); }
-      50%      { opacity:.5; box-shadow:0 0 16px rgba(212,160,23,1); }
-    }
-
-    /* ── Char Animation ── */
-    .char-wrap { display:inline-block; overflow:hidden; vertical-align:bottom; }
-    .char { display:inline-block; transform:translateY(110%); }
-
-    /* ── Status Badges ── */
-    .badge-false   { background:rgba(239,68,68,.12);  border:1px solid rgba(239,68,68,.4);  color:#fca5a5; }
-    .badge-ongoing { background:rgba(245,158,11,.12); border:1px solid rgba(245,158,11,.4); color:#fcd34d; }
-    .badge-pending { background:rgba(56,189,248,.12); border:1px solid rgba(56,189,248,.4); color:#7dd3fc; }
-
-    /* ── Section Label ── */
-    .sec-label {
+    /* ── Hero floating text ── */
+    .float-word{
+      position:absolute;
       font-family:'Space Mono',monospace;
-      font-size:.68rem; letter-spacing:.15em;
-      color:#ededed;
-      opacity:.55;
-    }
-
-    /* ── Case Cards ── */
-    .case-card {
-      background:#0d0d1c;
-      border:1px solid rgba(255,255,255,.07);
-      border-radius:1rem;
-      cursor:pointer;
-      transition:border-color .3s, transform .3s, box-shadow .3s;
-    }
-    .case-card:hover {
-      transform:translateY(-3px);
-      box-shadow:0 16px 48px rgba(0,0,0,.5);
-      border-color:rgba(255,255,255,.16);
-    }
-
-    /* ── Case Number (always visible) ── */
-    .case-num {
-      font-family:'Space Mono',monospace;
-      font-size:2.8rem;
       font-weight:700;
-      line-height:1;
-      color:rgba(237,237,237,.22);
-    }
-
-    /* ── Category Tag ── */
-    .cat-tag {
-      display:inline-flex; align-items:center;
-      padding:.25rem .65rem;
-      border-radius:.35rem;
-      border:1px solid rgba(237,237,237,.2);
-      font-size:.72rem;
-      font-family:'Space Mono',monospace;
-      letter-spacing:.04em;
-      color:#ededed;
-      background:rgba(237,237,237,.06);
-    }
-
-    /* ── Claim section (always visible) ── */
-    .claim-section {
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.07);
-      border-radius:.6rem;
-      padding:.75rem;
-    }
-    .claim-label {
-      font-family:'Space Mono',monospace;
-      font-size:.6rem;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:rgba(237,237,237,.4);
-      margin-bottom:.3rem;
-    }
-    .claim-text {
-      font-size:.82rem;
-      color:rgba(237,237,237,.72);
-      line-height:1.6;
-    }
-
-    /* ── Truth Accordion ── */
-    .truth-toggle {
-      display:flex; align-items:center; gap:.5rem;
-      padding:.6rem .75rem;
-      border-radius:.6rem;
-      border:1px solid rgba(212,160,23,.2);
-      background:rgba(212,160,23,.06);
-      cursor:pointer;
-      transition:background .2s, border-color .2s;
-      margin-top:.75rem;
-    }
-    .truth-toggle:hover { background:rgba(212,160,23,.12); border-color:rgba(212,160,23,.4); }
-    .truth-toggle-label {
-      font-family:'Space Mono',monospace;
-      font-size:.6rem;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:rgba(212,160,23,.85);
-      flex:1;
-    }
-    .truth-body {
-      max-height:0; overflow:hidden;
-      transition:max-height .45s cubic-bezier(.4,0,.2,1);
-    }
-    .truth-body.open { max-height:200px; }
-    .truth-body-inner {
-      padding:.75rem;
-      border:1px solid rgba(212,160,23,.15);
-      border-top:none;
-      border-radius:0 0 .6rem .6rem;
-      background:rgba(212,160,23,.04);
-    }
-    .truth-text {
-      font-size:.82rem;
-      color:rgba(255,255,255,.82);
-      line-height:1.65;
-    }
-    .chev { transition:transform .35s ease; }
-    .chev.open { transform:rotate(180deg); }
-
-    /* ── Filter Buttons ── */
-    .flt-btn {
-      border:1px solid rgba(255,255,255,.1);
-      border-radius:999px;
-      padding:.3rem 1rem;
-      font-family:'Space Mono',monospace;
-      font-size:.68rem; letter-spacing:.08em;
-      text-transform:uppercase;
-      color:rgba(237,237,237,.4);
-      cursor:none;
-      transition:color .2s, border-color .2s, background .2s;
-    }
-    .flt-btn:hover       { color:rgba(237,237,237,.75); border-color:rgba(237,237,237,.25); }
-    .flt-btn.active      { color:#ededed; border-color:rgba(237,237,237,.5); background:rgba(237,237,237,.06); }
-    .flt-btn[data-f="false"]          { border-color:rgba(239,68,68,.3); color:#f87171; }
-    .flt-btn[data-f="false"].active   { background:rgba(239,68,68,.12); border-color:rgba(239,68,68,.6); color:#fca5a5; }
-    .flt-btn[data-f="ongoing"]        { border-color:rgba(245,158,11,.3); color:#fbbf24; }
-    .flt-btn[data-f="ongoing"].active { background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.6); color:#fcd34d; }
-    .flt-btn[data-f="pending"]        { border-color:rgba(56,189,248,.3); color:#38bdf8; }
-    .flt-btn[data-f="pending"].active { background:rgba(56,189,248,.12); border-color:rgba(56,189,248,.6); color:#7dd3fc; }
-
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width:3px; }
-    ::-webkit-scrollbar-track { background:#07070f; }
-    ::-webkit-scrollbar-thumb { background:rgba(212,160,23,.55); border-radius:2px; }
-
-    /* ── Verdict Countdown ── */
-    .vcd-num {
-      font-family:'Space Mono',monospace;
-      font-size:2.2rem; font-weight:700; line-height:1;
-      color:#f0c040;
-      text-shadow:0 0 32px rgba(240,192,64,.45);
-    }
-    @media(min-width:640px){ .vcd-num{ font-size:4.5rem; } }
-    .vcd-lbl { font-size:.6rem; color:rgba(255,255,255,.3); letter-spacing:.12em; margin-top:.35rem; text-transform:uppercase; }
-    .vcd-sep { font-family:'Space Mono',monospace; font-size:2rem; color:rgba(240,192,64,.35); align-self:flex-start; padding-top:.1rem; line-height:1; }
-    @media(min-width:640px){ .vcd-sep{ font-size:4rem; } }
-
-    /* ── Countdown Share Modal ── */
-    #vcd-modal {
-      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-      padding:1rem; background:rgba(7,7,15,.88); backdrop-filter:blur(10px);
-      z-index:10001; opacity:0; pointer-events:none; transition:opacity .35s ease;
-    }
-    #vcd-modal.open { opacity:1; pointer-events:all; }
-    #vcd-card {
-      position:relative; width:340px; max-width:calc(100vw - 2rem);
-      background:#07070f; border:1px solid rgba(212,160,23,.4);
-      border-radius:1.25rem; overflow:hidden;
-      font-family:'Noto Sans TC',sans-serif;
-    }
-    #vcd-card::after {
-      content:''; position:absolute; inset:0; pointer-events:none; z-index:8; border-radius:1.25rem;
-      background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px);
-    }
-    .vcd-card-header {
-      padding:1.5rem 1.5rem 1rem;
-      background:linear-gradient(135deg,rgba(240,192,64,.06) 0%,rgba(7,7,15,0) 60%);
-      text-align:center; border-bottom:1px solid rgba(212,160,23,.12);
-    }
-    .vcd-card-title { font-family:'Space Mono',monospace; font-size:.65rem; letter-spacing:.18em; color:rgba(212,160,23,.6); text-transform:uppercase; margin-bottom:.5rem; }
-    .vcd-card-case { font-size:1.1rem; font-weight:700; color:#ededed; margin-bottom:.25rem; }
-    .vcd-card-date { font-family:'Space Mono',monospace; font-size:.7rem; color:rgba(240,192,64,.7); }
-    .vcd-card-nums {
-      display:flex; justify-content:center; align-items:flex-start; gap:.5rem;
-      padding:1.25rem 1rem;
-    }
-    .vcd-card-unit { text-align:center; min-width:56px; }
-    .vcd-card-n {
-      font-family:'Space Mono',monospace; font-size:2.4rem; font-weight:700; line-height:1;
-      color:#f0c040; text-shadow:0 0 20px rgba(240,192,64,.5);
-    }
-    .vcd-card-l { font-size:.55rem; color:rgba(255,255,255,.3); letter-spacing:.1em; margin-top:.2rem; }
-    .vcd-card-colon { font-family:'Space Mono',monospace; font-size:2rem; color:rgba(240,192,64,.3); padding-top:.3rem; line-height:1; }
-    .vcd-card-snap { font-family:'Space Mono',monospace; font-size:.55rem; color:rgba(255,255,255,.18); text-align:center; padding-bottom:.8rem; letter-spacing:.05em; }
-    .vcd-card-foot {
-      padding:.55rem 1.25rem; border-top:1px solid rgba(255,255,255,.05);
-      display:flex; align-items:center; justify-content:space-between;
-      background:rgba(255,255,255,.02);
-    }
-    .vcd-card-brand { font-family:'Space Mono',monospace; font-size:.5rem; letter-spacing:.12em; color:rgba(212,160,23,.45); text-transform:uppercase; }
-    .vcd-card-url   { font-family:'Space Mono',monospace; font-size:.5rem; color:rgba(255,255,255,.18); }
-
-    /* ── Glow blobs ── */
-    .glow-blob { position:absolute; border-radius:50%; pointer-events:none; filter:blur(80px); }
-
-    /* ── Stat Numbers ── */
-    .stat-num {
-      font-family:'Space Mono',monospace;
-      font-size:2.6rem; font-weight:700; line-height:1;
-    }
-
-    /* ── Magnetic Button ── */
-    .mag-btn {
-      display:inline-flex; align-items:center; gap:.6rem;
-      padding:.85rem 2rem;
-      border-radius:.75rem;
-      font-weight:700; font-size:.95rem;
-      cursor:none;
-      transition:box-shadow .3s;
-      will-change:transform;
-    }
-    .mag-btn-primary {
-      background:linear-gradient(135deg,#c9a227 0%,#8b6d10 100%);
-      color:#07070f;
-    }
-    .mag-btn-primary:hover { box-shadow:0 0 36px rgba(201,162,39,.55); }
-    .mag-btn-ghost {
-      border:1px solid rgba(255,255,255,.15);
-      color:rgba(255,255,255,.6);
-    }
-    .mag-btn-ghost:hover { border-color:rgba(255,255,255,.35); color:#fff; }
-
-    /* ── Legend Cards ── */
-    .legend-card {
-      border-radius:1rem;
-      padding:1.5rem;
-    }
-
-    /* ── Progress Bar ── */
-    .prog-track { height:4px; background:rgba(255,255,255,.07); border-radius:2px; overflow:hidden; margin-top:1rem; }
-    .prog-fill  { height:100%; border-radius:2px; transform:scaleX(0); transform-origin:left; transition:transform 1.2s cubic-bezier(.4,0,.2,1); }
-
-    /* ── Concept Cards ── */
-    .concept-card {
-      background:#0d0d1c;
-      border:1px solid rgba(255,255,255,.07);
-      border-radius:.9rem;
-      padding:1.25rem;
-      transition:border-color .3s;
-    }
-    .concept-card:hover { border-color:rgba(212,160,23,.3); }
-    .concept-num {
-      font-family:'Space Mono',monospace;
-      font-size:.62rem; letter-spacing:.12em;
-      color:rgba(212,160,23,.6);
-      text-transform:uppercase;
-      margin-bottom:.6rem;
-    }
-
-    /* ── Hero Grid ── */
-    #hero-bg-grid {
-      position:absolute; inset:0;
-      background-image:
-        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
-      background-size:60px 60px;
+      color:#f59e0b;
+      white-space:nowrap;
       pointer-events:none;
+      user-select:none;
     }
 
-    /* ── Canvas ── */
-    #hero-canvas {
-      display:block;
-      width:100%; height:100%;
-    }
+    /* Scanline */
+    .scanline::after{content:'';position:absolute;inset:0;
+      background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 2px,rgba(0,0,0,0.05) 4px);
+      pointer-events:none;}
 
-    /* ── Mobile ── */
-    @media (max-width:640px) {
-      .stat-num { font-size:2rem; }
-      .mag-btn  { padding:.75rem 1.4rem; font-size:.88rem; }
-    }
+    /* Flip card */
+    .card-scene{perspective:1200px;}
+    .card-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);}
+    .card-scene.flipped .card-inner{transform:rotateY(180deg);}
+    .card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;overflow:hidden;}
+    .card-back{transform:rotateY(180deg);}
 
-    /* ════ SHARE MODAL ════ */
-    #share-modal {
-      position:fixed; inset:0;
-      background:rgba(7,7,15,.88);
-      z-index:10001;
-      display:flex; align-items:center; justify-content:center;
-      padding:1rem;
-      opacity:0; pointer-events:none;
-      transition:opacity .35s ease;
-      backdrop-filter:blur(10px);
-    }
-    #share-modal.open { opacity:1; pointer-events:all; }
-    #sc-wrapper {
-      display:flex; flex-direction:column; align-items:center; gap:.85rem;
-      position:relative;
-      transform:scale(.9) translateY(24px);
-      transition:transform .45s cubic-bezier(.34,1.56,.64,1);
-    }
-    #share-modal.open #sc-wrapper { transform:scale(1) translateY(0); }
+    /* Stamp */
+    .stamp{display:inline-block;border:2px solid currentColor;border-radius:3px;padding:1px 6px;font-family:'Space Mono',monospace;font-weight:700;font-size:.6rem;letter-spacing:.08em;transform:rotate(-5deg);opacity:.9;}
 
-    /* The downloadable card */
-    #sc-card {
-      width:360px; max-width:calc(100vw - 2rem);
-      background:#07070f;
-      border:1px solid rgba(212,160,23,.4);
-      border-radius:1.25rem;
-      overflow:hidden;
-      position:relative;
-      font-family:'Noto Sans TC',sans-serif;
-    }
-    /* Scanlines */
-    #sc-card::after {
-      content:''; position:absolute; inset:0; pointer-events:none; z-index:8;
-      background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px);
-      border-radius:1.25rem;
-    }
-    /* Gold corner accents */
-    .sc-corner { position:absolute; width:18px; height:18px; border-color:rgba(212,160,23,.45); border-style:solid; }
-    .sc-tl { top:8px; left:8px;  border-width:1px 0 0 1px; }
-    .sc-tr { top:8px; right:8px; border-width:1px 1px 0 0; }
-    .sc-bl { bottom:8px; left:8px;  border-width:0 0 1px 1px; }
-    .sc-br { bottom:8px; right:8px; border-width:0 1px 1px 0; }
+    /* Glow line */
+    .glow-line{height:1px;background:linear-gradient(90deg,transparent,#f59e0b,transparent);opacity:.4;}
 
-    /* Header: pixel art area */
-    .sc-header {
-      position:relative; height:155px; overflow:hidden;
-      background:linear-gradient(135deg,#0d0d1c 0%,#12122e 100%);
-      border-bottom:1px solid rgba(212,160,23,.18);
-      display:flex; align-items:center; gap:1rem; padding:0 1.25rem;
-    }
-    .sc-header-grid {
-      position:absolute; inset:0; pointer-events:none;
-      background-image:
-        linear-gradient(rgba(212,160,23,.04) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(212,160,23,.04) 1px,transparent 1px);
-      background-size:18px 18px;
-    }
-    #sc-canvas {
-      position:relative; z-index:2;
-      width:140px; height:140px;
-      image-rendering:pixelated;
-      image-rendering:-moz-crisp-edges;
-      flex-shrink:0;
-    }
-    .sc-brand { position:relative; z-index:2; flex:1; min-width:0; }
-    .sc-brand-title {
-      font-family:'Space Mono',monospace;
-      font-size:1rem; font-weight:700;
-      color:#f0c040; letter-spacing:.06em; line-height:1.1;
-      margin-bottom:.5rem;
-    }
-    .sc-brand-sub {
-      font-family:'Space Mono',monospace;
-      font-size:.55rem; letter-spacing:.14em;
-      color:rgba(212,160,23,.45); text-transform:uppercase;
-      margin-bottom:.85rem;
-    }
-    .sc-badge-row { display:flex; align-items:center; gap:.5rem; }
+    /* Deco */
+    .deco-line{display:flex;align-items:center;gap:12px;}
+    .deco-line::before,.deco-line::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,.3));}
+    .deco-line::after{background:linear-gradient(270deg,transparent,rgba(245,158,11,.3));}
 
-    /* Body */
-    .sc-body { padding:1rem 1.25rem .75rem; }
-    .sc-num-row { display:flex; align-items:center; gap:.65rem; margin-bottom:.5rem; }
-    .sc-num {
-      font-family:'Space Mono',monospace;
-      font-size:2.2rem; font-weight:700;
-      color:rgba(237,237,237,.18); line-height:1;
-    }
-    .sc-status-badge {
-      font-size:.68rem; font-weight:500;
-      padding:.2rem .65rem; border-radius:999px;
-    }
-    .sc-title-text { font-size:.95rem; font-weight:700; color:#f1f5f9; margin-bottom:.3rem; }
-    .sc-cat-tag {
-      display:inline-flex; align-items:center;
-      padding:.15rem .55rem; border-radius:.3rem;
-      border:1px solid rgba(237,237,237,.18);
-      font-family:'Space Mono',monospace; font-size:.6rem; letter-spacing:.05em;
-      color:rgba(237,237,237,.45); margin-bottom:.85rem;
-    }
-    .sc-section-lbl {
-      font-family:'Space Mono',monospace;
-      font-size:.58rem; letter-spacing:.14em; text-transform:uppercase;
-      margin-bottom:.3rem;
-    }
-    .sc-section-lbl.claim { color:rgba(237,237,237,.32); }
-    .sc-section-lbl.truth { color:rgba(212,160,23,.7); }
-    .sc-text { font-size:.77rem; line-height:1.62; margin-bottom:.65rem; }
-    .sc-text.claim { color:rgba(237,237,237,.58); }
-    .sc-text.truth  { color:rgba(237,237,237,.85); }
-    .sc-divider { height:1px; background:rgba(255,255,255,.06); margin:.65rem 0; }
+    /* Cat btn */
+    .cat-btn{cursor:none;transition:all .25s;border:1px solid rgba(245,158,11,.3);color:#9ca3af;background:transparent;}
+    .cat-btn.active,.cat-btn:hover{background:#f59e0b;color:#07070f;border-color:#f59e0b;font-weight:700;}
 
-    /* Footer */
-    .sc-footer {
-      padding:.55rem 1.25rem;
-      border-top:1px solid rgba(255,255,255,.05);
-      background:rgba(255,255,255,.02);
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .sc-footer-brand {
-      display:flex; align-items:center; gap:.4rem;
-      font-family:'Space Mono',monospace; font-size:.55rem;
-      letter-spacing:.12em; color:rgba(212,160,23,.5); text-transform:uppercase;
-    }
-    .sc-footer-url {
-      font-family:'Space Mono',monospace; font-size:.55rem;
-      color:rgba(255,255,255,.2); letter-spacing:.04em;
-    }
+    /* Case card */
+    .case-card{cursor:none;transition:transform .2s,box-shadow .2s;}
+    .case-card:hover{transform:translateY(-4px);box-shadow:0 0 30px rgba(245,158,11,.12);}
 
-    /* Close button */
-    #sc-close-btn {
-      position:absolute; top:-10px; right:-10px;
-      width:30px; height:30px; border-radius:50%;
-      background:#1a1a38; border:1px solid rgba(212,160,23,.3);
-      color:rgba(255,255,255,.55); font-size:.75rem; cursor:none;
-      display:flex; align-items:center; justify-content:center;
-      transition:background .2s, color .2s; z-index:10;
-    }
-    #sc-close-btn:hover { background:rgba(212,160,23,.25); color:#fff; }
+    /* Badges */
+    .badge-guilty    {background:rgba(239,68,68,.15);  color:#ef4444;border:1px solid rgba(239,68,68,.35);}
+    .badge-clear     {background:rgba(107,114,128,.15);color:#9ca3af;border:1px solid rgba(107,114,128,.35);}
+    .badge-probation {background:rgba(245,158,11,.15); color:#f59e0b;border:1px solid rgba(245,158,11,.35);}
+    .badge-noted     {background:rgba(139,92,246,.15); color:#a78bfa;border:1px solid rgba(139,92,246,.35);}
+    .badge-unreported{background:rgba(251,146,60,.15); color:#fb923c;border:1px solid rgba(251,146,60,.35);}
 
-    /* Action buttons */
-    .sc-actions { display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; }
-    .sc-action-btn {
-      display:inline-flex; align-items:center; gap:.4rem;
-      padding:.5rem 1rem; border-radius:.6rem;
-      font-family:'Space Mono',monospace; font-size:.65rem; letter-spacing:.06em;
-      cursor:none; transition:all .2s;
-      border:1px solid rgba(255,255,255,.12);
-      color:rgba(255,255,255,.6); background:rgba(255,255,255,.04);
-    }
-    .sc-action-btn:hover { border-color:rgba(212,160,23,.4); color:#f0c040; background:rgba(212,160,23,.08); }
-    .sc-action-btn.gold {
-      background:linear-gradient(135deg,#c9a227,#8b6d10);
-      border-color:transparent; color:#07070f; font-weight:700;
-    }
-    .sc-action-btn.gold:hover { box-shadow:0 0 20px rgba(201,162,39,.45); }
+    /* Explainer vertical card */
+    .exp-card{display:flex;flex-direction:column;gap:16px;padding:28px 24px 32px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);min-height:400px;position:relative;transform-style:preserve-3d;transition:border-color .25s,box-shadow .25s;will-change:transform;}
+    .exp-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(245,158,11,.35),transparent);opacity:0;transition:opacity .3s;}
+    .exp-card:hover{border-color:rgba(245,158,11,.3);}
+    .exp-card:hover::after{opacity:1;}
+    .exp-icon{width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);flex-shrink:0;}
+    .exp-card .exp-num{font-family:'Space Mono',monospace;font-size:.6rem;color:#4b5563;letter-spacing:.1em;margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.05);}
 
-    /* Case card share button */
-    .share-card-btn {
-      display:inline-flex; align-items:center; gap:.3rem;
-      padding:.28rem .6rem; border-radius:.35rem;
-      font-size:.65rem; color:rgba(212,160,23,.55);
-      border:1px solid rgba(212,160,23,.18); background:transparent;
-      cursor:none; transition:color .2s, border-color .2s, background .2s;
-    }
-    .share-card-btn:hover {
-      color:#f0c040; border-color:rgba(212,160,23,.5); background:rgba(212,160,23,.08);
-    }
+    /* Char anim */
+    .char{display:inline-block;opacity:0;transform:translateY(20px);}
+
+    /* Blink */
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    .blink{animation:blink 1s infinite;}
+
+    /* Scrollbar */
+    ::-webkit-scrollbar{width:4px;}
+    ::-webkit-scrollbar-track{background:#07070f;}
+    ::-webkit-scrollbar-thumb{background:#f59e0b;border-radius:2px;}
+
+    @media(max-width:640px){html{cursor:auto;}#cursor-dot,#cursor-ring{display:none;}}
+
+    /* ── Share button ── */
+    .share-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .62rem;border-radius:.4rem;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.04em;color:rgba(245,158,11,.5);border:1px solid rgba(245,158,11,.18);background:transparent;cursor:pointer;transition:all .2s;}
+    .share-btn:hover{color:#f59e0b;border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.07);}
+
+    /* ── Share toast ── */
+    #share-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(10,10,24,.96);border:1px solid rgba(245,158,11,.4);border-radius:8px;padding:9px 20px;font-family:'Space Mono',monospace;font-size:.68rem;color:#f59e0b;z-index:9999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;}
+    #share-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* ── Share Card Modal ── */
+    #sc-modal{position:fixed;inset:0;background:rgba(7,7,15,.88);backdrop-filter:blur(12px);z-index:10001;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .3s ease;}
+    #sc-modal.open{opacity:1;pointer-events:all;}
+    #sc-wrapper2{position:relative;transform:scale(.88) translateY(20px);transition:transform .42s cubic-bezier(.34,1.56,.64,1);}
+    #sc-modal.open #sc-wrapper2{transform:scale(1) translateY(0);}
+    #sc-close{position:absolute;top:-12px;right:-12px;width:28px;height:28px;border-radius:50%;background:rgba(7,7,15,.95);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.55);font-size:.9rem;display:flex;align-items:center;justify-content:center;cursor:none;z-index:1;transition:border-color .2s,color .2s;}
+    #sc-close:hover{border-color:rgba(245,158,11,.55);color:#f59e0b;}
+    #sc-card2{width:340px;max-width:calc(100vw - 2rem);background:#0a0a18;border:1px solid rgba(245,158,11,.22);border-radius:14px;overflow:hidden;}
+    .sc2-header{padding:14px 20px 12px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center;background:rgba(245,158,11,.04);}
+    .sc2-brand{font-family:'Space Mono',monospace;font-size:.62rem;color:#f59e0b;letter-spacing:.12em;font-weight:700;line-height:1.4;}
+    .sc2-sub{font-family:'Space Mono',monospace;font-size:.5rem;color:rgba(245,158,11,.4);letter-spacing:.08em;}
+    .sc2-body{padding:16px 20px;}
+    .sc2-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+    .sc2-casenum{font-family:'Space Mono',monospace;font-size:.6rem;color:#4b5563;letter-spacing:.06em;}
+    .sc2-name{font-weight:900;color:#f3f4f6;font-size:.95rem;line-height:1.3;margin-bottom:3px;}
+    .sc2-amount{font-family:'Space Mono',monospace;color:#f59e0b;font-size:.88rem;font-weight:700;margin-bottom:12px;}
+    .sc2-lbl{font-size:.58rem;color:#4b5563;font-family:'Space Mono',monospace;letter-spacing:.08em;margin-bottom:3px;}
+    .sc2-text{font-size:.76rem;color:#9ca3af;line-height:1.65;margin-bottom:12px;background:rgba(0,0,0,.2);padding:8px 10px;border-radius:6px;border-left:2px solid rgba(245,158,11,.2);}
+    .sc2-verdict{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:10px 12px;}
+    .sc2-verdict-lbl{font-family:'Space Mono',monospace;font-size:.58rem;color:#f59e0b;letter-spacing:.08em;display:block;margin-bottom:4px;}
+    .sc2-verdict-text{font-size:.76rem;color:#f3f4f6;line-height:1.65;}
+    .sc2-footer{padding:9px 20px;border-top:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;}
+    .sc2-url{font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(245,158,11,.38);letter-spacing:.05em;}
+    .sc2-actions{display:flex;gap:8px;padding:12px 20px 16px;justify-content:center;}
+    .sc2-btn{display:flex;align-items:center;gap:.35rem;padding:.42rem 1.05rem;border-radius:6px;font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.04em;cursor:none;transition:all .2s;}
+    .sc2-btn.primary{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.38);color:#f59e0b;}
+    .sc2-btn.primary:hover{background:rgba(245,158,11,.2);border-color:#f59e0b;}
+    .sc2-btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.1);color:#6b7280;}
+    .sc2-btn.ghost:hover{border-color:rgba(255,255,255,.22);color:#9ca3af;}
   </style>
 </head>
-<body class="min-h-screen">
+<body>
 
-  <!-- Cursor -->
-  <div id="cur-dot"></div>
-  <div id="cur-ring"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div id="share-toast"></div>
 
-  <!-- Guides -->
-  <div class="guide" style="left:12.5%"></div>
-  <div class="guide" style="left:87.5%"></div>
-  <div class="guide" style="left:50%"></div>
+<!-- NAVBAR -->
+<nav class="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between"
+     style="background:linear-gradient(180deg,rgba(7,7,15,.96) 0%,transparent 100%);backdrop-filter:blur(10px);">
+  <div class="flex items-center gap-3">
+    <span class="font-mono text-sm font-bold tracking-widest" style="color:#f59e0b;">KO FACTCHECK</span>
+  </div>
+  <div class="flex items-center gap-3 text-xs font-mono text-gray-500 tracking-wider">
+    <span class="hidden sm:inline">一審判決解析版</span>
+    <span class="px-2 py-1 rounded" style="background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.25);">2026</span>
+  </div>
+</nav>
 
-  <!-- ════ HEADER ════ -->
-  <header id="site-header" class="fixed top-0 left-0 right-0 z-50 px-6 py-4"
-          style="background:rgba(7,7,15,0);backdrop-filter:blur(0px);transition:background .4s,backdrop-filter .4s,border-color .4s;">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <div class="gold-dot"></div>
-        <span class="font-mono text-xs tracking-widest text-white/35 uppercase">Ko Truth Lab</span>
-      </div>
-      <div class="hidden sm:flex items-center gap-5 font-mono text-xs text-white/25 tracking-wider">
-        <span>CASES: 20</span>
-        <span class="text-white/10">|</span>
-        <span>2026.03.11</span>
+<!-- ══ HERO ══ -->
+<section id="hero" class="relative min-h-screen flex flex-col items-center justify-center text-center px-6 scanline overflow-hidden">
+
+  <!-- 七嘴八舌浮動文字層 -->
+  <div id="float-layer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+
+  <!-- Hero 視覺層：密集網格 + 超大法庭文件插圖 + 動態標記 -->
+  <svg class="absolute inset-0 w-full h-full pointer-events-none" id="hero-lines"
+       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <!-- 細密網格 20px -->
+      <pattern id="gridSm" width="20" height="20" patternUnits="userSpaceOnUse">
+        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(245,158,11,0.06)" stroke-width="0.4"/>
+      </pattern>
+      <!-- 大格 100px 強調線 -->
+      <pattern id="gridLg" width="100" height="100" patternUnits="userSpaceOnUse">
+        <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(245,158,11,0.13)" stroke-width="0.7"/>
+      </pattern>
+    </defs>
+
+    <!-- 網格雙層 -->
+    <rect width="1440" height="900" fill="url(#gridSm)"/>
+    <rect width="1440" height="900" fill="url(#gridLg)"/>
+
+    <!-- ══ 左側置中：堆疊證據文件（超大，左半出血，右 2/3 可見） ══ -->
+    <!-- translate(-118,158): 文件寬300，左118px藏在螢幕外，右182px可見 -->
+    <g id="svg-papers" transform="translate(-118, 158)" opacity="0.26" fill="none" stroke="#f59e0b" stroke-linecap="round" stroke-linejoin="round">
+      <!-- 第3張（最底） -->
+      <rect x="26" y="31" width="300" height="408" rx="7" stroke-width="1" opacity="0.45" transform="rotate(5,176,235)"/>
+      <!-- 第2張 -->
+      <rect x="13" y="16" width="300" height="408" rx="7" stroke-width="1.1" opacity="0.65" transform="rotate(2.5,176,235)"/>
+      <!-- 最上張 -->
+      <rect x="0" y="0" width="300" height="408" rx="7" stroke-width="1.8"/>
+      <!-- CASE 標記框 -->
+      <rect x="26" y="20" width="104" height="31" rx="5" stroke-width="1" opacity="0.65"/>
+      <line x1="38" y1="34" x2="118" y2="34" stroke-width="0.9" opacity="0.8"/>
+      <!-- 文字線條（間距放大） -->
+      <line x1="26" y1="82"  x2="274" y2="82"  stroke-width="1.1"/>
+      <line x1="26" y1="110" x2="274" y2="110" stroke-width="1.1"/>
+      <line x1="26" y1="138" x2="222" y2="138" stroke-width="1"/>
+      <line x1="26" y1="166" x2="252" y2="166" stroke-width="1"/>
+      <line x1="26" y1="194" x2="198" y2="194" stroke-width="0.9" opacity="0.7"/>
+      <line x1="26" y1="222" x2="230" y2="222" stroke-width="0.9" opacity="0.7"/>
+      <!-- 印章圓圈（大）── 移除內部十字線，留給 × 標記進入時才旋轉 ── -->
+      <circle cx="226" cy="330" r="48" stroke-width="1.2" opacity="0.5"/>
+      <circle cx="226" cy="330" r="36" stroke-width="0.8" opacity="0.35"/>
+      <!-- 底部欄位線 -->
+      <line x1="26" y1="378" x2="152" y2="378" stroke-width="1" opacity="0.55"/>
+      <line x1="26" y1="396" x2="116" y2="396" stroke-width="0.9" opacity="0.45"/>
+      <!-- 邊框掃描線（GSAP 動畫用，初始隱藏）perimeter 1424 -->
+      <rect id="papers-scan" x="-2" y="-2" width="304" height="412" rx="7"
+            fill="none" stroke="#f59e0b" stroke-width="2.4"
+            stroke-dasharray="60 1364" stroke-dashoffset="0" opacity="0"/>
+    </g>
+
+    <!-- ══ 右上：超大資料夾 ══ -->
+    <!-- [decision: svg-line-art] Large folder illustration -->
+    <g id="svg-folder" transform="translate(1080, 18)" opacity="0.22" fill="none" stroke="#f59e0b" stroke-linecap="round" stroke-linejoin="round">
+      <!-- 資料夾本體 -->
+      <path d="M 0 48 L 0 230 Q 0 244 14 244 L 318 244 Q 332 244 332 230 L 332 72 Q 332 58 318 58 L 148 58 L 118 48 Z" stroke-width="1.8"/>
+      <line x1="0" y1="72" x2="332" y2="72" stroke-width="1.2"/>
+      <!-- 標籤頁圓角 -->
+      <path d="M 0 48 Q 0 38 10 38 L 108 38 L 118 48" stroke-width="1.2" opacity="0.7"/>
+      <!-- 資料夾內文件線條 -->
+      <line x1="30" y1="108" x2="200" y2="108" stroke-width="1.1" opacity="0.7"/>
+      <line x1="30" y1="128" x2="200" y2="128" stroke-width="1.1" opacity="0.7"/>
+      <line x1="30" y1="148" x2="155" y2="148" stroke-width="1" opacity="0.6"/>
+      <!-- 迴紋針 -->
+      <path d="M 260 90 Q 260 80 272 80 Q 284 80 284 90 L 284 120 Q 284 128 276 128 Q 268 128 268 120 L 268 98" stroke-width="1.5" opacity="0.65"/>
+      <!-- 底部標籤線 -->
+      <line x1="30" y1="210" x2="130" y2="210" stroke-width="1.2" opacity="0.6"/>
+      <line x1="30" y1="226" x2="95"  y2="226" stroke-width="1"   opacity="0.5"/>
+      <!-- ══ 互動目標框（供 anim-x-1 飛向的標的）══ -->
+      <rect id="folder-box" x="25" y="152" width="188" height="62" rx="6"
+            fill="none" stroke="#f59e0b" stroke-width="1.2" opacity="0.65"/>
+      <line x1="42" y1="171" x2="188" y2="171" stroke-width="0.9" opacity="0.55"/>
+      <line x1="42" y1="187" x2="165" y2="187" stroke-width="0.8" opacity="0.45"/>
+      <!-- 邊框掃描線（GSAP 動畫用）perimeter ≈ 1086 -->
+      <rect id="folder-scan" x="-2" y="36" width="336" height="212" rx="14"
+            fill="none" stroke="#f59e0b" stroke-width="2.4"
+            stroke-dasharray="60 1026" stroke-dashoffset="0" opacity="0"/>
+    </g>
+
+    <!-- ══ 右下：超大折角文件（無×） ══ -->
+    <!-- [decision: svg-line-art] Large dog-ear document illustration -->
+    <!-- doc 初始 translate(1185,472)：在休息位往下 12，Phase 1 往上移到 (1185,460) -->
+    <!-- checkbox 中心 local(196,319)；doc 到位後 abs(1381,779) = × 目標 -->
+    <g id="svg-doc-right" transform="translate(1185, 472)" opacity="0.22" fill="none" stroke="#f59e0b" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 0 0 L 190 0 L 245 55 L 245 370 L 0 370 Z" stroke-width="1.8"/>
+      <path d="M 190 0 L 190 55 L 245 55" stroke-width="1.4"/>
+      <!-- 文字行 -->
+      <line x1="28" y1="96"  x2="217" y2="96"  stroke-width="1.1"/>
+      <line x1="28" y1="116" x2="217" y2="116" stroke-width="1.1"/>
+      <line x1="28" y1="136" x2="165" y2="136" stroke-width="1"/>
+      <line x1="28" y1="156" x2="195" y2="156" stroke-width="1"/>
+      <line x1="28" y1="176" x2="180" y2="176" stroke-width="0.9" opacity="0.7"/>
+      <line x1="28" y1="196" x2="210" y2="196" stroke-width="0.9" opacity="0.7"/>
+      <!-- 簽名欄 -->
+      <line x1="28" y1="310" x2="148" y2="310" stroke-width="1" opacity="0.6"/>
+      <line x1="28" y1="330" x2="100" y2="330" stroke-width="0.9" opacity="0.5"/>
+      <!-- 方框（放大為 56×56，中心保持 local(196,319)）── 留給 × 標記進入時才旋轉 ── -->
+      <rect x="168" y="291" width="56" height="56" rx="4" stroke-width="1.2" opacity="0.6"/>
+      <!-- 騎縫章 -->
+      <line x1="0"   y1="200" x2="8"   y2="200" stroke-width="1" stroke-dasharray="3 3" opacity="0.45"/>
+      <line x1="237" y1="200" x2="245" y2="200" stroke-width="1" stroke-dasharray="3 3" opacity="0.45"/>
+      <!-- 邊框掃描線（GSAP 動畫用）perimeter ≈ 1230 -->
+      <rect id="doc-scan" x="-2" y="-2" width="249" height="374"
+            fill="none" stroke="#f59e0b" stroke-width="2.4"
+            stroke-dasharray="60 1170" stroke-dashoffset="0" opacity="0"/>
+    </g>
+
+    <!-- ══ 連接虛線（暗示金流關聯，僅右側） ══ -->
+    <g stroke="#f59e0b" fill="none" stroke-dasharray="5 9" stroke-linecap="round" opacity="0.09">
+      <path d="M 1080 262 Q 980 310 880 290"/>
+      <path d="M 1185 630 Q 1100 590 1020 610"/>
+    </g>
+
+    <!-- ══ 動態標記元素（GSAP 動畫目標）── 緊貼各自文件，不跨螢幕 ══ -->
+
+    <!-- × 標記 A：左側文件右緣外側，與文件同時出發，慢慢往左進入圓圈 -->
+    <!-- × 在 (196, 508) = 文件下移 20 SVG 單位後，圓圈落點 (108,508) 的右側 →然後水平衝入 -->
+    <g id="anim-x-2" transform="translate(196, 508) rotate(0)" stroke="#f59e0b" stroke-linecap="round" opacity="0.32">
+      <line x1="-14" y1="-14" x2="14" y2="14" stroke-width="2"/>
+      <line x1="14" y1="-14" x2="-14" y2="14" stroke-width="2"/>
+    </g>
+
+    <!-- × 標記 B：右上資料夾（svg-folder）左下角旁 -->
+    <!-- svg-folder 在 translate(1080,18)，底邊 y≈262，左緣 x=1080 -->
+    <!-- × 在 folder-box 正下方（框中心 SVG x=1200, y=183；marker 在 box 底部正下方 y=282） -->
+    <g id="anim-x-1" transform="translate(1199, 282) rotate(0)" stroke="#f59e0b" stroke-linecap="round" opacity="0.32">
+      <line x1="-15" y1="-15" x2="15" y2="15" stroke-width="2.1"/>
+      <line x1="15" y1="-15" x2="-15" y2="15" stroke-width="2.1"/>
+    </g>
+
+    <!-- × 標記 C：右下文件左緣稍外側，從左往右水平進入勾選框 -->
+    <!-- doc y=460；checkbox abs(1381,779) -->
+    <!-- marker 從 x=1150（文件左緣 1185 外 35px）出發，縮短行程至 231 SVG 單位 -->
+    <g id="anim-x-3" transform="translate(1150, 779) rotate(0)" stroke="#f59e0b" stroke-linecap="round" opacity="0.32">
+      <line x1="-14" y1="-14" x2="14" y2="14" stroke-width="2"/>
+      <line x1="14" y1="-14" x2="-14" y2="14" stroke-width="2"/>
+    </g>
+
+    <!-- 靜態裝飾（無 GSAP，純構圖點綴） -->
+    <g transform="translate(560, 840)" stroke="#f59e0b" stroke-linecap="round" opacity="0.14">
+      <line x1="0" y1="-11" x2="0" y2="11" stroke-width="1.5"/>
+      <line x1="-11" y1="0" x2="11" y2="0" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(880, 856)" stroke="#f59e0b" stroke-linecap="round" opacity="0.12">
+      <line x1="-10" y1="-10" x2="10" y2="10" stroke-width="1.4"/>
+      <line x1="10" y1="-10" x2="-10" y2="10" stroke-width="1.4"/>
+    </g>
+
+    <!-- 中央底部小細節 -->
+    <g stroke="#f59e0b" fill="none" opacity="0.2">
+      <line x1="620" y1="860" x2="820" y2="860" stroke-width="1"/>
+      <line x1="720" y1="855" x2="720" y2="900" stroke-width="1" stroke-dasharray="3 4"/>
+      <circle cx="720" cy="852" r="4" stroke-width="1.2"/>
+    </g>
+  </svg>
+
+  <!-- 中心光暈 -->
+  <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+    <div style="width:600px;height:600px;background:radial-gradient(circle,rgba(245,158,11,.08) 0%,transparent 70%);filter:blur(40px);"></div>
+  </div>
+
+  <!-- case no -->
+  <div class="relative z-10 font-mono text-xs text-gray-600 tracking-widest mb-8 flex items-center gap-4" id="hero-meta" style="opacity:0;">
+    <span>CASE NO. 113金訴51</span>
+    <span class="blink" style="color:#f59e0b;">▌</span>
+    <span>一審判決 · 上訴中</span>
+  </div>
+
+  <!-- Headline -->
+  <h1 class="relative z-10 font-black leading-tight mb-5" style="font-size:clamp(2.4rem,6vw,5.5rem);letter-spacing:-.02em;">
+    <span class="block text-white" id="line1">他不知道，</span>
+    <span class="block" style="color:#f59e0b;" id="line2">但帳冊知道</span>
+  </h1>
+
+  <p id="hero-sub" class="relative z-10 text-gray-400 mb-10 max-w-lg"
+     style="font-size:clamp(1rem,2vw,1.2rem);opacity:0;transform:translateY(16px);">
+    一審認定的 <span style="color:#f59e0b;font-weight:700;">20筆金流</span> → 逐筆破解常見說法
+  </p>
+
+  <div id="hero-cta" class="relative z-10 flex flex-col sm:flex-row gap-4 mb-16" style="opacity:0;transform:translateY(16px);">
+    <a href="#cards" class="magnetic px-8 py-4 rounded-full font-bold text-sm tracking-wider"
+       style="background:#f59e0b;color:#07070f;cursor:none;">解碼 20 筆金流</a>
+    <a href="#explainer" class="magnetic px-8 py-4 rounded-full font-bold text-sm tracking-wider"
+       style="border:1px solid rgba(245,158,11,.4);color:#f59e0b;cursor:none;">先看判決前必讀</a>
+  </div>
+
+  <!-- Stats -->
+  <div id="hero-stats" class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-3xl" style="opacity:0;transform:translateY(16px);">
+    <div class="text-center p-4 rounded-xl" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);">
+      <div class="font-mono text-3xl font-bold mb-1" style="color:#f59e0b;" data-counter="20">0</div>
+      <div class="text-xs text-gray-500 tracking-wider">爭議筆數</div>
+    </div>
+    <div class="text-center p-4 rounded-xl" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);">
+      <div class="font-mono text-3xl font-bold mb-1" style="color:#ef4444;" data-counter="12">0</div>
+      <div class="text-xs text-gray-500 tracking-wider">判決有罪筆</div>
+    </div>
+    <div class="text-center p-4 rounded-xl" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);">
+      <div class="font-mono text-2xl font-bold mb-1" style="color:#f59e0b;">1.3億+</div>
+      <div class="text-xs text-gray-500 tracking-wider">涉案總金額</div>
+    </div>
+    <div class="text-center p-4 rounded-xl" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);">
+      <div class="font-mono text-2xl font-bold mb-1" style="color:#ef4444;">17年↑</div>
+      <div class="text-xs text-gray-500 tracking-wider">合併執行刑</div>
+    </div>
+  </div>
+
+  <!-- Scroll hint -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-700 text-xs font-mono z-10" id="scroll-hint">
+    <span>SCROLL</span>
+    <div class="w-px h-10 overflow-hidden" style="background:rgba(245,158,11,.15);">
+      <div class="w-full h-4" style="background:#f59e0b;animation:scrollPulse 1.5s ease-in-out infinite;"></div>
+    </div>
+  </div>
+  <style>@keyframes scrollPulse{0%{transform:translateY(-100%)}100%{transform:translateY(300%)}}</style>
+</section>
+
+<!-- ══ EXPLAINER ══ -->
+<section id="explainer" class="py-24 px-6 max-w-6xl mx-auto">
+  <div class="deco-line mb-10">
+    <span class="font-mono text-xs text-gray-500 tracking-widest whitespace-nowrap">判決前必讀 × 法庭速讀室</span>
+  </div>
+  <h2 class="text-3xl font-black text-center mb-2">攻防焦點 × 法庭認定</h2>
+  <p class="text-center text-gray-500 text-sm mb-10">辯方怎麼說，法官怎麼認定——七個核心爭點一次看清楚</p>
+
+  <!-- Carousel wrapper: 68px padding reserves room for 42px arrows + gap, clear of cards -->
+  <div style="position:relative;padding:0 68px;" id="exp-carousel-wrap">
+    <!-- Arrows: centred in the 68px padding zone (13px from border = (68-42)/2) -->
+    <button id="exp-prev" aria-label="上一張" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);z-index:10;width:42px;height:42px;border-radius:50%;background:rgba(15,15,30,.9);border:1px solid rgba(245,158,11,.3);color:#f59e0b;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s,border-color .25s,box-shadow .25s;backdrop-filter:blur(8px);padding:0;line-height:1;">
+      <iconify-icon icon="mdi:chevron-left" style="font-size:1.5rem;display:flex;"></iconify-icon>
+    </button>
+    <button id="exp-next" aria-label="下一張" style="position:absolute;right:13px;top:50%;transform:translateY(-50%);z-index:10;width:42px;height:42px;border-radius:50%;background:rgba(15,15,30,.9);border:1px solid rgba(245,158,11,.3);color:#f59e0b;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s,border-color .25s,box-shadow .25s;backdrop-filter:blur(8px);padding:0;line-height:1;">
+      <iconify-icon icon="mdi:chevron-right" style="font-size:1.5rem;display:flex;"></iconify-icon>
+    </button>
+
+    <!-- Hover-advance trigger zones: invisible wide strips covering the padding column
+         (full 68px padding + 30px into card edge = 98px each side).
+         z-index:8 = above cards but below arrows (z:10), so arrows still clickable. -->
+    <div id="exp-zone-left"  style="position:absolute;left:0;top:0;width:98px;height:100%;z-index:8;cursor:pointer;"></div>
+    <div id="exp-zone-right" style="position:absolute;right:0;top:0;width:98px;height:100%;z-index:8;cursor:pointer;"></div>
+
+    <!-- Viewport: overflow-x:clip clips track horizontally; overflow-y:visible lets 3D-tilted cards breathe -->
+    <div id="exp-viewport" style="overflow-x:clip;overflow-y:visible;">
+      <!-- Track: 7 cards total -->
+      <div id="exp-track" style="display:flex;gap:16px;transition:transform .45s cubic-bezier(.25,.8,.25,1);will-change:transform;">
+
+        <!-- Card 1: LAW FACT -->
+        <div class="exp-card exp-tilt" style="flex:0 0 auto;">
+          <div class="exp-icon"><iconify-icon icon="mdi:help-circle-outline" style="color:#f59e0b;font-size:1.6rem;"></iconify-icon></div>
+          <p class="font-bold text-white text-base leading-snug">「帳冊是偽造的，對嗎？」</p>
+          <p class="text-gray-400 text-sm leading-relaxed">辯方確實主張USB帳冊真偽不明。但法庭把帳冊上的13位金主全部傳喚出庭具結——結果每一位都確認數字就是金額。柯方？<span style="color:#f59e0b;font-weight:600;">放棄詰問</span>。沉默，有時候也是一種答案。</p>
+          <p class="exp-num">LAW FACT · 01 / 04</p>
+        </div>
+
+        <!-- Card 2: LAW FACT -->
+        <div class="exp-card exp-tilt" style="flex:0 0 auto;">
+          <div class="exp-icon"><iconify-icon icon="mdi:cash-multiple" style="color:#f59e0b;font-size:1.6rem;"></iconify-icon></div>
+          <p class="font-bold text-white text-base leading-snug">「政治獻金不是犯罪，對嗎？」</p>
+          <p class="text-gray-400 text-sm leading-relaxed">沒錯，但前提是要<span style="color:#f59e0b;font-weight:600;">申報並存入專戶</span>。收了錢卻放進自己口袋、拿去支付黨務薪資不申報——那叫<span style="color:#ef4444;font-weight:600;">侵占</span>或<span style="color:#ef4444;font-weight:600;">背信</span>。法律說的很清楚。</p>
+          <p class="exp-num">LAW FACT · 02 / 04</p>
+        </div>
+
+        <!-- Card 3: LAW FACT -->
+        <div class="exp-card exp-tilt" style="flex:0 0 auto;">
+          <div class="exp-icon"><iconify-icon icon="mdi:office-building-outline" style="color:#f59e0b;font-size:1.6rem;"></iconify-icon></div>
+          <p class="font-bold text-white text-base leading-snug">「容積率是市長有權決定的，對嗎？」</p>
+          <p class="text-gray-400 text-sm leading-relaxed">市長有裁量權，但不是無限權。京華城不符都更條件，硬給20%容積獎勵就是「法無明文卻自創規則」。法官認定：<span style="color:#ef4444;font-weight:600;">圖利逾121億</span>。裁量權≠為所欲為。</p>
+          <p class="exp-num">LAW FACT · 03 / 04</p>
+        </div>
+
+        <!-- Card 4: LAW FACT -->
+        <div class="exp-card exp-tilt" style="flex:0 0 auto;">
+          <div class="exp-icon"><iconify-icon icon="mdi:gavel" style="color:#f59e0b;font-size:1.6rem;"></iconify-icon></div>
+          <p class="font-bold text-white text-base leading-snug">「一審不算數，還有二三審？」</p>
+          <p class="text-gray-400 text-sm leading-relaxed">是的，柯可以上訴，司法程序未完。但本站的重點是<span style="color:#f59e0b;font-weight:600;">釐清「一審法院如何認定事實」</span>——與網路常見說法的落差。這才是法治素養的核心。</p>
+          <p class="exp-num">LAW FACT · 04 / 04</p>
+        </div>
+
+        <!-- Card 5: 對價關係 -->
+        <div class="exp-card exp-tilt" style="flex:0 0 auto;border-color:rgba(99,102,241,.25);background:rgba(99,102,241,.05);">
+          <div class="exp-icon" style="background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.3);"><iconify-icon icon="mdi:link-variant" style="color:#818cf8;font-size:1.6rem;"></iconify-icon></div>
+          <p style="font-family:'Space Mono',monospace;font-size:.6rem;color:#6366f1;letter-spacing:.12em;">爭點 01 · Quid Pro Quo</p>
+          <p class="font-bold text-white text-base leading-snug">對價關係</p>
+          <p class="text-gray-400 text-sm leading-relaxed">賄賂罪的核心要件。檢方需證明：金主給錢，與市府給出的行政利益（如容積率放行），兩者之間存在<span style="color:#818cf8;font-weight:600;">明確的事先約定或默契</span>。無對價關係則不構成賄賂。</p>
+          <p class="exp-num" style="color:#4b5179;border-top-color:rgba(99,102,241,.1);">LEGAL CONCEPT · 05 / 07</p>
+        </div>
+
+        <!-- Card 6: 大水庫理論 -->
+        <div class="exp-card exp-tilt" style="flex:0 0 auto;border-color:rgba(99,102,241,.25);background:rgba(99,102,241,.05);">
+          <div class="exp-icon" style="background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.3);"><iconify-icon icon="mdi:water" style="color:#818cf8;font-size:1.6rem;"></iconify-icon></div>
+          <p style="font-family:'Space Mono',monospace;font-size:.6rem;color:#6366f1;letter-spacing:.12em;">爭點 02 · Reservoir Theory</p>
+          <p class="font-bold text-white text-base leading-snug">大水庫理論</p>
+          <p class="text-gray-400 text-sm leading-relaxed">辯方核心主張：所有現金流入一個<span style="color:#818cf8;font-weight:600;">「共同水庫」</span>，統一用於選舉活動支出，並非流入個人口袋。若成立，則為漏報政治獻金的行政瑕疵，而非貪污侵占。法官：未採信。</p>
+          <p class="exp-num" style="color:#4b5179;border-top-color:rgba(99,102,241,.1);">LEGAL CONCEPT · 06 / 07</p>
+        </div>
+
+        <!-- Card 7: 公益侵占 -->
+        <div class="exp-card exp-tilt" style="flex:0 0 auto;border-color:rgba(99,102,241,.25);background:rgba(99,102,241,.05);">
+          <div class="exp-icon" style="background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.3);"><iconify-icon icon="mdi:shield-alert-outline" style="color:#818cf8;font-size:1.6rem;"></iconify-icon></div>
+          <p style="font-family:'Space Mono',monospace;font-size:.6rem;color:#6366f1;letter-spacing:.12em;">爭點 03 · Public Benefit Fraud</p>
+          <p class="font-bold text-white text-base leading-snug">公益侵占</p>
+          <p class="text-gray-400 text-sm leading-relaxed">公職人員以商業合約名義（如肖像授權、顧問費），將公務機關資源或公益捐款導入私人帳戶的行為。即使有<span style="color:#818cf8;font-weight:600;">合約包裝</span>，仍可能構成「公益侵占罪」。</p>
+          <p class="exp-num" style="color:#4b5179;border-top-color:rgba(99,102,241,.1);">LEGAL CONCEPT · 07 / 07</p>
+        </div>
+
       </div>
     </div>
-  </header>
 
-  <!-- ════ HERO ════ -->
-  <section id="hero" class="relative min-h-screen flex items-center overflow-hidden pt-20 pb-10">
-    <div id="hero-bg-grid"></div>
+    <!-- Dots indicator -->
+    <div id="exp-dots" style="display:flex;justify-content:center;gap:8px;margin-top:20px;"></div>
+  </div>
 
-    <!-- Glow blobs -->
-    <div class="glow-blob" style="width:650px;height:650px;top:-180px;left:-100px;background:radial-gradient(circle,rgba(212,160,23,0.08) 0%,transparent 65%);"></div>
-    <div class="glow-blob" style="width:450px;height:450px;bottom:-120px;right:-80px;background:radial-gradient(circle,rgba(56,189,248,0.05) 0%,transparent 65%);"></div>
+  <div class="glow-line mt-12"></div>
+</section>
 
-    <div class="relative z-10 max-w-7xl mx-auto w-full px-6 grid lg:grid-cols-2 gap-12 items-center">
+<!-- ══ FLIP CARDS ══ -->
+<section id="cards" class="py-12 px-4 max-w-7xl mx-auto">
+  <div class="deco-line mb-8">
+    <span class="font-mono text-xs text-gray-500 tracking-widest whitespace-nowrap">EVIDENCE FILES × 20筆金流解密</span>
+  </div>
+  <h2 class="text-3xl font-black text-center mb-2">說法 vs. 判決</h2>
+  <p class="text-center text-gray-500 text-sm mb-8">點擊每張卡片，翻開一審真相</p>
 
-      <!-- LEFT: Text -->
+  <div class="flex flex-wrap justify-center gap-3 mb-10" id="filter-bar">
+    <button class="cat-btn active px-5 py-2.5 rounded-full text-sm font-mono tracking-wider" data-cat="all">全部 (20)</button>
+    <button class="cat-btn px-5 py-2.5 rounded-full text-sm font-mono tracking-wider" data-cat="misappropriation">政治獻金侵占 (4)</button>
+    <button class="cat-btn px-5 py-2.5 rounded-full text-sm font-mono tracking-wider" data-cat="breach">背信挪用 (1)</button>
+    <button class="cat-btn px-5 py-2.5 rounded-full text-sm font-mono tracking-wider" data-cat="bribery">京華城收賄圖利 (6)</button>
+    <button class="cat-btn px-5 py-2.5 rounded-full text-sm font-mono tracking-wider" data-cat="unreported">申報不實 (9)</button>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="cards-grid"></div>
+
+  <div class="flex flex-wrap justify-center gap-5 mt-10 text-sm font-mono text-gray-500">
+    <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full inline-block" style="background:#ef4444;"></span>判決有罪</span>
+    <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full inline-block" style="background:#fb923c;"></span>未申報</span>
+    <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full inline-block" style="background:#f59e0b;"></span>有罪緩刑</span>
+    <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full inline-block" style="background:#6b7280;"></span>證據不足</span>
+    <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full inline-block" style="background:#8b5cf6;"></span>犯後態度</span>
+  </div>
+</section>
+
+<!-- ══ MONEY FLOW ══ -->
+<section id="money-flow" class="py-24 px-6 max-w-6xl mx-auto">
+  <div class="deco-line mb-10">
+    <span class="font-mono text-xs text-gray-500 tracking-widest whitespace-nowrap">MONEY TRAIL × 資金追蹤圖解</span>
+  </div>
+  <h2 class="text-3xl font-black text-center mb-2">錢，去了哪裡？</h2>
+  <p class="text-center text-gray-500 text-sm mb-10">20筆現金 · 兩條路線 · 一張圖看清楚流向</p>
+
+  <!-- Tab switcher -->
+  <div style="display:flex;justify-content:center;gap:12px;margin-bottom:40px;">
+    <button class="mf-tab mf-tab-active" data-mf="0" style="padding:10px 22px;border-radius:99px;border:1px solid rgba(245,158,11,.6);background:rgba(245,158,11,.12);color:#f59e0b;font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.06em;cursor:pointer;transition:.22s;display:flex;align-items:center;gap:6px;">
+      <iconify-icon icon="mdi:cash-multiple" style="font-size:1rem;"></iconify-icon> 政治獻金黑洞
+    </button>
+    <button class="mf-tab" data-mf="1" style="padding:10px 22px;border-radius:99px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#6b7280;font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.06em;cursor:pointer;transition:.22s;display:flex;align-items:center;gap:6px;">
+      <iconify-icon icon="mdi:city-variant-outline" style="font-size:1rem;"></iconify-icon> 京華城賄賂路線
+    </button>
+  </div>
+
+  <!-- ── Panel 0: 政治獻金黑洞 ──────────────────────────────────── -->
+  <div class="mf-panel" id="mf-panel-0" style="position:relative;">
+    <svg id="mf-svg-0" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible;"></svg>
+
+    <div style="display:grid;grid-template-columns:1fr 150px 1fr;gap:0;align-items:center;position:relative;z-index:2;">
+
+      <!-- LEFT: Sources -->
+      <div style="display:flex;flex-direction:column;gap:10px;" id="mf-src-0">
+
+        <div class="mf-source-node" style="background:rgba(255,255,255,.03);border:1px solid rgba(245,158,11,.22);border-radius:12px;padding:14px 16px;">
+          <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#4b5563;margin-bottom:5px;letter-spacing:.06em;">CASE #01–03 · 三筆現金捐款</div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">謝國樑母親 · 王美文 · 林命群</div>
+          <div style="font-family:'Space Mono',monospace;color:#f59e0b;font-size:.85rem;font-weight:700;">各 200萬，共 600萬</div>
+          <div style="font-size:.7rem;color:#6b7280;margin-top:4px;">現金交付市長室，未入黨務專戶</div>
+        </div>
+
+        <div class="mf-source-node" style="background:rgba(255,255,255,.03);border:1px solid rgba(245,158,11,.22);border-radius:12px;padding:14px 16px;">
+          <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#4b5563;margin-bottom:5px;letter-spacing:.06em;">CASE #04 · 肖像授權金</div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">木可公司政治獻金</div>
+          <div style="font-family:'Space Mono',monospace;color:#f59e0b;font-size:.85rem;font-weight:700;">6,134萬</div>
+          <div style="font-size:.7rem;color:#6b7280;margin-top:4px;">以肖像授權為包裝，洗入私人公司</div>
+        </div>
+
+        <div class="mf-source-node" style="background:rgba(255,255,255,.03);border:1px solid rgba(245,158,11,.22);border-radius:12px;padding:14px 16px;">
+          <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#4b5563;margin-bottom:5px;letter-spacing:.06em;">CASE #05 · 公款挪用</div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">眾望基金會</div>
+          <div style="font-family:'Space Mono',monospace;color:#f59e0b;font-size:.85rem;font-weight:700;">827萬</div>
+          <div style="font-size:.7rem;color:#6b7280;margin-top:4px;">挪用公益資金支付競總員工薪資</div>
+        </div>
+
+        <div class="mf-source-node" style="background:rgba(255,255,255,.03);border:1px solid rgba(251,146,60,.2);border-radius:12px;padding:14px 16px;">
+          <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#4b5563;margin-bottom:5px;letter-spacing:.06em;">CASE #12–20 · 9筆未申報</div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">陳盈助·范有偉·王令麟·林志郎等</div>
+          <div style="font-family:'Space Mono',monospace;color:#fb923c;font-size:.85rem;font-weight:700;">共 3,030萬</div>
+          <div style="font-size:.7rem;color:#6b7280;margin-top:4px;">現金具結屬實，USB帳冊全數確認</div>
+        </div>
+
+      </div>
+
+      <!-- CENTER HUB -->
+      <div style="display:flex;justify-content:center;">
+        <div class="mf-hub" style="background:rgba(10,10,28,1);border:2px solid rgba(245,158,11,.55);border-radius:16px;padding:22px 14px;text-align:center;min-width:110px;box-shadow:0 0 28px rgba(245,158,11,.12),0 0 60px rgba(245,158,11,.06);z-index:3;position:relative;">
+          <iconify-icon icon="mdi:account-circle" style="color:#f59e0b;font-size:2rem;display:block;margin-bottom:6px;"></iconify-icon>
+          <div style="font-weight:900;color:#f3f4f6;font-size:.95rem;line-height:1.2;margin-bottom:4px;">柯文哲</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.5rem;color:#f59e0b;letter-spacing:.1em;">MONEY HUB</div>
+          <div style="margin-top:8px;font-family:'Space Mono',monospace;font-size:.55rem;color:#6b7280;">市長任期<br>2014–2022</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div style="display:flex;flex-direction:column;gap:10px;" id="mf-res-0">
+
+        <div class="mf-result-node" style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.28);border-radius:12px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#6b7280;">共同公益侵占罪 · 3年6月</div>
+            <span class="badge-guilty" style="font-size:.55rem;padding:1px 7px;border-radius:99px;flex-shrink:0;margin-left:6px;">有罪</span>
+          </div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">流入木可公司</div>
+          <div style="font-family:'Space Mono',monospace;color:#ef4444;font-size:.85rem;font-weight:700;">6,134萬 + 全額沒收</div>
+        </div>
+
+        <div class="mf-result-node" style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.28);border-radius:12px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#6b7280;">公益侵占罪 · 判刑2年</div>
+            <span class="badge-guilty" style="font-size:.55rem;padding:1px 7px;border-radius:99px;flex-shrink:0;margin-left:6px;">有罪</span>
+          </div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">侵占入己</div>
+          <div style="font-family:'Space Mono',monospace;color:#ef4444;font-size:.85rem;font-weight:700;">600萬</div>
+        </div>
+
+        <div class="mf-result-node" style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.28);border-radius:12px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#6b7280;">共同背信罪 · 2年6月</div>
+            <span class="badge-guilty" style="font-size:.55rem;padding:1px 7px;border-radius:99px;flex-shrink:0;margin-left:6px;">有罪</span>
+          </div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">眾望基金會遭背信</div>
+          <div style="font-family:'Space Mono',monospace;color:#ef4444;font-size:.85rem;font-weight:700;">827萬</div>
+        </div>
+
+        <div class="mf-result-node" style="background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.25);border-radius:12px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#6b7280;">業務登載不實</div>
+            <span class="badge-unreported" style="font-size:.55rem;padding:1px 7px;border-radius:99px;flex-shrink:0;margin-left:6px;">未申報</span>
+          </div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">9筆未申報金流</div>
+          <div style="font-family:'Space Mono',monospace;color:#fb923c;font-size:.85rem;font-weight:700;">3,030萬</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Summary bar -->
+    <div style="margin-top:24px;padding:14px 22px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.18);border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
       <div>
-        <!-- Pill -->
-        <div id="hero-pill" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 opacity-0"
-             style="background:rgba(212,160,23,.07);border:1px solid rgba(212,160,23,.2);">
-          <div class="gold-dot" style="width:6px;height:6px;animation-duration:1.5s;"></div>
-          <span class="font-mono text-xs tracking-widest text-yellow-400/60 uppercase">法治素養闢謠計畫 · Ko FactCheck Project</span>
-        </div>
-
-        <!-- Headline -->
-        <h1 id="hero-h1" class="font-black leading-tight tracking-tight mb-6 select-none">
-          <span id="line1" class="block text-5xl sm:text-6xl lg:text-7xl text-white mb-2"></span>
-          <span id="line2" class="block text-xl sm:text-2xl lg:text-3xl font-bold"
-                style="background:linear-gradient(135deg,#f0c040 0%,#c9a227 40%,#f0c040 80%);-webkit-background-clip:text;background-clip:text;color:transparent;">這筆錢我真的不知道</span>
-        </h1>
-
-        <!-- Sub -->
-        <p id="hero-sub" class="text-base sm:text-lg text-white/45 mb-10 max-w-lg leading-relaxed opacity-0">
-          20 筆爭議資金 × 20 種說詞對照 ── 硬核實測法庭鐵證
-        </p>
-
-        <!-- Stats -->
-        <div id="stat-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10 opacity-0">
-          <div class="beam rounded-2xl p-4 text-center" style="background:rgba(13,13,28,.9);backdrop-filter:blur(12px);">
-            <div class="stat-num text-white mb-1">20</div>
-            <div class="text-xs text-white/35 tracking-wider">爭議案件</div>
-          </div>
-          <div class="beam rounded-2xl p-4 text-center" style="background:rgba(13,13,28,.9);backdrop-filter:blur(12px);">
-            <div class="stat-num text-red-400 mb-1">05</div>
-            <div class="text-xs text-white/35 tracking-wider">鐵證確立</div>
-          </div>
-          <div class="beam rounded-2xl p-4 text-center" style="background:rgba(13,13,28,.9);backdrop-filter:blur(12px);">
-            <div class="stat-num text-amber-400 mb-1">12</div>
-            <div class="text-xs text-white/35 tracking-wider">檢辯攻防中</div>
-          </div>
-          <div class="beam rounded-2xl p-4 text-center" style="background:rgba(13,13,28,.9);backdrop-filter:blur(12px);">
-            <div class="stat-num text-sky-400 mb-1">03</div>
-            <div class="text-xs text-white/35 tracking-wider">靜候宣判</div>
-          </div>
-        </div>
-
-        <!-- CTA -->
-        <div id="cta-row" class="flex flex-col sm:flex-row gap-3 opacity-0">
-          <a href="#cases" class="mag-btn mag-btn-primary" id="cta-primary">
-            <iconify-icon icon="mdi:magnify-scan"></iconify-icon>
-            立即解鎖真相
-          </a>
-          <a href="#legend" class="mag-btn mag-btn-ghost" id="cta-ghost">
-            <iconify-icon icon="mdi:information-outline"></iconify-icon>
-            判讀方法
-          </a>
-        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#6b7280;letter-spacing:.06em;margin-bottom:3px;">侵占路線 · 涉案金額總計</div>
+        <div style="font-size:.78rem;color:#9ca3af;">Cases #01–05 · #12–20 · 共14筆</div>
       </div>
-
-      <!-- RIGHT: Canvas Network -->
-      <div class="hidden lg:block relative" style="height:520px;">
-        <!-- [主腦決定：金流網絡圖 — 以柯文哲為中心，8大金主為衛星節點，金色動態流線，hover高亮互動] -->
-        <canvas id="hero-canvas"></canvas>
-        <!-- Edge gradient to blend left side -->
-        <div style="position:absolute;top:0;left:0;bottom:0;width:30%;background:linear-gradient(90deg,#07070f,transparent);pointer-events:none;"></div>
-        <!-- Label -->
-        <div style="position:absolute;bottom:12px;right:12px;" class="font-mono text-[10px] text-white/20 tracking-widest uppercase">金流關係網絡 · 主要涉案人</div>
-      </div>
-
-    </div>
-
-    <!-- Scroll hint -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-20 pointer-events-none">
-      <span class="font-mono text-[10px] tracking-widest uppercase text-white/60">Scroll</span>
-      <div class="w-px h-10 bg-gradient-to-b from-white/60 to-transparent"></div>
-    </div>
-  </section>
-
-  <!-- ════ LEGEND ════ -->
-  <section id="legend" class="py-24 px-6">
-    <div class="max-w-7xl mx-auto">
-
-      <div class="flex items-center gap-4 mb-14">
-        <span class="sec-label">// 01</span>
-        <h2 class="text-2xl font-bold text-white">判讀指南</h2>
-        <div class="flex-1 h-px bg-white/[0.06]"></div>
-      </div>
-
-      <!-- Top row: 3 legend cards + donut chart -->
-      <div class="grid lg:grid-cols-[1fr_1fr_1fr_auto] gap-5 items-start mb-10">
-
-        <!-- Card: False -->
-        <div class="legend-card border border-red-500/20" style="background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(13,13,28,1));">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(239,68,68,.15);">
-              <iconify-icon icon="mdi:close-circle" class="text-red-400 text-xl"></iconify-icon>
-            </div>
-            <div>
-              <div class="font-bold text-red-300 text-sm">鐵證確立</div>
-              <div class="font-mono text-[10px] text-red-500/55 tracking-wider">DEBUNKED</div>
-            </div>
-          </div>
-          <p class="text-sm text-white/55 leading-relaxed">柯Ｐ辯方已無法再主張「不知真假」或「缺乏實據」——法庭證人證詞與客觀卷證已確實推翻其說法。</p>
-          <div class="prog-track mt-4">
-            <div class="prog-fill bg-red-500" style="width:100%;" data-target="25"></div>
-          </div>
-          <div class="flex justify-between mt-1.5">
-            <span class="font-mono text-[10px] text-red-400/50">5 案件</span>
-            <span class="font-mono text-[10px] text-white/20">25%</span>
-          </div>
-        </div>
-
-        <!-- Card: Ongoing -->
-        <div class="legend-card border border-amber-500/20" style="background:linear-gradient(135deg,rgba(245,158,11,.07),rgba(13,13,28,1));">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(245,158,11,.15);">
-              <iconify-icon icon="mdi:scale-balance" class="text-amber-400 text-xl"></iconify-icon>
-            </div>
-            <div>
-              <div class="font-bold text-amber-300 text-sm">檢辯攻防中</div>
-              <div class="font-mono text-[10px] text-amber-500/55 tracking-wider">IN TRIAL</div>
-            </div>
-          </div>
-          <p class="text-sm text-white/55 leading-relaxed">雙方就法律定性、資金流向或對價關係存在爭議，屬正常司法程序，尚無定論。</p>
-          <div class="prog-track mt-4">
-            <div class="prog-fill bg-amber-500" style="width:100%;" data-target="60"></div>
-          </div>
-          <div class="flex justify-between mt-1.5">
-            <span class="font-mono text-[10px] text-amber-400/50">12 案件</span>
-            <span class="font-mono text-[10px] text-white/20">60%</span>
-          </div>
-        </div>
-
-        <!-- Card: Pending -->
-        <div class="legend-card border border-sky-500/20" style="background:linear-gradient(135deg,rgba(56,189,248,.07),rgba(13,13,28,1));">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(56,189,248,.15);">
-              <iconify-icon icon="mdi:gavel" class="text-sky-400 text-xl"></iconify-icon>
-            </div>
-            <div>
-              <div class="font-bold text-sky-300 text-sm">靜候宣判</div>
-              <div class="font-mono text-[10px] text-sky-500/55 tracking-wider">VERDICT PENDING</div>
-            </div>
-          </div>
-          <p class="text-sm text-white/55 leading-relaxed">關鍵事實已進入法官審認階段，判決結果將決定最終法律責任歸屬。</p>
-          <div class="prog-track mt-4">
-            <div class="prog-fill bg-sky-500" style="width:100%;" data-target="15"></div>
-          </div>
-          <div class="flex justify-between mt-1.5">
-            <span class="font-mono text-[10px] text-sky-400/50">3 案件</span>
-            <span class="font-mono text-[10px] text-white/20">15%</span>
-          </div>
-        </div>
-
-        <!-- Donut Chart -->
-        <div class="flex flex-col items-center gap-4 px-4">
-          <svg id="donut-svg" viewBox="0 0 200 200" class="w-44 h-44" style="overflow:visible;">
-            <!-- Background ring -->
-            <circle cx="100" cy="100" r="68" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="22"/>
-            <!-- false: 25%, starts at 0 — dashoffset=0 → solid appears at top -->
-            <circle id="seg-false" cx="100" cy="100" r="68" fill="none" stroke="#ef4444" stroke-width="22"
-              stroke-dasharray="0 427" stroke-dashoffset="0"
-              transform="rotate(-90 100 100)"
-              style="transition:stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1)"/>
-            <!-- ongoing: 60%, starts at 25%=107px — dashoffset = C-107 = 320 -->
-            <circle id="seg-ongoing" cx="100" cy="100" r="68" fill="none" stroke="#f59e0b" stroke-width="22"
-              stroke-dasharray="0 427" stroke-dashoffset="320"
-              transform="rotate(-90 100 100)"
-              style="transition:stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1) .15s"/>
-            <!-- pending: 15%, starts at 85%=363px — dashoffset = C-363 = 64 -->
-            <circle id="seg-pending" cx="100" cy="100" r="68" fill="none" stroke="#38bdf8" stroke-width="22"
-              stroke-dasharray="0 427" stroke-dashoffset="64"
-              transform="rotate(-90 100 100)"
-              style="transition:stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1) .3s"/>
-            <!-- Center -->
-            <text x="100" y="93" text-anchor="middle" fill="white"
-                  font-size="26" font-weight="700" font-family="Space Mono,monospace">20</text>
-            <text x="100" y="113" text-anchor="middle" fill="rgba(255,255,255,0.35)"
-                  font-size="9" font-family="Noto Sans TC,sans-serif">總案件數</text>
-          </svg>
-          <!-- Legend labels -->
-          <div class="flex flex-col gap-1.5 text-xs">
-            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-red-500 shrink-0"></span><span class="text-white/55">鐵證確立 25%</span></div>
-            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-amber-500 shrink-0"></span><span class="text-white/55">檢辯攻防中 60%</span></div>
-            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-sky-500 shrink-0"></span><span class="text-white/55">靜候宣判 15%</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom row: 3 core legal concepts -->
-      <div class="mt-4">
-        <div class="flex items-center gap-3 mb-5">
-          <span class="sec-label">核心法律爭點</span>
-          <div class="flex-1 h-px bg-white/[0.08]"></div>
-        </div>
-        <div class="grid sm:grid-cols-3 gap-4">
-          <div class="concept-card">
-            <div class="concept-num">爭點 01 · Quid Pro Quo</div>
-            <h4 class="font-bold text-white text-sm mb-2">對價關係</h4>
-            <p class="text-xs text-white/50 leading-relaxed">賄賂罪的核心要件。檢方需證明：金主給錢，與市府給出的行政利益（如容積率放行），兩者之間存在明確的事先約定或默契。無對價關係則不構成賄賂。</p>
-          </div>
-          <div class="concept-card">
-            <div class="concept-num">爭點 02 · Reservoir Theory</div>
-            <h4 class="font-bold text-white text-sm mb-2">大水庫理論</h4>
-            <p class="text-xs text-white/50 leading-relaxed">辯方核心主張：所有現金流入一個「共同水庫」，統一用於選舉活動支出，並非流入個人口袋。若成立，則為漏報政治獻金的行政瑕疵，而非貪污侵占。</p>
-          </div>
-          <div class="concept-card">
-            <div class="concept-num">爭點 03 · Public Benefit Fraud</div>
-            <h4 class="font-bold text-white text-sm mb-2">公益侵占</h4>
-            <p class="text-xs text-white/50 leading-relaxed">公職人員以商業合約名義（如肖像授權、顧問費），將公務機關資源或公益捐款導入私人帳戶的行為。即使有合約包裝，仍可能構成「公益侵占罪」。</p>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ════ FILTER BAR ════ -->
-  <div id="filter-bar" class="sticky z-[49] px-6 py-3 border-b border-white/[0.05]"
-       style="background:#07070f;top:52px;">
-    <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto"
-         style="scrollbar-width:none;-ms-overflow-style:none;">
-      <span class="sec-label mr-1 shrink-0">Filter:</span>
-      <button class="flt-btn active shrink-0" data-f="all"     onclick="filterCases('all')">All</button>
-      <button class="flt-btn shrink-0"         data-f="false"   onclick="filterCases('false')">鐵證確立</button>
-      <button class="flt-btn shrink-0"         data-f="ongoing" onclick="filterCases('ongoing')">檢辯攻防中</button>
-      <button class="flt-btn shrink-0"         data-f="pending" onclick="filterCases('pending')">靜候宣判</button>
-      <span id="case-counter" class="ml-auto font-mono text-xs text-white/25 shrink-0 pl-2">20 / 20</span>
+      <div style="font-weight:900;color:#ef4444;font-size:1.4rem;font-family:'Space Mono',monospace;">≈ 10,591萬</div>
     </div>
   </div>
 
-  <!-- ════ CASES GRID ════ -->
-  <section id="cases" class="py-20 px-6">
-    <div class="max-w-7xl mx-auto">
-      <div class="flex items-center gap-4 mb-14">
-        <span class="sec-label">// 02</span>
-        <h2 class="text-2xl font-bold text-white">案件解碼</h2>
-        <div class="flex-1 h-px bg-white/[0.06]"></div>
+  <!-- ── Panel 1: 京華城賄賂路線 ──────────────────────────────────── -->
+  <div class="mf-panel" id="mf-panel-1" style="display:none;position:relative;">
+    <svg id="mf-svg-1" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible;"></svg>
+
+    <div style="display:grid;grid-template-columns:1fr 150px 1fr;gap:0;align-items:center;position:relative;z-index:2;">
+
+      <!-- LEFT: Bribers -->
+      <div style="display:flex;flex-direction:column;gap:10px;" id="mf-src-1">
+
+        <div class="mf-source-node" style="background:rgba(255,255,255,.03);border:1px solid rgba(139,92,246,.25);border-radius:12px;padding:14px 16px;">
+          <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#4b5563;margin-bottom:5px;letter-spacing:.06em;">CASE #06 · 違背職務行賄</div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">朱亞虎 / 鼎越</div>
+          <div style="font-family:'Space Mono',monospace;color:#8b5cf6;font-size:.85rem;font-weight:700;">210萬</div>
+          <div style="font-size:.7rem;color:#6b7280;margin-top:4px;">7名人頭分批現金行賄「打通關」</div>
+        </div>
+
+        <div class="mf-source-node" style="background:rgba(255,255,255,.03);border:1px solid rgba(107,114,128,.2);border-radius:12px;padding:14px 16px;">
+          <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#4b5563;margin-bottom:5px;letter-spacing:.06em;">CASE #08 · USB帳冊記錄</div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">沈慶京 / 威京集團</div>
+          <div style="font-family:'Space Mono',monospace;color:#9ca3af;font-size:.85rem;font-weight:700;">1,500萬（證據不足）</div>
+          <div style="font-size:.7rem;color:#6b7280;margin-top:4px;">提領記錄與帳冊吻合，缺交付補強</div>
+        </div>
+
+        <div class="mf-source-node" style="background:rgba(255,255,255,.03);border:1px solid rgba(139,92,246,.2);border-radius:12px;padding:14px 16px;">
+          <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#4b5563;margin-bottom:5px;letter-spacing:.06em;">CASE #09 · 圖利共犯</div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">彭振聲 · 邵琇珮</div>
+          <div style="font-family:'Space Mono',monospace;color:#8b5cf6;font-size:.85rem;font-weight:700;">市府配合護航</div>
+          <div style="font-size:.7rem;color:#6b7280;margin-top:4px;">庭上認罪，依法減刑緩刑3年</div>
+        </div>
+
+        <div class="mf-source-node" style="background:rgba(255,255,255,.03);border:1px solid rgba(139,92,246,.2);border-radius:12px;padding:14px 16px;">
+          <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#4b5563;margin-bottom:5px;letter-spacing:.06em;">CASE #10–11 · 共犯 / 湮滅</div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">黃景茂 · 橘子（許芷瑜）</div>
+          <div style="font-family:'Space Mono',monospace;color:#8b5cf6;font-size:.85rem;font-weight:700;">護航 + 潛逃</div>
+          <div style="font-size:.7rem;color:#6b7280;margin-top:4px;">前都發局長護航；秘書出境湮證</div>
+        </div>
+
       </div>
-      <div id="cases-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+      <!-- CENTER HUB -->
+      <div style="display:flex;justify-content:center;">
+        <div class="mf-hub" style="background:rgba(10,10,28,1);border:2px solid rgba(139,92,246,.55);border-radius:16px;padding:22px 14px;text-align:center;min-width:110px;box-shadow:0 0 28px rgba(139,92,246,.12),0 0 60px rgba(139,92,246,.06);z-index:3;position:relative;">
+          <iconify-icon icon="mdi:office-building-outline" style="color:#8b5cf6;font-size:2rem;display:block;margin-bottom:6px;"></iconify-icon>
+          <div style="font-weight:900;color:#f3f4f6;font-size:.9rem;line-height:1.2;margin-bottom:4px;">市府裁量</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.5rem;color:#8b5cf6;letter-spacing:.1em;">PIVOT</div>
+          <div style="margin-top:8px;font-family:'Space Mono',monospace;font-size:.55rem;color:#6b7280;">柯文哲<br>核准放行</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div style="display:flex;flex-direction:column;gap:10px;" id="mf-res-1">
+
+        <div class="mf-result-node" style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.28);border-radius:12px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#6b7280;">違背職務收賄 · 13年</div>
+            <span class="badge-guilty" style="font-size:.55rem;padding:1px 7px;border-radius:99px;flex-shrink:0;margin-left:6px;">有罪</span>
+          </div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">柯收受賄款</div>
+          <div style="font-family:'Space Mono',monospace;color:#ef4444;font-size:.85rem;font-weight:700;">210萬</div>
+        </div>
+
+        <div class="mf-result-node" style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.28);border-radius:12px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#6b7280;">對主管事務圖利罪</div>
+            <span class="badge-guilty" style="font-size:.55rem;padding:1px 7px;border-radius:99px;flex-shrink:0;margin-left:6px;">有罪</span>
+          </div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">容積獎勵20%放行</div>
+          <div style="font-family:'Space Mono',monospace;color:#ef4444;font-size:.85rem;font-weight:700;">圖利逾 121億</div>
+          <div style="font-size:.7rem;color:#6b7280;margin-top:4px;">沒收121億545萬6,748元</div>
+        </div>
+
+        <div class="mf-result-node" style="background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#6b7280;">圖利共犯 · 緩刑3年</div>
+            <span class="badge-probation" style="font-size:.55rem;padding:1px 7px;border-radius:99px;flex-shrink:0;margin-left:6px;">有罪緩刑</span>
+          </div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">彭振聲 · 邵琇珮認罪</div>
+          <div style="font-family:'Space Mono',monospace;color:#f59e0b;font-size:.85rem;font-weight:700;">圖利共犯緩刑</div>
+        </div>
+
+        <div class="mf-result-node" style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.28);border-radius:12px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.57rem;color:#6b7280;">圖利共犯 · 判6年6月</div>
+            <span class="badge-guilty" style="font-size:.55rem;padding:1px 7px;border-radius:99px;flex-shrink:0;margin-left:6px;">有罪</span>
+          </div>
+          <div style="font-weight:800;color:#f3f4f6;font-size:.92rem;margin-bottom:3px;">黃景茂護航 · 橘子潛逃</div>
+          <div style="font-family:'Space Mono',monospace;color:#ef4444;font-size:.85rem;font-weight:700;">護航圖利 + 犯後惡劣</div>
+        </div>
+
+      </div>
     </div>
-  </section>
 
-  <!-- ════ VERDICT COUNTDOWN ════ -->
-  <section class="py-20 px-6 border-t border-white/[0.05] text-center" style="background:linear-gradient(180deg,rgba(7,7,15,0) 0%,rgba(13,10,5,.6) 100%);">
-    <div class="max-w-3xl mx-auto">
-      <div class="font-mono text-[10px] tracking-[.22em] text-white/30 uppercase mb-3">⏳ 距離宣判倒數</div>
-      <h2 class="text-2xl sm:text-3xl font-bold text-white/80 mb-2">柯文哲涉貪三案</h2>
-      <div class="flex justify-center flex-wrap gap-2 mb-4">
-        <span class="font-mono text-[11px] px-2.5 py-1 rounded-full text-amber-400/70" style="border:1px solid rgba(212,160,23,.25);">京華城容積獎勵案</span>
-        <span class="font-mono text-[11px] px-2.5 py-1 rounded-full text-amber-400/70" style="border:1px solid rgba(212,160,23,.25);">政治獻金侵占案</span>
-        <span class="font-mono text-[11px] px-2.5 py-1 rounded-full text-amber-400/70" style="border:1px solid rgba(212,160,23,.25);">眾望基金會背信案</span>
-      </div>
-      <p class="font-mono text-sm text-amber-400/65 mb-12 tracking-wider">2026 年 3 月 26 日 · 台灣台北地方法院</p>
-
-      <!-- Countdown digits -->
-      <div id="vcd-expired-msg" class="hidden font-mono text-2xl text-amber-400 tracking-widest mb-10">⚖️ 本案已宣判</div>
-      <div id="vcd-display" class="flex justify-center items-start gap-1.5 sm:gap-6 mb-12">
-        <div class="text-center"><div id="vcd-d" class="vcd-num">--</div><div class="vcd-lbl">天</div></div>
-        <div class="vcd-sep">:</div>
-        <div class="text-center"><div id="vcd-h" class="vcd-num">--</div><div class="vcd-lbl">時</div></div>
-        <div class="vcd-sep">:</div>
-        <div class="text-center"><div id="vcd-m" class="vcd-num">--</div><div class="vcd-lbl">分</div></div>
-        <div class="vcd-sep">:</div>
-        <div class="text-center"><div id="vcd-s" class="vcd-num">--</div><div class="vcd-lbl">秒</div></div>
-      </div>
-
-      <button onclick="openCountdownCard()"
-              class="mag-btn beam inline-flex items-center gap-2 px-7 py-3 rounded-full font-mono text-sm tracking-wider"
-              style="background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.4);color:#f0c040;cursor:none;">
-        <iconify-icon icon="mdi:share-variant"></iconify-icon> 分享此倒數
-      </button>
-    </div>
-  </section>
-
-  <!-- ════ FOOTER ════ -->
-  <footer class="py-14 px-6 border-t border-white/[0.05]">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+    <!-- Summary bar -->
+    <div style="margin-top:24px;padding:14px 22px;background:rgba(139,92,246,.05);border:1px solid rgba(139,92,246,.18);border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
       <div>
-        <div class="flex items-center gap-2.5 mb-3">
-          <div class="gold-dot" style="width:6px;height:6px;"></div>
-          <span class="font-mono text-xs tracking-widest text-white/35 uppercase">Ko Truth Lab · 法治素養闢謠計畫</span>
-        </div>
-        <p class="text-xs text-white/22 max-w-sm leading-relaxed">本頁資料根據公開庭審記錄整理，僅供法治素養教育目的，不代表任何政治立場。所有資料以法院公開審判記錄為準。</p>
+        <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#6b7280;letter-spacing:.06em;">賄賂路線 · 一審圖利金額</div>
+        <div style="font-size:.78rem;color:#9ca3af;margin-top:3px;">Cases #06–11 · 共6筆 · 含共犯</div>
       </div>
-      <div class="text-right shrink-0">
-        <div class="font-mono text-[10px] text-white/18 mb-1 uppercase tracking-widest">Last Update</div>
-        <div class="font-mono text-xl text-white/35">2026.03.11</div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ════ SHARE MODAL ════ -->
-  <div id="share-modal" onclick="if(event.target===this)closeShareCard();">
-    <div id="sc-wrapper">
-      <!-- Close -->
-      <button id="sc-close-btn" onclick="closeShareCard();">
-        <iconify-icon icon="mdi:close"></iconify-icon>
-      </button>
-
-      <!-- Capturable card -->
-      <div id="sc-card">
-        <div class="sc-corner sc-tl"></div>
-        <div class="sc-corner sc-tr"></div>
-        <div class="sc-corner sc-bl"></div>
-        <div class="sc-corner sc-br"></div>
-
-        <!-- Header: pixel art + brand -->
-        <div class="sc-header">
-          <div class="sc-header-grid"></div>
-          <canvas id="sc-canvas" width="140" height="140"></canvas>
-<div class="sc-brand">
-            <div class="sc-brand-title">KO<br>FACTCHECK</div>
-            <div class="sc-brand-sub">法治素養闢謠計畫</div>
-            <div class="sc-badge-row">
-              <span id="sc-badge" class="sc-status-badge badge-false">鐵證確立</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Body -->
-        <div class="sc-body">
-          <div class="sc-num-row">
-            <span id="sc-num" class="sc-num">01</span>
-          </div>
-          <div id="sc-title" class="sc-title-text"></div>
-          <div><span id="sc-cat" class="sc-cat-tag"></span></div>
-          <p id="sc-claim" class="sc-text claim"></p>
-          <div class="sc-divider"></div>
-          <div class="sc-section-lbl truth">法庭事實</div>
-          <p id="sc-truth" class="sc-text truth"></p>
-        </div>
-
-        <!-- Footer -->
-        <div class="sc-footer">
-          <div class="sc-footer-brand">
-            <span style="width:5px;height:5px;border-radius:50%;background:#d4a017;display:inline-block;flex-shrink:0;"></span>
-            Ko FactCheck Project
-          </div>
-          <span class="sc-footer-url">ko-factcheck.app</span>
-        </div>
-      </div>
-
-      <!-- Action buttons (not in download) -->
-      <div class="sc-actions">
-        <button class="sc-action-btn gold" onclick="downloadShareCard(this)">
-          <iconify-icon icon="mdi:download-outline"></iconify-icon>
-          下載圖片
-        </button>
-        <button id="sc-copy-btn" class="sc-action-btn" onclick="copyShareLink()">
-          <iconify-icon icon="mdi:link-variant"></iconify-icon>
-          複製連結
-        </button>
-        <button class="sc-action-btn" onclick="nativeShare()">
-          <iconify-icon icon="mdi:share-variant-outline"></iconify-icon>
-          分享
-        </button>
-      </div>
+      <div style="font-weight:900;color:#8b5cf6;font-size:1.4rem;font-family:'Space Mono',monospace;">逾 121億</div>
     </div>
   </div>
 
-  <!-- ════ COUNTDOWN SHARE MODAL ════ -->
-  <div id="vcd-modal" onclick="if(event.target===this)closeCountdownCard();">
-    <div style="position:relative;">
-      <button onclick="closeCountdownCard();"
-              style="position:absolute;top:-10px;right:-10px;width:30px;height:30px;border-radius:50%;
-                     background:rgba(7,7,15,.9);border:1px solid rgba(255,255,255,.12);
-                     color:rgba(255,255,255,.55);font-size:.75rem;cursor:none;
-                     display:flex;align-items:center;justify-content:center;z-index:10;">
-        <iconify-icon icon="mdi:close"></iconify-icon>
-      </button>
+  <div class="glow-line mt-12"></div>
+</section>
 
-      <!-- Capturable card -->
-      <div id="vcd-card">
-        <div class="vcd-card-header">
-          <div class="vcd-card-title">⏳ 距宣判倒數 · 快照</div>
-          <div class="vcd-card-case">柯文哲涉貪三案</div>
-          <div class="vcd-card-date">2026.03.26 · 台北地方法院</div>
-        </div>
-        <div class="vcd-card-nums">
-          <div class="vcd-card-unit"><div id="vcd-snap-d" class="vcd-card-n">00</div><div class="vcd-card-l">天</div></div>
-          <div class="vcd-card-colon">:</div>
-          <div class="vcd-card-unit"><div id="vcd-snap-h" class="vcd-card-n">00</div><div class="vcd-card-l">時</div></div>
-          <div class="vcd-card-colon">:</div>
-          <div class="vcd-card-unit"><div id="vcd-snap-m" class="vcd-card-n">00</div><div class="vcd-card-l">分</div></div>
-          <div class="vcd-card-colon">:</div>
-          <div class="vcd-card-unit"><div id="vcd-snap-s" class="vcd-card-n">00</div><div class="vcd-card-l">秒</div></div>
-        </div>
-        <div class="vcd-card-snap" id="vcd-snap-time">快照時間 · ──</div>
-        <div class="vcd-card-foot">
-          <div class="vcd-card-brand">Ko FactCheck · 法治素養闢謠計畫</div>
-          <div class="vcd-card-url">ko-factcheck.org</div>
-        </div>
+<!-- ══ VERDICT SUMMARY ══ -->
+<section class="py-24 px-6 max-w-4xl mx-auto">
+  <div class="deco-line mb-10">
+    <span class="font-mono text-xs text-gray-500 tracking-widest whitespace-nowrap">VERDICT SUMMARY × 四大罪案結論</span>
+  </div>
+  <div class="grid sm:grid-cols-2 gap-5 mb-8">
+    <div class="p-6 rounded-2xl" style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);">
+      <div class="flex items-center gap-3 mb-3">
+        <iconify-icon icon="mdi:briefcase-outline" style="color:#f59e0b;font-size:1.4rem;"></iconify-icon>
+        <h3 class="font-black text-white">政治獻金公益侵占</h3>
       </div>
-
-      <!-- Actions -->
-      <div style="display:flex;gap:.6rem;margin-top:.85rem;justify-content:center;">
-        <button onclick="downloadCountdownCard(this)"
-                style="display:flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;
-                       border-radius:999px;font-size:.75rem;font-family:'Space Mono',monospace;
-                       background:rgba(212,160,23,.15);border:1px solid rgba(212,160,23,.45);
-                       color:#f0c040;cursor:none;transition:background .2s;">
-          <iconify-icon icon="mdi:download"></iconify-icon> 下載
-        </button>
-        <button onclick="nativeShare()"
-                style="display:flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;
-                       border-radius:999px;font-size:.75rem;font-family:'Space Mono',monospace;
-                       background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
-                       color:rgba(237,237,237,.6);cursor:none;transition:background .2s;">
-          <iconify-icon icon="mdi:share-variant-outline"></iconify-icon> 分享
-        </button>
+      <ul class="text-sm text-gray-400 space-y-1.5">
+        <li>· 謝+王+林 共600萬，侵占入己</li>
+        <li>· 木可肖像洗錢6,134萬 → <span style="color:#ef4444;">判刑 3年6月</span></li>
+      </ul>
+    </div>
+    <div class="p-6 rounded-2xl" style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);">
+      <div class="flex items-center gap-3 mb-3">
+        <iconify-icon icon="mdi:bank-outline" style="color:#f59e0b;font-size:1.4rem;"></iconify-icon>
+        <h3 class="font-black text-white">挪用眾望基金會背信</h3>
       </div>
+      <ul class="text-sm text-gray-400 space-y-1.5">
+        <li>· 挪用827萬支付競總員工薪資</li>
+        <li>· 構成背信罪 → <span style="color:#ef4444;">判刑 2年6月</span></li>
+      </ul>
+    </div>
+    <div class="p-6 rounded-2xl" style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);">
+      <div class="flex items-center gap-3 mb-3">
+        <iconify-icon icon="mdi:city-variant-outline" style="color:#f59e0b;font-size:1.4rem;"></iconify-icon>
+        <h3 class="font-black text-white">京華城違法容積（收賄）</h3>
+      </div>
+      <ul class="text-sm text-gray-400 space-y-1.5">
+        <li>· 朱亞虎210萬賄款：違背職務收賄</li>
+        <li>· <span style="color:#ef4444;">重判13年</span>（沈慶京1,500萬：證據不足）</li>
+      </ul>
+    </div>
+    <div class="p-6 rounded-2xl" style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);">
+      <div class="flex items-center gap-3 mb-3">
+        <iconify-icon icon="mdi:file-document-outline" style="color:#f59e0b;font-size:1.4rem;"></iconify-icon>
+        <h3 class="font-black text-white">政治獻金申報不實</h3>
+      </div>
+      <ul class="text-sm text-gray-400 space-y-1.5">
+        <li>· 9筆共3,030萬，USB帳冊全數確認</li>
+        <li>· 帳冊打臉所有「不知道」的說法</li>
+      </ul>
     </div>
   </div>
 
-  <!-- ════ CITATION STRIP ════ -->
-  <div class="px-6 py-5 border-t border-white/[0.04]" style="background:rgba(255,255,255,0.015);">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
-      <span class="font-mono text-[10px] tracking-widest text-white/25 uppercase shrink-0">資料來源</span>
-      <div class="w-px h-3 bg-white/10 hidden sm:block shrink-0"></div>
-      <div class="flex flex-wrap gap-x-5 gap-y-1.5">
-        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">北檢起訴書</span>
-        <span class="text-white/10 text-[10px]">·</span>
-        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">鏡週刊</span>
-        <span class="text-white/10 text-[10px]">·</span>
-        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">法律白話文</span>
-        <span class="text-white/10 text-[10px]">·</span>
-        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">公視新聞網</span>
-        <span class="text-white/10 text-[10px]">·</span>
-        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">苗博雅 YT</span>
-        <span class="text-white/10 text-[10px]">·</span>
-        <span class="font-mono text-[10px] text-white/30 hover:text-white/55 transition-colors cursor-default">風傳媒</span>
-      </div>
-    </div>
+  <div class="p-8 rounded-2xl text-center" style="background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.2);">
+    <p class="font-mono text-xs text-gray-500 mb-2 tracking-widest">合併執行刑（一審）</p>
+    <p class="text-5xl font-black mb-3" style="color:#f59e0b;font-family:'Space Mono',monospace;">17年以上</p>
+    <p class="text-gray-500 text-sm">二審上訴中 · 尚未定讞 · 本站僅呈現一審事實認定</p>
+    <button class="share-btn" style="margin-top:18px;font-size:.68rem;padding:.38rem .95rem;" onclick="openVerdictShare()">
+      <iconify-icon icon="mdi:share-variant-outline" style="font-size:.78rem;display:flex;"></iconify-icon>&nbsp;分享一審結論
+    </button>
   </div>
+</section>
 
-  <!-- ════ JAVASCRIPT ════ -->
-  <script>
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
-  }
+<!-- FOOTER -->
+<footer class="py-12 px-6 text-center border-t" style="border-color:rgba(255,255,255,.06);">
+  <div class="flex items-center justify-center gap-3 mb-4">
+    <span class="font-mono text-sm font-bold tracking-widest" style="color:#f59e0b;">KO FACTCHECK</span>
+  </div>
+  <p class="text-gray-600 text-xs max-w-xl mx-auto leading-relaxed">
+    資料來源：臺灣臺北地方法院113年金訴字第51號判決新聞稿及庭審公開紀錄。<br/>
+    目的為法治素養教育，不代表任何政治立場。二審結果以法院正式判決為準。
+  </p>
+  <p class="text-gray-700 text-xs mt-4 font-mono">ko-factcheck.org · 2026</p>
+</footer>
 
-  /* ─── Case Data ─── */
-  const CASES = [
-    { id:1,  num:'01', title:'博弈大亨 陳盈助',          amount:'300 萬',   category:'政治獻金', status:'false',
-      claim:'工作簿不知真假，在庭訊中證稱不認識柯文哲，沒有捐款。',
-      truth:'【證人已打臉】其親信邱清章已作證，親自拿300萬現金到市長室，交給正在踩飛輪的柯文哲。' },
-    { id:2,  num:'02', title:'東森集團 王令麟',           amount:'500 萬',   category:'政治獻金', status:'false',
-      claim:'工作簿不知真假，尚無公開報導顯示承認捐款。',
-      truth:'【證人已打臉】王令麟已親自出庭作證，承認面對柯文哲金錢需求時，請朋友代為捐款。' },
-    { id:3,  num:'03', title:'東森電視主張 高祥',         amount:'150 萬',   category:'政治獻金', status:'false',
-      claim:'工作簿不知真假，尚無公開報導顯示承認捐款。',
-      truth:'【客觀卷證】檢方傳喚USB名單上13人皆具結證實數字即金額，柯方放棄詰問形同默認。' },
-    { id:4,  num:'04', title:'名醫 林志郎',               amount:'500 萬',   category:'政治獻金', status:'false',
-      claim:'工作簿不知真假，尚無公開報導顯示承認捐款。',
-      truth:'【客觀卷證】名單金主皆具結證實數字為真，並非不知真假。柯方同樣放棄詰問。' },
-    { id:5,  num:'05', title:'前都發局長 黃景茂筆錄',     amount:'—',        category:'程序爭議', status:'false',
-      claim:'檢方捏造黃景茂「明知違法」的偵訊筆錄。',
-      truth:'【法庭勘驗】當庭勘驗影片確認黃花了22分鐘逐字閱讀並修改後才簽名，無捏造情事。' },
-    { id:6,  num:'06', title:'木可涉侵占罪爛帳',          amount:'6,234 萬', category:'侵占爭議', status:'ongoing',
-      claim:'負責人亂帳調查中，木可400萬轉入為柯文哲肖像權金。',
-      truth:'【檢辯攻防】檢方起訴假藉商業授權將公款洗入私人口袋涉「公益侵占」；辯方主張為合理商業模式。' },
-    { id:7,  num:'07', title:'挪用民眾黨基金會',          amount:'827 萬',   category:'背信爭議', status:'ongoing',
-      claim:'財務運作仍在接受調查與監督，尚未有最終結論。',
-      truth:'【檢辯攻防】檢方起訴挪用公款支付黨務薪資涉「背信罪」；辯方主張為內部資源調度。' },
-    { id:8,  num:'08', title:'悟覺妙天',                  amount:'1,000 萬', category:'侵占爭議', status:'ongoing',
-      claim:'行李箱內1000萬，存入新故鄉協會與協會零用金。',
-      truth:'【檢辯攻防】確實有收受現金，雙方就此款項是否構成違法侵占進行法律攻防。' },
-    { id:9,  num:'09', title:'勤業眾信會計師 范有偉',     amount:'500 萬',   category:'政治獻金', status:'ongoing',
-      claim:'偵訊時有說就是政治獻金。',
-      truth:'【檢辯攻防】范坦承在地下室親交500萬現金；辯方主張為單純政治獻金，無對價關係。' },
-    { id:10, num:'10', title:'謝國樑母親',                amount:'200 萬',   category:'大水庫理論', status:'ongoing',
-      claim:'捐給民眾黨，交給高虹安及賴香伶競選用。',
-      truth:'【檢辯攻防】證人邱佩琳證實拿現金到市長室；辯方主打「大水庫理論」（錢用於選舉非私用）。' },
-    { id:11, num:'11', title:'信義房屋董娘 王美文',       amount:'200 萬',   category:'大水庫理論', status:'ongoing',
-      claim:'捐給民眾黨，交給高虹安及賴香伶競選用。',
-      truth:'【檢辯攻防】款項確實存在，辯方主張為漏報政治獻金的行政瑕疵，而非貪污侵占。' },
-    { id:12, num:'12', title:'文華東方負責人 林命群',     amount:'200 萬',   category:'大水庫理論', status:'ongoing',
-      claim:'捐給民眾黨，交給高虹安及賴香伶競選用。',
-      truth:'【檢辯攻防】雙方就「政治獻金漏報」與「侵占公款」界線進行攻防。' },
-    { id:13, num:'13', title:'和泰興業董事長 蘇一仲',     amount:'30 萬',    category:'大水庫理論', status:'ongoing',
-      claim:'捐給賴香伶競選的政治獻金。',
-      truth:'【檢辯攻防】證實有錢流入，定罪取決於資金最終去向認定。' },
-    { id:14, num:'14', title:'富裔實業董事長 祝文定',     amount:'30 萬',    category:'大水庫理論', status:'ongoing',
-      claim:'捐給賴香伶競選的政治獻金。',
-      truth:'【檢辯攻防】大水庫理論適用性攻防，資金最終流向爭議持續。' },
-    { id:15, num:'15', title:'和泰車董事長 黃南光',       amount:'20 萬',    category:'大水庫理論', status:'ongoing',
-      claim:'捐給賴香伶競選的政治獻金。',
-      truth:'【檢辯攻防】大水庫理論適用性攻防，資金最終流向爭議持續。' },
-    { id:16, num:'16', title:'20% 容積獎勵適法性',        amount:'—',        category:'京華城',   status:'ongoing',
-      claim:'依都市計畫法第24條，市府與都委會有裁量權給予獎勵。',
-      truth:'【檢辯攻防】檢方指控京華城非都更案，違法「準用」都更獎勵；辯方主張法無明文不代表違法。' },
-    { id:17, num:'17', title:'秘書橘子 (許芷瑜) 角色',   amount:'1,500 萬', category:'京華城',   status:'ongoing',
-      claim:'人沒回來、錢沒扣到，缺乏直接金流實體證據。',
-      truth:'【檢辯攻防】檢方控橘子經手1500萬賄款並潛逃出境；辯方採「車手抗辯」質疑無實體金流。' },
-    { id:18, num:'18', title:'威京集團主席 沈慶京',       amount:'1,500 萬', category:'京華城',   status:'pending',
-      claim:'都說沒有金流了！',
-      truth:'【待法官定奪】檢方查出提領1600萬現金紀錄與USB帳冊；法官需判定是否與容積率放行具「對價關係」。' },
-    { id:19, num:'19', title:'鼎越前負責人 朱亞虎',       amount:'210 萬',   category:'京華城',   status:'pending',
-      claim:'政治獻金，朱亞虎自己揣測和京華城有關。',
-      truth:'【待法官定奪】朱在庭上認罪行賄「打通關」；辯方反控檢方脅迫取供，法官需裁定自白證據能力。' },
-    { id:20, num:'20', title:'彭振聲、邵琇珮認罪',        amount:'—',        category:'京華城',   status:'pending',
-      claim:'遭檢方疲勞轟炸、欺騙才認罪。',
-      truth:'【待法官定奪】兩名核心高官已在庭上承認「圖利罪」並求緩刑；法官需定奪其認罪是否牽連柯文哲。' },
-  ];
+<script>
+// ══════════════════════════════
+//  七嘴八舌 Hero Animation
+// ══════════════════════════════
+const PHRASES = [
+  { text: '這筆錢我真的不知道', size: 1.4, opacity: 0.07, blur: 2 },
+  { text: '收賄', size: 2.2, opacity: 0.06, blur: 2 },
+  { text: '帳冊', size: 1.8, opacity: 0.07, blur: 2 },
+  { text: '有罪', size: 2.6, opacity: 0.05, blur: 3 },
+  { text: '圖利121億', size: 1.2, opacity: 0.08, blur: 2 },
+  { text: '背信', size: 1.6, opacity: 0.06, blur: 2 },
+  { text: '侵占', size: 1.9, opacity: 0.05, blur: 3 },
+  { text: 'USB帳冊', size: 1.1, opacity: 0.08, blur: 2 },
+  { text: '17年', size: 2.4, opacity: 0.05, blur: 4 },
+  { text: '不知道', size: 1.5, opacity: 0.07, blur: 2 },
+  { text: '申報不實', size: 1.0, opacity: 0.08, blur: 2 },
+  { text: '京華城', size: 1.3, opacity: 0.07, blur: 2 },
+  { text: '放棄詰問', size: 0.9, opacity: 0.08, blur: 2 },
+  { text: '大水庫', size: 1.1, opacity: 0.07, blur: 2 },
+  { text: '認罪', size: 1.7, opacity: 0.06, blur: 3 },
+  { text: '法庭鐵證', size: 0.95, opacity: 0.08, blur: 2 },
+  { text: '20筆金流', size: 1.0, opacity: 0.08, blur: 2 },
+  { text: '對價關係', size: 0.9, opacity: 0.07, blur: 2 },
+  { text: '一審判決', size: 1.2, opacity: 0.07, blur: 2 },
+  { text: '政治獻金', size: 1.1, opacity: 0.08, blur: 2 },
+  { text: '沈慶京', size: 1.0, opacity: 0.07, blur: 2 },
+  { text: '朱亞虎', size: 0.95, opacity: 0.07, blur: 2 },
+  { text: '緩刑', size: 1.4, opacity: 0.06, blur: 3 },
+  { text: '木可', size: 1.6, opacity: 0.06, blur: 2 },
+  { text: '專戶', size: 1.0, opacity: 0.08, blur: 2 },
+  { text: '帳冊知道', size: 1.3, opacity: 0.07, blur: 2 },
+  { text: '裁量權', size: 0.9, opacity: 0.07, blur: 2 },
+  { text: '具結作證', size: 0.85, opacity: 0.08, blur: 2 },
+];
 
-  const S = {
-    false:   { label:'鐵證確立',   icon:'mdi:close-circle',  badge:'badge-false',   text:'text-red-400',   glow:'rgba(239,68,68,.06)' },
-    ongoing: { label:'檢辯攻防中', icon:'mdi:scale-balance', badge:'badge-ongoing', text:'text-amber-400', glow:'rgba(245,158,11,.06)' },
-    pending: { label:'靜候宣判',   icon:'mdi:gavel',          badge:'badge-pending', text:'text-sky-400',   glow:'rgba(56,189,248,.06)' },
-  };
+function initFloating() {
+  const layer = document.getElementById('float-layer');
+  const W = window.innerWidth;
+  const H = window.innerHeight;
 
-  /* ─── Render Cases ─── */
-  function renderCases(filter) {
-    const list = filter === 'all' ? CASES : CASES.filter(c => c.status === filter);
-    document.getElementById('case-counter').textContent = `${list.length} / ${CASES.length}`;
+  // Zone boundaries: left safe zone (0–19%), center dim zone (19–68%), right safe zone (68–100%)
+  // Side zones are away from the headline — phrases there can be readable
+  PHRASES.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.className = 'float-word';
+    el.textContent = p.text;
 
-    document.getElementById('cases-grid').innerHTML = list.map(c => {
-      const s = S[c.status];
-      const hasAmt = c.amount !== '—';
-      return `
-      <div class="case-card p-5" style="background:linear-gradient(145deg,${s.glow},#0d0d1c);">
+    // Cycle through zones: 0=left-side, 1=center, 2=right-side
+    const zone = i % 3;
+    let startX, finalOpacity, finalBlur, maxDriftX;
 
-        <!-- num + badge -->
-        <div class="flex items-start justify-between mb-3">
-          <span class="case-num">${c.num}</span>
-          <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium ${s.badge}">
-            <iconify-icon icon="${s.icon}" class="text-sm leading-none"></iconify-icon>
-            ${s.label}
-          </span>
+    if (zone === 0) {
+      // Left safe zone: keep within 0–18% width
+      startX      = Math.random() * (W * 0.18);
+      finalOpacity = 0.22 + Math.random() * 0.10;  // 0.22–0.32 — readable
+      finalBlur    = 1.5;                           // gentle soft blur
+      maxDriftX    = 70;   // small drift so they stay in the zone
+    } else if (zone === 2) {
+      // Right safe zone: 68–100% width
+      startX       = W * 0.68 + Math.random() * (W * 0.32);
+      finalOpacity = 0.22 + Math.random() * 0.10;
+      finalBlur    = 1.5;
+      maxDriftX    = 70;
+    } else {
+      // Center zone: very dim, blurred — won't fight the headline
+      startX       = W * 0.20 + Math.random() * (W * 0.48);
+      finalOpacity = p.opacity;   // 0.05–0.08
+      finalBlur    = p.blur;      // 2–4px
+      maxDriftX    = 110;
+    }
+
+    const startY = Math.random() * H;
+
+    el.style.cssText = `
+      font-size: ${p.size}rem;
+      opacity: ${finalOpacity};
+      left: ${startX}px;
+      top: ${startY}px;
+      filter: blur(${finalBlur}px);
+      will-change: transform;
+    `;
+    el.dataset.blur = finalBlur;   // ← store for tlA restore
+    layer.appendChild(el);
+
+    const dur    = 18 + Math.random() * 22;
+    const driftX = (Math.random() - 0.5) * maxDriftX * 2;
+    const driftY = (Math.random() - 0.5) * 200;
+    const rotDeg = (Math.random() - 0.5) * 12;
+
+    gsap.to(el, {
+      x: driftX, y: driftY, rotation: rotDeg,
+      duration: dur, ease: 'sine.inOut', repeat: -1, yoyo: true,
+      delay: Math.random() * -dur,
+    });
+
+    // Opacity pulse — side phrases pulse more gently (stay visible)
+    gsap.to(el, {
+      opacity: finalOpacity * (zone !== 1 ? 0.55 : 0.35),
+      duration: 4 + Math.random() * 6,
+      ease: 'sine.inOut', repeat: -1, yoyo: true,
+      delay: Math.random() * 4,
+    });
+  });
+}
+
+// ══════════════════════════════
+//  Case Data
+// ══════════════════════════════
+const CASES = [
+  { id:1,  cat:'misappropriation', icon:'mdi:briefcase-outline',   name:'謝國樑母親',          amount:'200萬',
+    claim:'捐給民眾黨，交給高虹安及賴香伶競選用（大水庫理論）。',
+    truth:'證人邱佩琳證實親自拿現金到市長室；辯方主打「大水庫理論」，主張錢用於選舉非私用。',
+    verdict:'【公益侵占罪·政治獻金侵占案】法官認定柯將此款與王美文、林命群捐款（共600萬）私吞，未依法申報存入專戶，構成公益侵占罪，判刑2年。',
+    status:'guilty',     humor:'大水庫？法官說：桶破了，水流進柯P口袋了。' },
+  { id:2,  cat:'misappropriation', icon:'mdi:home-outline',        name:'信義房屋董娘 王美文',  amount:'200萬',
+    claim:'捐給民眾黨，交給高虹安及賴香伶競選用。',
+    truth:'款項確實存在，辯方主張為漏報政治獻金的行政瑕疵，而非貪污侵占。',
+    verdict:'【公益侵占罪·政治獻金侵占案】未存入專戶且未申報，認定侵占入己，與另兩筆合計600萬侵吞。',
+    status:'guilty',     humor:'沒存進專戶、沒有申報，這200萬去哪了？法官幫你找到了。' },
+  { id:3,  cat:'misappropriation', icon:'mdi:account-outline',     name:'文華東方負責人 林命群', amount:'200萬',
+    claim:'捐給民眾黨，交給高虹安及賴香伶競選用。',
+    truth:'款項確實存在，雙方就「政治獻金漏報」與「侵占公款」的法律界線進行攻防。',
+    verdict:'【公益侵占罪·政治獻金侵占案】與前兩筆合計600萬侵占入己，三筆款項均認定構成公益侵占。',
+    status:'guilty',     humor:'三個200萬，湊成一個很圓的故事。法官說這圓是侵占。' },
+  { id:4,  cat:'misappropriation', icon:'mdi:drama-masks',         name:'木可公司肖像授權金',   amount:'6,134萬',
+    claim:'木可400萬轉入為柯肖像權金，是合理商業授權。',
+    truth:'檢方起訴假藉商業授權將政治獻金洗入私人口袋涉「公益侵占」；辯方主張為合理商業模式。',
+    verdict:'【共同公益侵占罪·木可公關案】利用肖像授權及販售小物等名義，將6,134萬6,790元政治獻金洗入木可侵占，判刑3年6月，並沒收木可公司同額款項。',
+    status:'guilty',     humor:'一張臉值6,134萬？連好萊塢明星都要嫉妒了。' },
+  { id:5,  cat:'breach',           icon:'mdi:bank-outline',        name:'挪用眾望基金會',       amount:'827萬',
+    claim:'財務運作屬內部資源調度，尚未有結論。',
+    truth:'檢方起訴挪用公款支付黨務薪資涉「背信罪」；辯方主張為內部資源調度。',
+    verdict:'【共同背信罪·挪用眾望基金會案】挪用基金會公款支付競總員工薪資，悖於基金會設立目的，構成背信罪，判刑2年6月。',
+    status:'guilty',     humor:'「內部調度」在法律上有個更精準的名稱：背信罪。' },
+  { id:6,  cat:'bribery',          icon:'mdi:currency-usd',        name:'鼎越前負責人 朱亞虎',  amount:'210萬',
+    claim:'政治獻金；朱亞虎自己揣測和京華城有關（遭檢方脅迫取供）。',
+    truth:'朱在庭上認罪，找7名人頭行賄「打通關」；辯方反控檢方脅迫取供，法官裁定自白具證據能力。',
+    verdict:'【違背職務收受賄賂罪·京華城案】認定210萬為違背職務賄款，柯文哲重判13年。朱亞虎緩起訴，李文宗此部分無罪。',
+    status:'guilty',     humor:'7名人頭行賄「打通關」，法官說：這不叫政治獻金。' },
+  { id:7,  cat:'bribery',          icon:'mdi:city-variant-outline', name:'20%容積獎勵適法性',   amount:'圖利121億+',
+    claim:'依都市計畫法第24條，市府與都委會有裁量權給予獎勵。',
+    truth:'檢方指控京華城非都更案，違法「準用」都更獎勵；辯方主張法無明文不代表違法。',
+    verdict:'【對主管事務圖利罪·京華城案】京華城不符都更條件，給予20%獎勵無法律依據，圖利鼎越逾121億元，沒收121億545萬6,748元。',
+    status:'guilty',     humor:'裁量權不是魔法棒，法律說不行就是不行。' },
+  { id:8,  cat:'bribery',          icon:'mdi:help-circle-outline',  name:'威京集團主席 沈慶京',  amount:'1,500萬',
+    claim:'都說沒有金流了！沒有實體交付的證據。',
+    truth:'檢方查出提領1,600萬現金紀錄與USB帳冊；法官審酌是否與容積率放行具「對價關係」。',
+    verdict:'【證據不足·不另為無罪諭知】法官確認USB帳冊是柯文哲親自記錄且代表金錢，但缺乏完成交付的補強證據。沈慶京因共同圖利等罪另判10年。',
+    status:'clear',      humor:'法官說：帳冊上有你，但那袋現金找不到交付證明。' },
+  { id:9,  cat:'bribery',          icon:'mdi:scale-balance',        name:'彭振聲、邵琇珮認罪',  amount:'圖利罪',
+    claim:'遭檢方疲勞轟炸、欺騙才認罪，認罪應屬無效。',
+    truth:'兩名核心高官在庭上承認「圖利罪」並求緩刑；法官裁定其認罪具牽連效力。',
+    verdict:'【對主管事務圖利罪·京華城案】兩人於偵查中自白圖利，依法減刑，均判緩刑3年。',
+    status:'probation',  humor:'認罪換緩刑，但認罪的內容，法官全都記住了。' },
+  { id:10, cat:'bribery',          icon:'mdi:file-document-outline', name:'前都發局長 黃景茂筆錄', amount:'圖利共犯',
+    claim:'檢方捏造黃景茂「明知違法」的偵訊筆錄。',
+    truth:'當庭勘驗影片確認黃花了22分鐘逐字閱讀並修改後才簽名，無捏造情事。',
+    verdict:'【對主管事務圖利罪·京華城案】認定黃明知違法仍配合護航圖利，判處有期徒刑6年6月。',
+    status:'guilty',     humor:'22分鐘逐字讀完才簽名，「不知道」這三字說不出口了。' },
+  { id:11, cat:'bribery',          icon:'mdi:airplane',             name:'秘書橘子（許芷瑜）',  amount:'潛逃出境',
+    claim:'人沒回來、錢沒扣到，缺乏直接金流實體證據。',
+    truth:'檢方控橘子經手1,500萬賄款並潛逃出境；辯方採「車手抗辯」質疑無實體金流。',
+    verdict:'【犯後態度·藏匿證據·京華城案/侵占案】法官指柯遭搜索時撕碎「晶華→orange出國」便條紙，橘子急赴日本，認定屬隱匿證據、犯後態度不佳，嚴重影響量刑。',
+    status:'noted',      humor:'秘書跑了，但法官說：這件事本身就是最好的證據。' },
+  { id:12, cat:'unreported',       icon:'mdi:cards-playing-outline', name:'博弈大亨 陳盈助',     amount:'300萬',
+    claim:'工作簿不知真假；陳在庭訊中稱不認識柯文哲，沒有捐款。',
+    truth:'其親信邱清章已作證，親自拿300萬現金到市長室，交給正在踩飛輪的柯文哲。',
+    verdict:'【政治獻金申報不實·補強證據】法官傳喚證人比對後，確認USB工作簿具真實性，數字代表真實金錢，為全案關鍵補強證據。此筆未單獨宣告刑責。',
+    status:'unreported', humor:'不認識？但他的親信親自踏進了你的市長室，交給正在踩飛輪的你。' },
+  { id:13, cat:'unreported',       icon:'mdi:receipt-outline',      name:'勤業眾信會計師 范有偉', amount:'500萬',
+    claim:'第一次約談稱僅捐30萬政治獻金。',
+    truth:'范坦承在地下室親交500萬現金；辯方主張為單純政治獻金，無對價關係；柯方放棄詰問。',
+    verdict:'【政治獻金申報不實·補強證據】用以佐證USB帳冊並非虛構，確認記錄真實性。此筆未單獨宣告刑責。',
+    status:'unreported', humor:'在地下室交500萬叫「正常政治獻金」？地點選得很有趣。' },
+  { id:14, cat:'unreported',       icon:'mdi:office-building-outline', name:'東森集團 王令麟',      amount:'500萬',
+    claim:'工作簿不知真假，未承認捐款。',
+    truth:'檢方傳喚USB名單上13人皆具結證實數字即金額；王令麟出庭承認請朋友代捐；柯方放棄詰問形同默認。',
+    verdict:'【政治獻金申報不實·補強證據】用以佐證USB帳冊真實性。王令麟本人出庭承認代捐事實。此筆未單獨宣告刑責。',
+    status:'unreported', humor:'本人出庭，親口承認代捐。帳冊：我早就說了。' },
+  { id:15, cat:'unreported',       icon:'mdi:stethoscope',          name:'名醫 林志郎',          amount:'500萬',
+    claim:'工作簿不知真假，未承認捐款。',
+    truth:'名單13位金主皆具結證實USB帳冊數字為真實金額，並非不知真假。',
+    verdict:'【政治獻金申報不實·補強證據】用以佐證USB帳冊真實性。具結作證確認記錄屬實。此筆未單獨宣告刑責。',
+    status:'unreported', humor:'名醫診斷：帳冊沒病，紀錄屬實。' },
+  { id:16, cat:'unreported',       icon:'mdi:broadcast',            name:'東森電視 張高祥',      amount:'150萬',
+    claim:'工作簿不知真假，未承認捐款。',
+    truth:'檢方傳喚USB名單上13人皆具結證實數字即金額，柯方放棄詰問形同默認。',
+    verdict:'【政治獻金申報不實·補強證據】用以佐證USB帳冊真實性。13人具結確認，柯方全程未詰問。此筆未單獨宣告刑責。',
+    status:'unreported', humor:'13人具結，柯方沉默。這個沉默，非常響亮。' },
+  { id:17, cat:'unreported',       icon:'mdi:hands-pray',           name:'悟覺妙天',             amount:'1,000萬',
+    claim:'行李箱內1,000萬存入新故鄉協會與協會零用金；橘子拉走1,000萬。',
+    truth:'確實有收受現金，名列帳冊，雙方就此款項是否構成違法侵占進行法律攻防。',
+    verdict:'【政治獻金申報不實·補強證據】用以佐證USB帳冊真實性，收受現金事實清楚。此筆未單獨宣告刑責。',
+    status:'unreported', humor:'行李箱裝一千萬叫「協會往來」，這個財務習慣很獨特。' },
+  { id:18, cat:'unreported',       icon:'mdi:car-outline',          name:'和泰興業董事長 蘇一仲', amount:'30萬',
+    claim:'捐給民眾黨的政治獻金。',
+    truth:'證實有錢流入，定罪取決於資金最終去向認定；大水庫理論適用性攻防。',
+    verdict:'【政治獻金申報不實·補強證據】用以佐證USB帳冊真實性，確認記錄屬實。此筆未單獨宣告刑責。',
+    status:'unreported', humor:'30萬，帳冊上有你，法院說：謝謝配合。' },
+  { id:19, cat:'unreported',       icon:'mdi:water-outline',        name:'富裔實業董事長 祝文定', amount:'30萬',
+    claim:'捐給民眾黨的政治獻金。',
+    truth:'同上，大水庫理論適用性攻防，最終未獲採信。',
+    verdict:'【政治獻金申報不實·補強證據】用以佐證USB帳冊真實性。大水庫理論再度落水。此筆未單獨宣告刑責。',
+    status:'unreported', humor:'大水庫理論第N次落水，帳冊再次得分。' },
+  { id:20, cat:'unreported',       icon:'mdi:flag-checkered',       name:'和泰車董事長 黃南光',   amount:'20萬',
+    claim:'捐給民眾黨的政治獻金。',
+    truth:'同上，大水庫理論適用性攻防，與前數筆同樣未獲採信。',
+    verdict:'【政治獻金申報不實·補強證據】用以佐證USB帳冊真實性。20筆金流全部確認，帳冊完整性無懈可擊。此筆未單獨宣告刑責。',
+    status:'unreported', humor:'最後一筆。帳冊：20：0，我贏了。' }
+];
+
+const STATUS_CFG = {
+  guilty:     { label:'判決有罪', cls:'badge-guilty',     dot:'#ef4444' },
+  clear:      { label:'證據不足', cls:'badge-clear',      dot:'#6b7280' },
+  probation:  { label:'有罪緩刑', cls:'badge-probation',  dot:'#f59e0b' },
+  noted:      { label:'態度惡劣', cls:'badge-noted',      dot:'#8b5cf6' },
+  unreported: { label:'未申報',   cls:'badge-unreported', dot:'#fb923c' }
+};
+
+// Category label shown on card FRONT (replaces status badge there)
+const CAT_LABEL = {
+  misappropriation: '政治獻金侵占',
+  breach:           '背信挪用',
+  bribery:          '京華城收賄圖利',
+  unreported:       '申報不實',
+};
+const CAT_CLS = {
+  misappropriation: 'badge-guilty',
+  breach:           'badge-probation',
+  bribery:          'badge-noted',
+  unreported:       'badge-unreported',
+};
+
+// ══════════════════════════════
+//  Render Cards
+// ══════════════════════════════
+function renderCards(cat) {
+  const grid = document.getElementById('cards-grid');
+  const list = cat === 'all' ? CASES : CASES.filter(c => c.cat === cat);
+  grid.innerHTML = '';
+
+  list.forEach(c => {
+    const s = STATUS_CFG[c.status];
+    const el = document.createElement('div');
+    el.className = 'case-card card-scene';
+    el.style.height = '380px';
+    el.innerHTML = `
+      <div class="card-inner" style="height:100%;">
+        <!-- FRONT -->
+        <div class="card-face" style="background:#0d0d1c;border:1px solid rgba(255,255,255,.08);padding:20px;display:flex;flex-direction:column;height:100%;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <span style="font-family:'Space Mono',monospace;font-size:.65rem;color:#4b5563;letter-spacing:.06em;">CASE #${String(c.id).padStart(2,'0')}</span>
+            <span class="${CAT_CLS[c.cat]}" style="font-size:.6rem;padding:2px 8px;border-radius:99px;font-family:'Space Mono',monospace;font-weight:700;">${CAT_LABEL[c.cat]}</span>
+          </div>
+          <iconify-icon icon="${c.icon}" style="color:#f59e0b;font-size:2rem;margin-bottom:8px;display:block;"></iconify-icon>
+          <div style="font-weight:900;color:#f3f4f6;font-size:1rem;line-height:1.3;margin-bottom:4px;">${c.name}</div>
+          <div style="font-family:'Space Mono',monospace;color:#f59e0b;font-size:.95rem;font-weight:700;margin-bottom:12px;">${c.amount}</div>
+          <div style="font-size:.82rem;color:#6b7280;line-height:1.6;background:rgba(0,0,0,.25);padding:10px 12px;border-radius:8px;border-left:2px solid rgba(245,158,11,.25);flex:1;overflow:hidden;">
+            <span style="color:#9ca3af;font-size:.62rem;letter-spacing:.05em;display:block;margin-bottom:4px;">常見說法</span>
+            ${c.claim}
+          </div>
+          <div style="text-align:center;font-size:.65rem;color:#374151;font-family:'Space Mono',monospace;margin-top:10px;">點擊翻開 → 一審判決</div>
         </div>
-
-        <!-- title + amount -->
-        <h3 class="font-bold text-white text-[0.95rem] leading-snug mb-1">${c.title}</h3>
-        ${hasAmt
-          ? `<div class="font-mono text-lg font-bold ${s.text} mb-3">${c.amount}</div>`
-          : `<div class="font-mono text-sm text-white/25 mb-3">—</div>`}
-
-        <!-- category tag -->
-        <div class="mb-3"><span class="cat-tag">${c.category}</span></div>
-
-        <!-- claim: ALWAYS VISIBLE -->
-        <div class="claim-section mb-0">
-          <p class="claim-text">${c.claim}</p>
-        </div>
-
-        <!-- truth: toggle -->
-        <div class="truth-toggle" onclick="toggleTruth(${c.id}, event)">
-          <iconify-icon icon="mdi:shield-search" class="text-yellow-500/70"></iconify-icon>
-          <span class="truth-toggle-label">法庭事實</span>
-          <iconify-icon icon="mdi:chevron-down" id="chev-${c.id}" class="chev text-yellow-500/60 text-base"></iconify-icon>
-        </div>
-        <div id="truth-${c.id}" class="truth-body">
-          <div class="truth-body-inner">
-            <p class="truth-text">${c.truth}</p>
+        <!-- BACK -->
+        <div class="card-face card-back" style="background:#100a0a;border:1px solid rgba(239,68,68,.2);padding:20px;display:flex;flex-direction:column;height:100%;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <span style="font-family:'Space Mono',monospace;font-size:.65rem;color:#4b5563;letter-spacing:.06em;">VERDICT</span>
+            <div class="stamp" style="color:${s.dot};border-color:${s.dot};">${s.label}</div>
+          </div>
+          <div style="font-size:.68rem;color:#6b7280;margin-bottom:4px;font-family:'Space Mono',monospace;letter-spacing:.04em;">真相與攻防</div>
+          <p style="color:#9ca3af;font-size:.78rem;line-height:1.6;margin-bottom:10px;background:rgba(255,255,255,.03);padding:8px 10px;border-radius:6px;border-left:2px solid rgba(99,102,241,.3);flex:1;overflow:hidden;">${c.truth}</p>
+          <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:10px 12px;margin-top:4px;">
+            <span style="font-family:'Space Mono',monospace;font-size:.6rem;color:#f59e0b;letter-spacing:.08em;display:block;margin-bottom:5px;">💡 一審判決</span>
+            <span style="font-size:.78rem;color:#f3f4f6;line-height:1.6;">${c.verdict}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+            <span style="font-size:.65rem;color:#374151;font-family:'Space Mono',monospace;">← 點擊返回</span>
+            <button class="share-btn" onclick="openShareCard(${c.id});event.stopPropagation();" title="分享此案">
+              <iconify-icon icon="mdi:share-variant-outline" style="font-size:.72rem;"></iconify-icon>分享此案
+            </button>
           </div>
         </div>
-
-        <!-- Share button -->
-        <div class="flex justify-end mt-2 pt-2 border-t border-white/[0.05]">
-          <button class="share-card-btn" onclick="openShareCard(${c.id}); event.stopPropagation();">
-            <iconify-icon icon="mdi:share-variant-outline" class="text-[11px] leading-none"></iconify-icon>
-            分享此案
-          </button>
-        </div>
-
       </div>`;
-    }).join('');
-
-    gsap.from('#cases-grid .case-card', {
-      opacity:0, y:22, stagger:.04, duration:.42, ease:'power2.out', clearProps:'all',
-    });
-    bindHover();
-  }
-
-  function toggleTruth(id, e) {
-    e && e.stopPropagation();
-    const body = document.getElementById(`truth-${id}`);
-    const chev = document.getElementById(`chev-${id}`);
-    const open = body.classList.toggle('open');
-    chev.classList.toggle('open', open);
-  }
-
-  function filterCases(f) {
-    document.querySelectorAll('.flt-btn').forEach(b => b.classList.toggle('active', b.dataset.f === f));
-    renderCases(f);
-  }
-
-  /* ─── Custom Cursor ─── */
-  const curDot = document.getElementById('cur-dot');
-  const curRing = document.getElementById('cur-ring');
-  let mx=0, my=0, rx=0, ry=0;
-
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    curDot.style.left = mx+'px'; curDot.style.top = my+'px';
-  });
-  (function loop() {
-    rx += (mx-rx)*.12; ry += (my-ry)*.12;
-    curRing.style.left = rx+'px'; curRing.style.top = ry+'px';
-    requestAnimationFrame(loop);
-  })();
-
-  function bindHover() {
-    document.querySelectorAll('a,button,.case-card,.mag-btn,.flt-btn,.truth-toggle,.share-card-btn,.sc-action-btn,#sc-close-btn').forEach(el => {
-      el.addEventListener('mouseenter', () => document.body.classList.add('cur-hover'));
-      el.addEventListener('mouseleave', () => document.body.classList.remove('cur-hover'));
-    });
-  }
-  bindHover();
-
-  /* ─── Magnetic Buttons ─── */
-  function initMagnetic() {
-    document.querySelectorAll('.mag-btn').forEach(btn => {
-      btn.addEventListener('mousemove', e => {
-        const r = btn.getBoundingClientRect();
-        gsap.to(btn, { x:(e.clientX-r.left-r.width/2)*.28, y:(e.clientY-r.top-r.height/2)*.28, duration:.3, ease:'power2.out' });
-      });
-      btn.addEventListener('mouseleave', () => {
-        gsap.to(btn, { x:0, y:0, duration:.6, ease:'elastic.out(1,.5)' });
-      });
-    });
-  }
-
-  /* ─── Split Text ─── */
-  function splitChars(el, text) {
-    el.innerHTML = text.split('').map(ch =>
-      ch===' ' ? '<span class="char-wrap"><span class="char">&nbsp;</span></span>'
-               : `<span class="char-wrap"><span class="char">${ch}</span></span>`
-    ).join('');
-    return el.querySelectorAll('.char');
-  }
-
-  /* ─── Hero Canvas: Money Flow Network ─── */
-  function initHeroCanvas() {
-    const canvas = document.getElementById('hero-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let W, H, t=0, hovered=-1;
-
-    /* Node definitions — polar coords around center */
-    const NODES = [
-      { label:'柯文哲', sub:'被告',    type:'center', angle:0,   r:0   },
-      { label:'陳盈助', sub:'300萬',   type:'false',  angle:0,   r:155 },
-      { label:'王令麟', sub:'500萬',   type:'false',  angle:45,  r:158 },
-      { label:'沈慶京', sub:'1500萬',  type:'pending',angle:90,  r:168 },
-      { label:'悟覺妙天',sub:'1000萬', type:'ongoing',angle:135, r:158 },
-      { label:'木可',   sub:'6234萬',  type:'ongoing',angle:180, r:162 },
-      { label:'林志郎', sub:'500萬',   type:'false',  angle:225, r:155 },
-      { label:'范有偉', sub:'500萬',   type:'ongoing',angle:270, r:155 },
-      { label:'朱亞虎', sub:'210萬',   type:'pending',angle:315, r:160 },
-    ];
-
-    const COLORS = { center:'#f0c040', false:'#ef4444', ongoing:'#f59e0b', pending:'#38bdf8' };
-
-    function resize() {
-      const rect = canvas.parentElement.getBoundingClientRect();
-      W = canvas.width  = rect.width  * window.devicePixelRatio;
-      H = canvas.height = rect.height * window.devicePixelRatio;
-      canvas.style.width  = rect.width  + 'px';
-      canvas.style.height = rect.height + 'px';
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-    }
-
-    function pos(n, rw, rh) {
-      if (n.r === 0) return { x: rw/2, y: rh/2 };
-      const a  = (n.angle - 90) * Math.PI / 180;
-      const sc = Math.min(rw, rh) / 420;
-      return { x: rw/2 + Math.cos(a)*n.r*sc, y: rh/2 + Math.sin(a)*n.r*sc };
-    }
-
-    function draw() {
-      const rw = W / window.devicePixelRatio;
-      const rh = H / window.devicePixelRatio;
-      ctx.clearRect(0, 0, rw, rh);
-
-      /* Connections */
-      NODES.slice(1).forEach((n, i) => {
-        const src = pos(NODES[0], rw, rh);
-        const dst = pos(n, rw, rh);
-        const col = COLORS[n.type];
-        const isHov = hovered === i+1 || hovered === 0;
-
-        /* Base line */
-        ctx.save();
-        ctx.beginPath(); ctx.moveTo(src.x, src.y); ctx.lineTo(dst.x, dst.y);
-        ctx.strokeStyle = col; ctx.globalAlpha = isHov ? .3 : .1;
-        ctx.lineWidth = isHov ? 2 : 1; ctx.stroke(); ctx.restore();
-
-        /* Animated dashes — money flowing inward */
-        ctx.save();
-        ctx.beginPath(); ctx.moveTo(src.x, src.y); ctx.lineTo(dst.x, dst.y);
-        ctx.strokeStyle = col; ctx.globalAlpha = isHov ? .9 : .45;
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([5, 10]);
-        ctx.lineDashOffset = -(t * .7) + i * 8;
-        ctx.stroke(); ctx.restore();
-      });
-
-      /* Nodes */
-      NODES.forEach((n, i) => {
-        const p = pos(n, rw, rh);
-        const col = COLORS[n.type];
-        const isCenter = n.r === 0;
-        const isHov = hovered === i;
-        const pulse = Math.sin(t * .035 + i * .9) * .12 + 1;
-        const baseR = isCenter ? 24 : 11;
-        const nr = baseR * pulse * (isHov ? 1.35 : 1);
-
-        /* Glow */
-        const grd = ctx.createRadialGradient(p.x, p.y, nr*.3, p.x, p.y, nr*3);
-        grd.addColorStop(0, col + (isHov ? '40' : '22'));
-        grd.addColorStop(1, col + '00');
-        ctx.beginPath(); ctx.arc(p.x, p.y, nr*3, 0, Math.PI*2);
-        ctx.fillStyle = grd; ctx.fill();
-
-        /* Circle */
-        ctx.beginPath(); ctx.arc(p.x, p.y, nr, 0, Math.PI*2);
-        ctx.fillStyle = isCenter ? col : col + 'cc';
-        ctx.shadowColor = col; ctx.shadowBlur = isHov ? 22 : 10;
-        ctx.fill(); ctx.shadowBlur = 0;
-
-        /* Label */
-        ctx.save(); ctx.textAlign = 'center';
-        if (isCenter) {
-          ctx.font = '700 12px "Noto Sans TC",sans-serif';
-          ctx.fillStyle = '#07070f';
-          ctx.fillText(n.label, p.x, p.y - 1);
-          ctx.font = '400 9px "Space Mono",monospace';
-          ctx.fillStyle = 'rgba(7,7,15,.65)';
-          ctx.fillText(n.sub, p.x, p.y + 11);
-        } else {
-          const ly = p.y + nr + 14;
-          ctx.font = `500 11px "Noto Sans TC",sans-serif`;
-          ctx.fillStyle = isHov ? '#fff' : 'rgba(255,255,255,.65)';
-          ctx.fillText(n.label, p.x, ly);
-          ctx.font = `700 9.5px "Space Mono",monospace`;
-          ctx.fillStyle = col + (isHov ? 'ff' : 'bb');
-          ctx.fillText(n.sub, p.x, ly + 13);
-        }
-        ctx.restore();
-      });
-
-      t++; requestAnimationFrame(draw);
-    }
-
-    /* Mouse events on canvas */
-    canvas.addEventListener('mousemove', e => {
-      const rect  = canvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      const rw = rect.width; const rh = rect.height;
-      hovered = -1;
-      NODES.forEach((n, i) => {
-        const p = pos(n, rw, rh);
-        if (Math.hypot(p.x - mx, p.y - my) < 32) hovered = i;
-      });
-      document.body.classList.toggle('cur-hover', hovered !== -1);
-    });
-    canvas.addEventListener('mouseleave', () => {
-      hovered = -1; document.body.classList.remove('cur-hover');
-    });
-
-    window.addEventListener('resize', () => { ctx.resetTransform(); resize(); });
-    resize(); draw();
-  }
-
-  /* ─── Donut Chart Animation ─── */
-  function animateDonut() {
-    // C = 2π×68 ≈ 427.26
-    // dasharray = "solid_length gap_length" where solid+gap = C
-    // dashoffset (set in HTML) positions each segment's start on the arc
-    const C = 2 * Math.PI * 68;
-    document.getElementById('seg-false').setAttribute('stroke-dasharray',   `${C*.25} ${C*.75}`);
-    document.getElementById('seg-ongoing').setAttribute('stroke-dasharray', `${C*.60} ${C*.40}`);
-    document.getElementById('seg-pending').setAttribute('stroke-dasharray', `${C*.15} ${C*.85}`);
-  }
-
-  /* ─── Disable bfcache so browser always does a fresh load (starts at top) ─── */
-  window.addEventListener('unload', () => {});
-
-  /* ─── GSAP + ScrollTrigger ─── */
-  gsap.registerPlugin(ScrollTrigger);
-  ScrollTrigger.clearScrollMemory();
-  window.history.scrollRestoration = "manual";
-
-  window.addEventListener('DOMContentLoaded', () => {
-
-    /* Hero sequence */
-    const tl = gsap.timeline({ delay:.15 });
-    tl.to('#hero-pill', { opacity:1, duration:.55, ease:'power2.out' });
-    const c1 = splitChars(document.getElementById('line1'), '進擊的帳目');
-    tl.to(c1, { y:0, opacity:1, stagger:.07, duration:.55, ease:'power3.out' }, '-=.2');
-    // line2: gradient text — cannot splitChars (background-clip:text breaks on nested spans)
-    // Animate the whole element instead
-    gsap.set('#line2', { opacity:0, y:20 });
-    tl.to('#line2', { opacity:1, y:0, duration:.6, ease:'power3.out' }, '-=.35');
-    tl.to('#hero-sub',  { opacity:1, duration:.5, ease:'power2.out' }, '-=.2');
-    tl.to('#stat-grid', { opacity:1, duration:.5, ease:'power2.out' }, '-=.25');
-    tl.to('#cta-row',   { opacity:1, duration:.45, ease:'power2.out' }, '-=.2');
-
-    initMagnetic();
-    initHeroCanvas();
-
-    /* Header scroll */
-    const hdr = document.getElementById('site-header');
-    const filterBar = document.getElementById('filter-bar');
-
-    function syncFilterBar() {
-      filterBar.style.top = hdr.offsetHeight + 'px';
-    }
-    syncFilterBar();
-    window.addEventListener('resize', syncFilterBar);
-
-    ScrollTrigger.create({
-      start:'80px top',
-      onToggle: ({ isActive }) => {
-        hdr.style.background      = isActive ? 'rgba(7,7,15,.92)' : 'rgba(7,7,15,0)';
-        hdr.style.backdropFilter  = isActive ? 'blur(20px)' : 'blur(0px)';
-        hdr.style.borderBottom    = isActive ? '1px solid rgba(255,255,255,.05)' : 'none';
-      },
-    });
-
-    /* Legend: progress bars + donut on scroll */
-    ScrollTrigger.create({
-      trigger:'#legend', start:'top 72%', once:true,
-      onEnter: () => {
-        document.querySelectorAll('.prog-fill').forEach(bar => {
-          bar.style.transform = 'scaleX(1)';
-        });
-        animateDonut();
-      },
-    });
-
-    /* Initial render */
-    renderCases('all');
-
-    /* Force scroll to top AFTER all GSAP/ScrollTrigger init */
-    window.scrollTo(0, 0);
+    el.addEventListener('click', () => el.classList.toggle('flipped'));
+    grid.appendChild(el);
   });
 
-  /* Aggressive scroll to top and show body */
-  // It handles tricky mobile browsers that delay their scroll restoration
-  function forceTopAndShow() {
-    window.scrollTo(0, 0);
-    document.body.classList.add('ready');
-    // Add scroll-smooth class back
-    setTimeout(() => {
-      document.documentElement.classList.add('scroll-smooth');
-    }, 100);
+  gsap.fromTo(grid.querySelectorAll('.case-card'),
+    { opacity:0, y:24 },
+    { opacity:1, y:0, stagger:.04, duration:.4, ease:'power2.out' }
+  );
+}
+
+// Filter
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCards(btn.dataset.cat);
+  });
+});
+
+renderCards('all');
+
+// ══════════════════════════════
+//  Explainer Carousel + 3D Tilt
+// ══════════════════════════════
+(function initExplainerCarousel() {
+  const wrap     = document.getElementById('exp-carousel-wrap');
+  const viewport = document.getElementById('exp-viewport');
+  const track    = document.getElementById('exp-track');
+  const dotsWrap = document.getElementById('exp-dots');
+  const btnPrev  = document.getElementById('exp-prev');
+  const btnNext  = document.getElementById('exp-next');
+  const cards    = Array.from(track.querySelectorAll('.exp-card'));
+
+  const GAP         = 16;
+  const TOTAL       = cards.length; // 7
+  let   currentIdx  = 0;
+
+  function getVisible() {
+    const vw = viewport.offsetWidth;
+    if (vw < 480) return 1;
+    if (vw < 768) return 2;
+    if (vw < 1100) return 3;
+    return 4;
   }
 
-  // We fire on both DOMContentLoaded and load to be safe,
-  // but we also use requestAnimationFrame to fight the browser's own delayed scroll restoration.
-  let scrollChecks = 0;
-  function enforceScrollTop() {
-    window.scrollTo(0, 0);
-    scrollChecks++;
-    if (scrollChecks < 15) {
-      requestAnimationFrame(enforceScrollTop);
-    } else {
-      forceTopAndShow();
+  function getCardW() {
+    const vw      = viewport.offsetWidth;
+    const visible = getVisible();
+    return Math.floor((vw - GAP * (visible - 1)) / visible);
+  }
+
+  function getMaxIndex() { return Math.max(0, TOTAL - getVisible()); }
+
+  function setCardWidths() {
+    const w = getCardW();
+    cards.forEach(c => { c.style.width = w + 'px'; });
+  }
+
+  function moveTo(idx) {
+    const maxIdx   = getMaxIndex();
+    currentIdx     = Math.max(0, Math.min(idx, maxIdx));
+    const w        = getCardW();
+    const step     = w + GAP;
+    track.style.transform = `translateX(-${currentIdx * step}px)`;
+    updateDots();
+    btnPrev.style.opacity = currentIdx === 0 ? '0.3' : '1';
+    btnNext.style.opacity = currentIdx === maxIdx ? '0.3' : '1';
+  }
+
+  function buildDots() {
+    const maxIdx = getMaxIndex();
+    dotsWrap.innerHTML = '';
+    for (let i = 0; i <= maxIdx; i++) {
+      const d = document.createElement('button');
+      d.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;transition:background .25s,transform .25s;background:rgba(255,255,255,.2);';
+      d.addEventListener('click', () => moveTo(i));
+      dotsWrap.appendChild(d);
     }
   }
 
-  // Fire as soon as JS parses
-  enforceScrollTop();
+  function updateDots() {
+    const maxIdx = getMaxIndex();
+    // Rebuild dots if count changed (e.g. on resize)
+    if (dotsWrap.children.length !== maxIdx + 1) buildDots();
+    Array.from(dotsWrap.children).forEach((d, i) => {
+      d.style.background   = i === currentIdx ? '#f59e0b' : 'rgba(255,255,255,.2)';
+      d.style.transform    = i === currentIdx ? 'scale(1.3)' : 'scale(1)';
+    });
+  }
 
-  window.addEventListener('load', () => {
-    scrollChecks = 0;
-    enforceScrollTop();
+  btnPrev.addEventListener('click', () => moveTo(currentIdx - 1));
+  btnNext.addEventListener('click', () => moveTo(currentIdx + 1));
+
+  // Touch / drag swipe
+  let startX = 0;
+  track.addEventListener('pointerdown', e => { startX = e.clientX; });
+  track.addEventListener('pointerup',   e => {
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 40) moveTo(currentIdx + (dx < 0 ? 1 : -1));
   });
 
-  /* ════ PIXEL ART SHARE CARD ════ */
+  // ── Hover arrow → auto-advance ───────────────────────────────────────────
+  // Hovering the arrow button (no click needed) slowly advances the carousel.
+  // The arrows live OUTSIDE the viewport, so they reliably receive mouseenter.
+  const HOVER_DELAY  = 600;   // ms to wait before first slide
+  const HOVER_REPEAT = 1000;  // ms between subsequent slides
+  let hoverTimer = null;
 
-  // ── Palette ──
-  const PP = {
-    '.':null,
-    'H':'#0a0a1a',  // dark outline / hair
-    'K':'#dfc4a0',  // skin light
-    'k':'#c4a882',  // skin shadow
-    'W':'#f0f0f0',  // white (shirt, glasses lens)
-    'F':'#1a1a30',  // dark glasses frame
-    'T':'#2a5cba',  // blue tie
-    'G':'#f0c040',  // gold (shoes, belt, lapels)
-    'g':'#c9a227',  // gold mid
-    'S':'#12122e',  // suit / pants dark
-    'n':'#1e3050',  // navy pants
-  };
-
-  // ════ THREE POSES ════
-
-  // ── Pose 2: 扎眼 (standing, idle blinking) ──
-  const SPR_STAND_OPEN = [
-    '....HHHHHHHH....',
-    '...HHHHHHHHHH...',
-    '..HKKKKKKKKkH...',
-    '.HKKKKKKKKKKkH..',
-    '.HKFFFFkKFFFFH..',  // top glasses frame
-    '.HKFWWFkKFWWFH..',  // white lenses open
-    '.HKFFFFkKFFFFH..',  // bottom glasses frame
-    '..HKKKkKKKkH....',
-    '...HSWWWWSSH....',
-    '..HSSgTTgSSH....',
-    '.HSSSSSSSSSSSH..',
-    '.HSSSSSSSSSSSH..',
-    '.HGGGGGGGGGgH...',  // gold belt = high-waist
-    '.HnnnnnnnnnnH...',
-    '..Hnnnn..nnH....',
-    '..GGG....GGG....',
-  ];
-  const SPR_STAND_BLINK = [
-    '....HHHHHHHH....',
-    '...HHHHHHHHHH...',
-    '..HKKKKKKKKkH...',
-    '.HKKKKKKKKKKkH..',
-    '.HKFFFFkKFFFFH..',
-    '.HKFFFFkKFFFFH..',  // blink: no white lens
-    '.HKFFFFkKFFFFH..',
-    '..HKKKkKKKkH....',
-    '...HSWWWWSSH....',
-    '..HSSgTTgSSH....',
-    '.HSSSSSSSSSSSH..',
-    '.HSSSSSSSSSSSH..',
-    '.HGGGGGGGGGgH...',
-    '.HnnnnnnnnnnH...',
-    '..Hnnnn..nnH....',
-    '..GGG....GGG....',
-  ];
-
-  // ── Pose 0: 採飛輪 (on spinning bike) ──
-  const SPR_BIKE = [
-    '....HHHHHHHH....',
-    '...HHHHHHHHHH...',
-    '..HKKKKKKKKkH...',
-    '.HKKKKKKKKKKkH..',
-    '.HKFFFFkKFFFFH..',
-    '.HKFWWFkKFWWFH..',
-    '.HKFFFFkKFFFFH..',
-    '..HKKKkKKKkH....',
-    'GGGGGGGGGGGGGGGG',  // HANDLEBAR — gold full-width bar
-    'KS..HSSgSSH..SK.',  // hands (K=skin) gripping + torso
-    '.SS.HSSSSSH.SS..',  // arms + body
-    '....HSSSSSH.....',
-    '....SSSSSSS.....',
-    '....SS...SS.....',
-    '...GGG...GGG....',  // pedaling shoes
-    '..GG.....GG.....',
-  ];
-
-  // ── Pose 1: 手擦汗 (wiping sweat, right arm raised) ──
-  const SPR_WIPE = [
-    '....HHHHHHHH....',
-    '...HHHHHHHHHH...',
-    '..HKKKKKKKKkH...',
-    '.HKKKKKKKKKKkHSS',  // face + sleeve going up (SS = arm)
-    '.HKFFFFkKFFFFHKS',  // glasses + K(hand) wiping brow + S(sleeve)
-    '.HKFWWFkKFWWFHKS',  // white lens + hand at forehead
-    '.HKFFFFkKFFFFH.S',  // glasses + sleeve
-    '..HKKKkKKKkH..SS',  // chin + sleeve
-    '...HSWWWWSSH.SS.',  // collar + arm
-    '..HSSgTTgSSH.SS.',  // lapels/tie + arm
-    '.HSSSSSSSSSSSH..',
-    '.HSSSSSSSSSSSH..',
-    '.HGGGGGGGGGgH...',
-    '.HnnnnnnnnnnH...',
-    '..Hnnnn..nnH....',
-    '..GGG....GGG....',
-  ];
-  const SPR_WIPE_BLINK = [
-    '....HHHHHHHH....',
-    '...HHHHHHHHHH...',
-    '..HKKKKKKKKkH...',
-    '.HKKKKKKKKKKkHSS',
-    '.HKFFFFkKFFFFHKS',
-    '.HKFFFFkKFFFFHKS',  // blink: no white lens, arm still raised
-    '.HKFFFFkKFFFFH.S',
-    '..HKKKkKKKkH..SS',
-    '...HSWWWWSSH.SS.',
-    '..HSSgTTgSSH.SS.',
-    '.HSSSSSSSSSSSH..',
-    '.HSSSSSSSSSSSH..',
-    '.HGGGGGGGGGgH...',
-    '.HnnnnnnnnnnH...',
-    '..Hnnnn..nnH....',
-    '..GGG....GGG....',
-  ];
-
-  const POSES = [
-    { label:'採飛輪', sprO: SPR_BIKE,       sprB: SPR_BIKE       },
-    { label:'手擦汗', sprO: SPR_WIPE,       sprB: SPR_WIPE_BLINK },
-    { label:'扎　眼', sprO: SPR_STAND_OPEN, sprB: SPR_STAND_BLINK },
-  ];
-  let currentPose = 2;
-
-  function drawSpr(ctx, rows, scale, ox, oy) {
-    for (let r = 0; r < rows.length; r++) {
-      const row = rows[r];
-      for (let c = 0; c < row.length; c++) {
-        const col = PP[row[c]];
-        if (!col) continue;
-        ctx.fillStyle = col;
-        ctx.fillRect(ox + c * scale, oy + r * scale, scale, scale);
-      }
-    }
+  function clearHoverTimer() {
+    clearTimeout(hoverTimer);
+    clearInterval(hoverTimer);
+    hoverTimer = null;
   }
 
-  // ── Particles (pose-aware) ──
-  let scParts = [];
-  function initParts(W, H, pose) {
-    if (pose === 0) {
-      // BIKE: speed lines sweeping left
-      scParts = Array.from({length: 16}, (_, i) => ({
-        x: Math.random() * W * 1.5,
-        y: 28 + Math.random() * (H - 56),
-        len: Math.random() * 22 + 10,
-        vx: -(Math.random() * 3.5 + 2),
-        alpha: Math.random() * 0.35 + 0.1,
-        color: ['#80c0ff','#a8d8ff','#ffffff','#60a0f0'][i % 4],
-        W, H,
-      }));
-    } else if (pose === 1) {
-      // WIPE: sweat drops arcing from upper-right
-      scParts = Array.from({length: 10}, () => {
-        const p = {
-          x:0, y:0, vx:0, vy:0, gravity:0.06,
-          alpha: Math.random() * 0.55 + 0.2,
-          color: ['#a0e8ff','#c8f4ff','#ffffff'][Math.floor(Math.random()*3)],
-          W, H,
-          reset() {
-            this.x = W * 0.58 + Math.random() * 18;
-            this.y = H * 0.18 + Math.random() * 22;
-            this.vx = Math.random() * 1.4 + 0.4;
-            this.vy = -(Math.random() * 1.8 + 0.2);
-          },
-        };
-        p.reset(); return p;
+  function startHoverAdvance(dir) {
+    clearHoverTimer();
+    // Visual feedback: glow the button
+    const btn = dir < 0 ? btnPrev : btnNext;
+    btn.style.borderColor = 'rgba(245,158,11,.85)';
+    btn.style.boxShadow   = '0 0 14px rgba(245,158,11,.35)';
+
+    hoverTimer = setTimeout(() => {
+      moveTo(currentIdx + dir);
+      hoverTimer = setInterval(() => moveTo(currentIdx + dir), HOVER_REPEAT);
+    }, HOVER_DELAY);
+  }
+
+  function stopHoverAdvance(btn) {
+    clearHoverTimer();
+    btn.style.borderColor = '';
+    btn.style.boxShadow   = '';
+  }
+
+  // Arrow button hover (click target)
+  btnPrev.addEventListener('mouseenter', () => startHoverAdvance(-1));
+  btnPrev.addEventListener('mouseleave', () => stopHoverAdvance(btnPrev));
+  btnNext.addEventListener('mouseenter', () => startHoverAdvance(1));
+  btnNext.addEventListener('mouseleave', () => stopHoverAdvance(btnNext));
+
+  // Wide invisible zones — cover the full left/right padding column so hovering
+  // anywhere near the edge (not just the small button) triggers auto-advance
+  const zoneL = document.getElementById('exp-zone-left');
+  const zoneR = document.getElementById('exp-zone-right');
+
+  zoneL.addEventListener('mouseenter', () => { startHoverAdvance(-1); btnPrev.style.borderColor='rgba(245,158,11,.85)'; btnPrev.style.boxShadow='0 0 14px rgba(245,158,11,.35)'; });
+  zoneL.addEventListener('mouseleave', () => { stopHoverAdvance(btnPrev); });
+  zoneR.addEventListener('mouseenter', () => { startHoverAdvance(1);  btnNext.style.borderColor='rgba(245,158,11,.85)'; btnNext.style.boxShadow='0 0 14px rgba(245,158,11,.35)'; });
+  zoneR.addEventListener('mouseleave', () => { stopHoverAdvance(btnNext); });
+
+  // 3D Tilt
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r   = card.getBoundingClientRect();
+      const cx  = ((e.clientX - r.left) / r.width  - 0.5) * 2;  // -1…+1
+      const cy  = ((e.clientY - r.top)  / r.height - 0.5) * 2;  // -1…+1
+      card.style.transform = `perspective(900px) rotateY(${cx * 12}deg) rotateX(${-cy * 8}deg) scale(1.02)`;
+      card.style.boxShadow = `${-cx * 8}px ${cy * 6}px 28px rgba(0,0,0,.45)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform  = '';
+      card.style.boxShadow  = '';
+    });
+  });
+
+  // Init
+  setCardWidths();
+  buildDots();
+  moveTo(0);
+  window.addEventListener('resize', () => { setCardWidths(); buildDots(); moveTo(currentIdx); });
+})();
+
+// ══════════════════════════════
+//  Custom Cursor
+// ══════════════════════════════
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => {
+  mx=e.clientX; my=e.clientY;
+  gsap.to(dot,{x:mx,y:my,duration:.08,ease:'none'});
+});
+(function loop(){rx+=(mx-rx)*.14;ry+=(my-ry)*.14;gsap.set(ring,{x:rx,y:ry});requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button,.case-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>gsap.to(ring,{width:52,height:52,borderColor:'#f59e0b',duration:.25}));
+  el.addEventListener('mouseleave',()=>gsap.to(ring,{width:36,height:36,borderColor:'rgba(245,158,11,.5)',duration:.25}));
+});
+
+// ══════════════════════════════
+//  GSAP Animations
+// ══════════════════════════════
+gsap.registerPlugin(ScrollTrigger);
+
+// Hero text
+gsap.to('#hero-meta',{opacity:1,y:0,duration:.6,delay:.2});
+['line1','line2'].forEach((id,li)=>{
+  const el=document.getElementById(id);
+  const text=el.textContent;
+  el.innerHTML=text.split('').map(ch=>`<span class="char">${ch===' '?'&nbsp;':ch}</span>`).join('');
+  gsap.to(`#${id} .char`,{opacity:1,y:0,stagger:.045,duration:.5,ease:'power3.out',delay:.4+li*.35});
+});
+gsap.to('#hero-sub',  {opacity:1,y:0,duration:.8,delay:1.2,ease:'power2.out'});
+gsap.to('#hero-cta',  {opacity:1,y:0,duration:.8,delay:1.4,ease:'power2.out'});
+gsap.to('#hero-stats',{opacity:1,y:0,duration:.8,delay:1.6,ease:'power2.out'});
+
+// Counters
+document.querySelectorAll('[data-counter]').forEach(el=>{
+  const target=parseInt(el.dataset.counter);
+  ScrollTrigger.create({trigger:el,start:'top 80%',once:true,
+    onEnter:()=>{
+      const o={v:0};
+      gsap.to(o,{v:target,duration:1.5,ease:'power2.out',onUpdate:()=>{el.textContent=Math.round(o.v);}});
+    }
+  });
+});
+
+// Magnetic buttons
+document.querySelectorAll('.magnetic').forEach(btn=>{
+  btn.addEventListener('mousemove',e=>{
+    const r=btn.getBoundingClientRect();
+    gsap.to(btn,{x:(e.clientX-(r.left+r.width/2))*.22,y:(e.clientY-(r.top+r.height/2))*.22,duration:.3});
+  });
+  btn.addEventListener('mouseleave',()=>gsap.to(btn,{x:0,y:0,duration:.6,ease:'elastic.out(1,.5)'}));
+});
+
+// Scroll hint fade
+window.addEventListener('scroll',()=>{if(window.scrollY>60)gsap.to('#scroll-hint',{opacity:0,duration:.4});},{passive:true});
+
+// ══ 文件互動動畫 ══
+// 邏輯：標記在目標旁靜止 → 緩慢進入目標元素 → 文件放大 + 邊框掃描線 → 標記退出 → 文件復原
+// attr:{transform} 控制 marker 位置（SVG 座標空間），幅度 40~90 SVG 單位，方向垂直/水平進入
+function initDocumentAnimations() {
+  if (typeof gsap === 'undefined') return;
+
+  // ── 文件本體靜默浮動（只有 folder，doc-right 由 tlC 自己管）──
+  gsap.to('#svg-folder', { y: -3, duration: 14, ease: 'sine.inOut', repeat: -1, yoyo: true, delay: 2 });
+
+  // ════════════════════════════════════════════════════════════════
+  // 互動 A：完全重寫
+  // 座標系：
+  //   svg-papers 初始 translate(-118, 158)；下移 20 → translate(-118, 178)
+  //   圓圈中心（文件下移後）世界座標 = (108, 508)
+  //   圓圈半徑 = 48；右邊緣 = (156, 508)
+  //   × 初始 (196, 508)，在圓圈右側 40 單位外
+  //
+  // 節奏（網頁一載入就同時開始）：
+  //   Phase 1 [0→5s] ：文件 Y 軸慢慢往下 + × 慢慢往左（同時出發）
+  //   Phase 2 [5→6.6s]：× 等速（ease:none）滑入圓圈圓心，到達後瞬間旋轉成 +
+  //   Phase 3 [6.6s]  ：文件亮度提升 + 邊框掃描（3s）
+  //   Hold   [9.6s]   ：靜止 0.7 秒
+  //   Phase 4 [10.3s] ：+ 瞬間旋轉回 × → 文件 Y 軸往上 + × 往右（同時，4s）
+  // ════════════════════════════════════════════════════════════════
+  const tlA = gsap.timeline({ repeat: -1, repeatDelay: 3, delay: 0 });
+  tlA
+    // ── Phase 1：兩者同時慢慢出發（5s）── ← ease:none = 等速，才不會在 Phase 2 銜接時頓一下
+    .to('#svg-papers', {
+      attr: { transform: 'translate(-118, 178)' },
+      duration: 5, ease: 'sine.inOut'   // 文件保持慢入慢出（Y軸漂移感）
+    }, 0)
+    .to('#anim-x-2', {
+      attr: { transform: 'translate(156, 508) rotate(0)' },
+      opacity: 0.62, duration: 5, ease: 'none'  // × 等速，和 Phase 2 無縫銜接
+    }, 0)
+
+    // ── Phase 2：× 等速滑入圓圈圓心（ease:none = 勻速，不加速）──
+    .to('#anim-x-2', {
+      attr: { transform: 'translate(108, 508) rotate(0)' },
+      opacity: 0.96, duration: 1.6, ease: 'none'
+    }, 5)
+    // ── 到達圓心後，瞬間旋轉成 + ──
+    .set('#anim-x-2', {
+      attr: { transform: 'translate(108, 508) rotate(45)' }
+    }, 6.6)
+
+    // ── Phase 3：文件亮度提升 + 掃描線（t=6.6s）+ 浮動字 blur 消除 ──
+    .to('#svg-papers', {
+      opacity: 0.52, duration: 0.5, ease: 'power2.out'
+    }, 6.6)
+    .to('#float-layer > *', {
+      filter: 'blur(0px)', duration: 0.8, ease: 'power1.out',
+      overwrite: 'auto'  // ← only kill competing filter tweens; leave opacity pulse intact
+    }, 6.6)
+    .set('#papers-scan', { attr: { strokeDashoffset: 0 } }, 6.6)
+    .to('#papers-scan', {
+      opacity: 0.9, attr: { strokeDashoffset: -1424 },
+      duration: 3, ease: 'none'
+    }, 6.6)
+    .to('#papers-scan', { opacity: 0, duration: 0.5 }, 9.6)
+
+    // ── Hold：靜止 0.7s（到 t=10.3s）──
+
+    // ── Phase 4a：+ 瞬間旋轉回 × ──
+    .set('#anim-x-2', {
+      attr: { transform: 'translate(108, 508) rotate(0)' }
+    }, 10.3)
+
+    // ── Phase 4b：文件往上 + × 往右（同時，4s）+ 浮動字 blur 各自恢復原值 ──
+    .to('#svg-papers', {
+      attr: { transform: 'translate(-118, 158)' },
+      opacity: 0.26, duration: 4, ease: 'sine.inOut'
+    }, 10.3)
+    .to('#anim-x-2', {
+      attr: { transform: 'translate(196, 508) rotate(0)' },
+      opacity: 0.32, duration: 4, ease: 'sine.inOut'
+    }, 10.3)
+    .call(() => {
+      // Restore each span to its own original blur (stored in data-blur)
+      document.querySelectorAll('#float-layer > *').forEach(el => {
+        const b = parseFloat(el.dataset.blur) || 2;
+        gsap.to(el, { filter: `blur(${b}px)`, duration: 2, ease: 'sine.inOut', overwrite: 'auto' });
       });
-    } else {
-      // STAND: gold particles floating up
-      scParts = Array.from({length: 22}, () => ({
-        x: Math.random() * W, y: Math.random() * H,
-        size: Math.random() * 2.5 + .6,
-        vy: -(Math.random() * .38 + .12),
-        vx: (Math.random() - .5) * .25,
-        alpha: Math.random() * .4 + .08,
-        color: ['#f0c040','#c9a227','#d4a017'][Math.floor(Math.random()*3)],
-        H,
-      }));
-    }
-  }
-  function updateParts(ctx, W, pose) {
-    if (pose === 0) {
-      scParts.forEach(p => {
-        p.x += p.vx;
-        if (p.x + p.len < 0) { p.x = p.W + p.len; p.y = 28 + Math.random() * (p.H - 56); }
-        ctx.save(); ctx.globalAlpha = p.alpha; ctx.strokeStyle = p.color;
-        ctx.lineWidth = 1.5; ctx.beginPath();
-        ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + p.len, p.y); ctx.stroke();
-        ctx.restore();
-      });
-    } else if (pose === 1) {
-      scParts.forEach(p => {
-        p.x += p.vx; p.y += p.vy; p.vy += p.gravity;
-        if (p.y > p.H || p.x > p.W) p.reset();
-        ctx.save(); ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
-        ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
-      });
-    } else {
-      scParts.forEach(p => {
-        p.x += p.vx; p.y += p.vy;
-        if (p.y < -4) { p.y = p.H + 4; p.x = Math.random() * W; }
-        if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
-        ctx.save(); ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
-        ctx.fillRect(p.x|0, p.y|0, p.size|0, p.size|0); ctx.restore();
-      });
-    }
-  }
+    }, null, 10.3);
 
-  // ── Animation loop ──
-  let scRAF = null, scT = 0;
-  function startShareAnim(pose) {
-    pose = (pose !== undefined) ? pose : currentPose;
-    const canvas = document.getElementById('sc-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const CW = canvas.width, CH = canvas.height;
-    const SCALE = 7, SW = 16 * SCALE, OX = (CW - SW) / 2;
-    const po = POSES[pose];
+  // ════════════════════════════════════════════════════════════════
+  // 互動 B：anim-x-1 → 右上資料夾裡的 folder-box
+  // × 從下方垂直進入框框，旋轉 45° 變成 +，邊框掃描一圈，退出時轉回 ×
+  // folder-box 中心 SVG ≈ (1199, 183)；× 初始 (1199, 282)；進入 (1199, 183) rotate(45)
+  // 移動距離：99 SVG 單位（垂直由下往上）
+  // ════════════════════════════════════════════════════════════════
+  const tlB = gsap.timeline({ repeat: -1, repeatDelay: 10, delay: 5 });
+  tlB
+    .to('#anim-x-1', {
+      attr: { transform: 'translate(1199, 183) rotate(45)' },
+      opacity: 0.90, duration: 4, ease: 'power1.inOut'
+    })
+    .to('#svg-folder', {
+      scale: 1.03, svgOrigin: '1246 140', opacity: 0.42,
+      duration: 0.9, ease: 'power2.out'
+    }, 3.8)
+    .set('#folder-scan', { attr: { strokeDashoffset: 0 } }, 3.8)
+    .to('#folder-scan', {
+      opacity: 0.88, attr: { strokeDashoffset: -1086 },
+      duration: 3, ease: 'none'
+    }, 3.8)
+    .to('#folder-scan', { opacity: 0, duration: 0.5 }, 6.8)
+    .to('#anim-x-1', {
+      attr: { transform: 'translate(1199, 282) rotate(0)' },
+      opacity: 0.32, duration: 3, ease: 'power1.inOut'
+    }, 7.2)
+    .to('#svg-folder', {
+      scale: 1, opacity: 0.22,
+      duration: 0.9, ease: 'power2.inOut'
+    }, 7.4);
 
-    initParts(CW, CH, pose);
-    scT = 0;
+  // ════════════════════════════════════════════════════════════════
+  // 互動 C：anim-x-3 → 右下文件勾選框（完全重寫，與 tlA 邏輯一致）
+  // 座標：
+  //   svg-doc-right 初始 translate(1185, 472)；往上移 12 → translate(1185, 460)
+  //   box center local(196,319)；doc 到位後世界座標 = (1381, 779)
+  //   × 初始 (1150, 779)，全程 y=779，與 doc 到位後 box center 完美對齊
+  //
+  // 節奏（網頁一載入同時出發）：
+  //   Phase 1 [0→5s] ：doc Y軸慢慢往上 + × 等速往右（同時）
+  //   Phase 2 [5→6.6s]：× 等速進入 box center → (1381, 779)
+  //   [6.6s]           ：瞬間旋轉成 +
+  //   Phase 3 [6.6s]  ：文件亮度提升 + 邊框掃描（3s）
+  //   Hold [9.6s]     ：靜止 0.7 秒
+  //   Phase 4 [10.3s] ：+ 瞬間旋轉回 × → doc 回位 + × 往左退（同時，4s）
+  // ════════════════════════════════════════════════════════════════
+  const tlC = gsap.timeline({ repeat: -1, repeatDelay: 3, delay: 0 });
+  tlC
+    // ── Phase 1：doc 往上 + × 往右（同時）──
+    .to('#svg-doc-right', {
+      attr: { transform: 'translate(1185, 460)' },   // UP：472 → 460
+      duration: 5, ease: 'sine.inOut'
+    }, 0)
+    .to('#anim-x-3', {
+      attr: { transform: 'translate(1341, 779) rotate(0)' },
+      opacity: 0.62, duration: 5, ease: 'none'
+    }, 0)
 
-    function frame() {
-      ctx.clearRect(0, 0, CW, CH);
-      updateParts(ctx, CW, pose);
+    // ── Phase 2：× 等速進入 box center (1381,779)，全程 y=779 ──
+    .to('#anim-x-3', {
+      attr: { transform: 'translate(1381, 779) rotate(0)' },
+      opacity: 0.96, duration: 1.6, ease: 'none'
+    }, 5)
+    // ── 到達後，瞬間旋轉成 + ──
+    .set('#anim-x-3', {
+      attr: { transform: 'translate(1381, 779) rotate(45)' }
+    }, 6.6)
 
-      const grd = ctx.createRadialGradient(CW/2, CH/2, 18, CW/2, CH/2, 72);
-      grd.addColorStop(0, 'rgba(201,162,39,.14)');
-      grd.addColorStop(1, 'rgba(201,162,39,0)');
-      ctx.fillStyle = grd; ctx.fillRect(0, 0, CW, CH);
+    // ── Phase 3：文件亮度提升 + 掃描線 ──
+    .to('#svg-doc-right', {
+      opacity: 0.50, duration: 0.5, ease: 'power2.out'
+    }, 6.6)
+    .set('#doc-scan', { attr: { strokeDashoffset: 0 } }, 6.6)
+    .to('#doc-scan', {
+      opacity: 0.88, attr: { strokeDashoffset: -1230 },
+      duration: 3, ease: 'none'
+    }, 6.6)
+    .to('#doc-scan', { opacity: 0, duration: 0.5 }, 9.6)
 
-      if (pose === 0) {
-        const bob = Math.round(Math.sin(scT * .1) * 2);
-        drawSpr(ctx, po.sprO, SCALE, OX, (CH - SW)/2 + bob);
-      } else if (pose === 1) {
-        const sway = Math.round(Math.sin(scT * .025) * 1.5);
-        const blink = (scT % 180 >= 165 && scT % 180 <= 168);
-        drawSpr(ctx, blink ? po.sprB : po.sprO, SCALE, OX + sway, (CH - SW)/2);
-      } else {
-        const bob = Math.round(Math.sin(scT * .04) * 2.5);
-        const blink = (scT % 220 >= 200 && scT % 220 <= 204);
-        drawSpr(ctx, blink ? po.sprB : po.sprO, SCALE, OX, (CH - SW)/2 + bob);
-      }
+    // ── Hold：靜止 0.7s（到 t=10.3s）──
 
-      scT++;
-      scRAF = requestAnimationFrame(frame);
-    }
-    if (scRAF) cancelAnimationFrame(scRAF);
-    frame();
-  }
+    // ── Phase 4a：+ 瞬間旋轉回 × ──
+    .set('#anim-x-3', {
+      attr: { transform: 'translate(1381, 779) rotate(0)' }
+    }, 10.3)
 
-  /* ════ VERDICT COUNTDOWN ════ */
-  const VERDICT = new Date('2026-03-26T02:00:00Z'); // 10:00 AM Taiwan time (UTC+8)
+    // ── Phase 4b：× 往左退 + doc 回位（同時，4s）──
+    .to('#anim-x-3', {
+      attr: { transform: 'translate(1150, 779) rotate(0)' },
+      opacity: 0.32, duration: 4, ease: 'none'
+    }, 10.3)
+    .to('#svg-doc-right', {
+      attr: { transform: 'translate(1185, 472)' },   // 回到初始位置（往下）
+      opacity: 0.22, duration: 4, ease: 'sine.inOut'
+    }, 10.3);
+}
 
-  function pad(n) { return String(n).padStart(2,'0'); }
+// ══════════════════════════════
+//  Share
+// ══════════════════════════════
+function shareKoFactcheck() {
+  _copyShareUrl('https://ko-factcheck.org/');
+}
+function _copyShareUrl(url) {
+  navigator.clipboard.writeText(url)
+    .then(() => _showShareToast('🔗 ko-factcheck.org 已複製至剪貼簿'))
+    .catch(() => _showShareToast('ko-factcheck.org'));
+}
+function _showShareToast(msg) {
+  const t = document.getElementById('share-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2600);
+}
 
-  function tickCountdown() {
-    const now  = new Date();
-    const diff = VERDICT - now;
-    const disp = document.getElementById('vcd-display');
-    const exp  = document.getElementById('vcd-expired-msg');
-    if (diff <= 0) {
-      if (disp) disp.classList.add('hidden');
-      if (exp)  exp.classList.remove('hidden');
-      return;
-    }
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000)  / 60000);
-    const s = Math.floor((diff % 60000)    / 1000);
-    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = pad(v); };
-    set('vcd-d', d); set('vcd-h', h); set('vcd-m', m); set('vcd-s', s);
-  }
-  tickCountdown();
-  setInterval(tickCountdown, 1000);
-
-  function openCountdownCard() {
-    const now  = new Date();
-    const diff = VERDICT - now;
-    const d = diff > 0 ? Math.floor(diff / 86400000) : 0;
-    const h = diff > 0 ? Math.floor((diff % 86400000) / 3600000) : 0;
-    const m = diff > 0 ? Math.floor((diff % 3600000) / 60000) : 0;
-    const s = diff > 0 ? Math.floor((diff % 60000) / 1000) : 0;
-    document.getElementById('vcd-snap-d').textContent = pad(d);
-    document.getElementById('vcd-snap-h').textContent = pad(h);
-    document.getElementById('vcd-snap-m').textContent = pad(m);
-    document.getElementById('vcd-snap-s').textContent = pad(s);
-    // Snapshot timestamp
-    const fmt = now.toLocaleString('zh-TW', {timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    document.getElementById('vcd-snap-time').textContent = '快照時間 · ' + fmt;
-    document.getElementById('vcd-modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeCountdownCard() {
-    document.getElementById('vcd-modal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  async function downloadCountdownCard(btn) {
-    const orig = btn.innerHTML;
-    btn.innerHTML = '<iconify-icon icon="mdi:loading"></iconify-icon> 處理中...';
-    try {
-      const card = document.getElementById('vcd-card');
-      const snap = await html2canvas(card, { backgroundColor:'#07070f', scale:2.5, useCORS:true, logging:false });
-      const a = document.createElement('a');
-      a.download = `ko-verdict-countdown-${Date.now()}.png`;
-      a.href = snap.toDataURL('image/png');
-      a.click();
-    } catch(e) { alert('下載失敗，請截圖儲存。'); }
-    finally { btn.innerHTML = orig; }
-  }
-
-  // ── Open / Close ──
-  function openShareCard(caseId) {
-    const c = CASES.find(x => x.id === caseId);
-    if (!c) return;
-    const s = S[c.status];
-
-    // Fill content
-    document.getElementById('sc-num').textContent   = c.num;
-    document.getElementById('sc-title').textContent = c.title;
-    document.getElementById('sc-cat').textContent   = c.category;
-    document.getElementById('sc-claim').textContent = c.claim;
-    document.getElementById('sc-truth').textContent = c.truth;
-
-    const badge = document.getElementById('sc-badge');
-    badge.textContent = s.label;
-    badge.className   = `sc-status-badge ${s.badge}`;
-
-    // Pick a random pose each time the card is opened
-    currentPose = Math.floor(Math.random() * 3);
-
-    document.getElementById('share-modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    startShareAnim(currentPose);
-  }
-
-  function closeShareCard() {
-    document.getElementById('share-modal').classList.remove('open');
-    document.body.style.overflow = '';
-    if (scRAF) { cancelAnimationFrame(scRAF); scRAF = null; }
-  }
-
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeShareCard(); });
-
-  // ── Download ──
-  async function downloadShareCard(btn) {
-    const orig = btn.innerHTML;
-    btn.innerHTML = '<iconify-icon icon="mdi:loading"></iconify-icon> 處理中...';
-    if (scRAF) { cancelAnimationFrame(scRAF); scRAF = null; }
-
-    try {
-      const card = document.getElementById('sc-card');
-      const snap = await html2canvas(card, {
-        backgroundColor: '#07070f',
-        scale: 2.5,
-        useCORS: true,
-        logging: false,
-        allowTaint: true,
-      });
-      const a = document.createElement('a');
-      a.download = `ko-factcheck-${Date.now()}.png`;
-      a.href = snap.toDataURL('image/png');
-      a.click();
-    } catch(e) {
-      alert('下載失敗，請截圖儲存。');
-    } finally {
-      btn.innerHTML = orig;
-      startShareAnim(currentPose);  // restart animation
-    }
-  }
-
-  // ── Copy link ──
-  function copyShareLink() {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      const btn = document.getElementById('sc-copy-btn');
+// ══ Share Card Modal — helpers ══
+function _scOpen() {
+  document.getElementById('sc-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeShareModal() {
+  document.getElementById('sc-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function scCopyLink() {
+  const btn = document.getElementById('sc2-copy-btn');
+  navigator.clipboard.writeText('https://ko-factcheck.org/')
+    .then(() => {
       const orig = btn.innerHTML;
-      btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> 已複製！';
+      btn.innerHTML = '<iconify-icon icon="mdi:check" style="font-size:.82rem;display:flex;"></iconify-icon> 已複製！';
       setTimeout(() => { btn.innerHTML = orig; }, 2000);
-    }).catch(() => { prompt('請手動複製：', window.location.href); });
+    })
+    .catch(() => _showShareToast('ko-factcheck.org'));
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeShareModal(); });
+
+// ── Case card share (card back "分享此案") ──
+function openShareCard(caseId) {
+  const c = CASES.find(x => x.id === caseId);
+  if (!c) return;
+  const s = STATUS_CFG[c.status];
+
+  document.getElementById('sc2-casenum').textContent    = `CASE #${String(c.id).padStart(2,'0')}`;
+  document.getElementById('sc2-name').textContent       = c.name;
+  document.getElementById('sc2-amount').textContent     = c.amount;
+  document.getElementById('sc2-amount').style.display   = '';
+  document.getElementById('sc2-claim-lbl').textContent  = '常見說法';
+  document.getElementById('sc2-claim-lbl').style.display = '';
+  document.getElementById('sc2-claim').textContent      = c.claim;
+  document.getElementById('sc2-verdict').textContent    = c.verdict;
+  document.getElementById('sc2-verdict-box').style.display = '';
+
+  // 只留判決 stamp，隱藏分類 catbadge
+  const badge = document.getElementById('sc2-badge');
+  badge.textContent = s.label; badge.style.color = s.dot; badge.style.borderColor = s.dot;
+  badge.style.display = '';
+
+  const cb = document.getElementById('sc2-catbadge');
+  cb.textContent = ''; cb.style.display = 'none';
+  _scOpen();
+}
+
+// ── Explainer carousel card share (shares THAT card's content) ──
+function openExpShare(label, title, body, isLegal) {
+  document.getElementById('sc2-casenum').textContent    = label;
+  document.getElementById('sc2-name').textContent       = title;
+  document.getElementById('sc2-amount').textContent     = '';
+  document.getElementById('sc2-amount').style.display   = 'none';
+  document.getElementById('sc2-claim-lbl').textContent  = '';
+  document.getElementById('sc2-claim-lbl').style.display = 'none';
+  document.getElementById('sc2-claim').textContent      = body;
+  document.getElementById('sc2-verdict-box').style.display = 'none';
+
+  const badge = document.getElementById('sc2-badge');
+  const cb    = document.getElementById('sc2-catbadge');
+  // 只留 catbadge，隱藏 stamp，避免重複
+  badge.style.display = 'none';
+  if (isLegal) {
+    cb.textContent = 'LEGAL CONCEPT'; cb.className = '';
+    cb.style.cssText = 'font-size:.56rem;padding:2px 7px;border-radius:99px;font-family:"Space Mono",monospace;font-weight:700;background:rgba(99,102,241,.12);color:#818cf8;border:1px solid rgba(99,102,241,.32);display:inline-block;';
+  } else {
+    cb.textContent = 'LAW FACT'; cb.className = '';
+    cb.style.cssText = 'font-size:.56rem;padding:2px 7px;border-radius:99px;font-family:"Space Mono",monospace;font-weight:700;background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.32);display:inline-block;';
+  }
+  _scOpen();
+}
+
+// ── Verdict summary share (四大罪案結論) ──
+function openVerdictShare() {
+  document.getElementById('sc2-casenum').textContent    = 'VERDICT SUMMARY';
+  document.getElementById('sc2-name').textContent       = '柯文哲一審判決：四大罪案';
+  document.getElementById('sc2-amount').textContent     = '合併執行刑 17 年以上';
+  document.getElementById('sc2-amount').style.display   = '';
+  document.getElementById('sc2-claim-lbl').textContent  = '一審認定罪名';
+  document.getElementById('sc2-claim-lbl').style.display = '';
+  document.getElementById('sc2-claim').textContent      = '政治獻金公益侵占（木可洗錢 6,134 萬，刑 3年6月）· 挪用眾望基金會背信（827 萬，刑 2年6月）· 京華城違法容積收賄（朱亞虎 210 萬，刑 13 年）· 政治獻金申報不實（9 筆 3,030 萬）';
+  document.getElementById('sc2-verdict').textContent    = '二審上訴中。本站僅呈現一審事實認定，不代表任何政治立場。帳冊由 13 位金主出庭具結確認。';
+  document.getElementById('sc2-verdict-box').style.display = '';
+
+  const badge = document.getElementById('sc2-badge');
+  badge.textContent = '一審有罪'; badge.style.color = '#ef4444'; badge.style.borderColor = '#ef4444';
+  badge.style.display = '';
+
+  const cb = document.getElementById('sc2-catbadge');
+  cb.textContent = '113金訴51'; cb.className = '';
+  cb.style.cssText = 'font-size:.56rem;padding:2px 7px;border-radius:99px;font-family:"Space Mono",monospace;font-weight:700;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.3);display:inline-block;';
+  _scOpen();
+}
+
+// Inject share buttons into explainer carousel card footers
+document.querySelectorAll('.exp-num').forEach(el => {
+  const card     = el.closest('.exp-card');
+  const cardLabel = el.textContent.trim(); // grab before button is added
+  const titleEl  = card.querySelector('.font-bold');
+  const bodyEl   = card.querySelector('.text-gray-400');
+  const cardTitle = titleEl ? titleEl.textContent.trim() : '';
+  const cardBody  = bodyEl  ? bodyEl.innerText || bodyEl.textContent : '';
+  const isLegal   = cardLabel.includes('LEGAL');
+
+  el.style.cssText += ';display:flex;justify-content:space-between;align-items:center;';
+  const btn = document.createElement('button');
+  btn.className = 'share-btn';
+  btn.title = '分享此卡';
+  btn.innerHTML = '<iconify-icon icon="mdi:share-variant-outline" style="font-size:.72rem;"></iconify-icon>&thinsp;分享';
+  btn.addEventListener('click', e => {
+    openExpShare(cardLabel, cardTitle, cardBody.trim(), isLegal);
+    e.stopPropagation();
+  });
+  el.appendChild(btn);
+});
+
+// ══════════════════════════════
+//  MONEY FLOW — Tabs + SVG Bezier Lines
+// ══════════════════════════════
+(function(){
+  const mfTabs   = document.querySelectorAll('.mf-tab');
+  const mfPanels = document.querySelectorAll('.mf-panel');
+
+  function activateTab(idx) {
+    mfTabs.forEach((t, i) => {
+      if (i === idx) {
+        t.style.background    = 'rgba(245,158,11,.12)';
+        t.style.borderColor   = 'rgba(245,158,11,.6)';
+        t.style.color         = '#f59e0b';
+      } else {
+        t.style.background    = 'transparent';
+        t.style.borderColor   = 'rgba(255,255,255,.1)';
+        t.style.color         = '#6b7280';
+      }
+    });
+    mfPanels.forEach((p, i) => {
+      p.style.display = (i === idx) ? '' : 'none';
+    });
+    setTimeout(() => drawMFLines(idx), 80);
   }
 
-  // ── Native share ──
-  function nativeShare() {
-    if (navigator.share) {
-      navigator.share({
-        title: '進擊的帳目：這筆錢我真的不知道',
-        text: '20 筆爭議資金 × 法庭鐵證解碼 | Ko FactCheck Project',
-        url: window.location.href,
-      }).catch(()=>{});
-    } else {
-      copyShareLink();
+  mfTabs.forEach((t, i) => t.addEventListener('click', () => activateTab(i)));
+
+  function drawMFLines(idx) {
+    const svg   = document.getElementById('mf-svg-' + idx);
+    const panel = document.getElementById('mf-panel-' + idx);
+    if (!svg || !panel) return;
+
+    svg.innerHTML = '';
+
+    const panelRect = panel.getBoundingClientRect();
+    const hub       = panel.querySelector('.mf-hub');
+    if (!hub) return;
+    const hubRect   = hub.getBoundingClientRect();
+
+    const sources = panel.querySelectorAll('.mf-source-node');
+    const results = panel.querySelectorAll('.mf-result-node');
+
+    const lineColor = idx === 0 ? '#f59e0b' : '#8b5cf6';
+
+    /* convert a DOMRect to coords relative to the panel */
+    function rel(r) {
+      return {
+        left  : r.left   - panelRect.left,
+        right : r.right  - panelRect.left,
+        top   : r.top    - panelRect.top,
+        bottom: r.bottom - panelRect.top,
+        midY  : (r.top + r.bottom) / 2 - panelRect.top,
+        midX  : (r.left + r.right) / 2 - panelRect.left,
+      };
     }
+
+    function bezier(x1, y1, x2, y2, opacity, w) {
+      const dx  = Math.abs(x2 - x1) * 0.52;
+      const d   = `M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}`;
+      const el  = document.createElementNS('http://www.w3.org/2000/svg','path');
+      el.setAttribute('d', d);
+      el.setAttribute('fill', 'none');
+      el.setAttribute('stroke', lineColor);
+      el.setAttribute('stroke-width', w || '1.5');
+      el.setAttribute('opacity', opacity || '0.38');
+      el.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(el);
+    }
+
+    function dot(cx, cy, r, op) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      el.setAttribute('cx', cx); el.setAttribute('cy', cy);
+      el.setAttribute('r', r || 3);
+      el.setAttribute('fill', lineColor);
+      el.setAttribute('opacity', op || '0.55');
+      svg.appendChild(el);
+    }
+
+    const h = rel(hubRect);
+
+    /* Source nodes → hub left edge */
+    sources.forEach(src => {
+      const s = rel(src.getBoundingClientRect());
+      bezier(s.right, s.midY, h.left, h.midY, '0.4', '1.5');
+      dot(s.right, s.midY, 3, '0.5');
+    });
+
+    /* Hub right edge → result nodes */
+    results.forEach(res => {
+      const r = rel(res.getBoundingClientRect());
+      bezier(h.right, h.midY, r.left, r.midY, '0.4', '1.5');
+      dot(r.left, r.midY, 3, '0.5');
+    });
+
+    /* Hub centre glow dot */
+    dot(h.midX, h.midY, 5, '0.65');
   }
 
-  </script>
+  /* ── Initial draw + redraw hooks ── */
+  function redrawActive() {
+    const active = [...mfPanels].findIndex(p => p.style.display !== 'none');
+    if (active >= 0) drawMFLines(active);
+    else drawMFLines(0);
+  }
 
+  window.addEventListener('load',   () => setTimeout(redrawActive, 250));
+  window.addEventListener('resize', () => setTimeout(redrawActive, 120));
+})();
+
+// Init floating text after GSAP loads
+window.addEventListener('load', () => {
+  initFloating();
+  initDocumentAnimations();
+});
+
+// ══════════════════════════════
+//  儲存分享卡為圖片（html2canvas）
+// ══════════════════════════════
+function scDownloadImage() {
+  const btn = document.getElementById('sc2-img-btn');
+  const card = document.getElementById('sc-card2');
+  if (!card || typeof html2canvas === 'undefined') return;
+
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<iconify-icon icon="mdi:loading" style="font-size:.82rem;display:flex;animation:spin .8s linear infinite;"></iconify-icon> 生成中…';
+  btn.disabled = true;
+
+  html2canvas(card, {
+    backgroundColor: '#0a0a18',
+    scale: 2,
+    useCORS: true,
+    logging: false,
+  }).then(canvas => {
+    const name = document.getElementById('sc2-name').textContent || 'ko-factcheck';
+    const link = document.createElement('a');
+    link.download = `KoFactCheck_${name.replace(/\s+/g,'_')}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.innerHTML = '<iconify-icon icon="mdi:check" style="font-size:.82rem;display:flex;"></iconify-icon> 已儲存！';
+    setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2000);
+  }).catch(() => {
+    btn.innerHTML = orig; btn.disabled = false;
+    _showShareToast('圖片生成失敗，請改用複製連結');
+  });
+}
+</script>
+
+<!-- ════ SHARE CARD MODAL ════ -->
+<div id="sc-modal" onclick="if(event.target===this)closeShareModal();">
+  <div id="sc-wrapper2">
+    <button id="sc-close" onclick="closeShareModal();">
+      <iconify-icon icon="mdi:close" style="font-size:.88rem;display:flex;"></iconify-icon>
+    </button>
+    <div id="sc-card2">
+      <!-- Header -->
+      <div class="sc2-header">
+        <div>
+          <div class="sc2-brand">KO FACTCHECK</div>
+          <div class="sc2-sub">法庭解密計畫 · 113金訴51</div>
+        </div>
+        <div id="sc2-badge" class="stamp" style="color:#ef4444;border-color:#ef4444;font-size:.6rem;">判決有罪</div>
+      </div>
+      <!-- Body -->
+      <div class="sc2-body">
+        <div class="sc2-meta">
+          <span id="sc2-casenum" class="sc2-casenum">CASE #01</span>
+          <span id="sc2-catbadge" class="badge-guilty" style="font-size:.56rem;padding:2px 7px;border-radius:99px;font-family:'Space Mono',monospace;font-weight:700;"></span>
+        </div>
+        <div id="sc2-name" class="sc2-name"></div>
+        <div id="sc2-amount" class="sc2-amount"></div>
+        <div id="sc2-claim-lbl" class="sc2-lbl">常見說法</div>
+        <p id="sc2-claim" class="sc2-text"></p>
+        <div id="sc2-verdict-box" class="sc2-verdict">
+          <span class="sc2-verdict-lbl">💡 一審判決</span>
+          <span id="sc2-verdict" class="sc2-verdict-text"></span>
+        </div>
+      </div>
+      <!-- Footer -->
+      <div class="sc2-footer">
+        <div>
+          <div class="sc2-brand" style="font-size:.54rem;letter-spacing:.1em;">KO FACTCHECK</div>
+          <div class="sc2-sub">他不知道，但帳冊知道</div>
+        </div>
+        <span class="sc2-url">ko-factcheck.org</span>
+      </div>
+    </div>
+    <!-- Actions -->
+    <div class="sc2-actions">
+      <button id="sc2-img-btn" class="sc2-btn primary" onclick="scDownloadImage()">
+        <iconify-icon icon="mdi:image-outline" style="font-size:.82rem;display:flex;"></iconify-icon>
+        儲存圖片
+      </button>
+      <button id="sc2-copy-btn" class="sc2-btn ghost" onclick="scCopyLink()">
+        <iconify-icon icon="mdi:link-variant" style="font-size:.82rem;display:flex;"></iconify-icon>
+        複製連結
+      </button>
+      <button class="sc2-btn ghost" onclick="closeShareModal()">
+        <iconify-icon icon="mdi:close" style="font-size:.82rem;display:flex;"></iconify-icon>
+        關閉
+      </button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
