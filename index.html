@@ -121,6 +121,18 @@
       #mf-src-0,#mf-src-1,#mf-res-0,#mf-res-1{gap:8px !important;}
     }
 
+    /* ── Timeline ── */
+    .tl-tab{cursor:pointer;transition:all .25s;border:1px solid rgba(245,158,11,.3);color:#9ca3af;background:transparent;padding:.45rem 1.1rem;border-radius:99px;font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.06em;}
+    .tl-tab.active,.tl-tab:hover{background:rgba(245,158,11,.12);color:#f59e0b;border-color:rgba(245,158,11,.6);font-weight:700;}
+    #tl-prev,#tl-next{position:absolute;top:calc(50% + 10px);transform:translateY(-50%);z-index:10;width:38px;height:38px;border-radius:50%;background:rgba(15,15,30,.92);border:1px solid rgba(245,158,11,.3);color:#f59e0b;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s,border-color .25s;backdrop-filter:blur(8px);padding:0;}
+    #tl-prev{left:5px;}#tl-next{right:5px;}
+    #tl-prev:hover,#tl-next:hover{background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.7);}
+    .tl-card{transition:border-color .25s,box-shadow .2s;}
+    .tl-card:hover{filter:brightness(1.08);}
+    @media(max-width:640px){
+      #tl-wrap{padding:0 44px !important;}
+    }
+
     /* ── Share button ── */
     .share-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .62rem;border-radius:.4rem;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.04em;color:rgba(245,158,11,.5);border:1px solid rgba(245,158,11,.18);background:transparent;cursor:pointer;transition:all .2s;}
     .share-btn:hover{color:#f59e0b;border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.07);}
@@ -521,6 +533,40 @@
     <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full inline-block" style="background:#6b7280;"></span>證據不足</span>
     <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full inline-block" style="background:#8b5cf6;"></span>犯後態度</span>
   </div>
+</section>
+
+<!-- ══ TIMELINE ══ -->
+<section id="timeline" class="py-24 px-6 max-w-6xl mx-auto">
+  <div class="deco-line mb-10">
+    <span class="font-mono text-xs text-gray-500 tracking-widest whitespace-nowrap">TIMELINE × 關鍵時間軸</span>
+  </div>
+  <h2 class="text-3xl font-black text-center mb-2">每一個日期，都是紀錄</h2>
+  <p class="text-center text-gray-500 text-sm mb-8">從密會到宣判——法庭還原的完整時序</p>
+
+  <div style="display:flex;gap:10px;justify-content:center;margin-bottom:28px;">
+    <button class="tl-tab active" data-tl="0" style="display:flex;align-items:center;gap:6px;"><iconify-icon icon="mdi:gavel" style="color:#f59e0b;font-size:1rem;display:flex;"></iconify-icon>京華城案</button>
+    <button class="tl-tab" data-tl="1" style="display:flex;align-items:center;gap:6px;"><iconify-icon icon="mdi:cash-multiple" style="color:#f59e0b;font-size:1rem;display:flex;"></iconify-icon>木可 · 眾望</button>
+  </div>
+
+  <div style="position:relative;padding:0 52px;" id="tl-wrap">
+    <button id="tl-prev" aria-label="上一筆">
+      <iconify-icon icon="mdi:chevron-left" style="font-size:1.4rem;display:flex;"></iconify-icon>
+    </button>
+    <button id="tl-next" aria-label="下一筆">
+      <iconify-icon icon="mdi:chevron-right" style="font-size:1.4rem;display:flex;"></iconify-icon>
+    </button>
+    <!-- 寬感應區：覆蓋左右 padding 欄 + 卡片邊緣 30px，z-index 低於箭頭 -->
+    <div id="tl-zone-left"  style="position:absolute;left:0;top:0;width:90px;height:100%;z-index:8;cursor:pointer;"></div>
+    <div id="tl-zone-right" style="position:absolute;right:0;top:0;width:90px;height:100%;z-index:8;cursor:pointer;"></div>
+
+    <div id="tl-viewport" style="overflow:hidden;position:relative;">
+      <div id="tl-hline" style="position:absolute;top:33px;left:0;right:0;height:1px;z-index:0;pointer-events:none;"></div>
+      <div id="tl-track" style="display:flex;gap:20px;padding:0 2px 8px;transition:transform .45s cubic-bezier(.25,.8,.25,1);will-change:transform;position:relative;z-index:1;"></div>
+    </div>
+
+    <div id="tl-dots" style="display:flex;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap;"></div>
+  </div>
+  <div class="glow-line mt-12"></div>
 </section>
 
 <!-- ══ MONEY FLOW ══ -->
@@ -1760,6 +1806,223 @@ document.querySelectorAll('.exp-num').forEach(el => {
 
   window.addEventListener('load',   () => setTimeout(redrawActive, 250));
   window.addEventListener('resize', () => setTimeout(redrawActive, 120));
+})();
+
+// ══════════════════════════════
+//  Timeline
+// ══════════════════════════════
+(function initTimeline() {
+  const TYPE_CFG = {
+    key:    { dot:'#f59e0b', badge:'關鍵決策', bg:'rgba(245,158,11,.07)', border:'rgba(245,158,11,.22)' },
+    bribe:  { dot:'#ef4444', badge:'賄賂金流', bg:'rgba(239,68,68,.06)',  border:'rgba(239,68,68,.25)' },
+    court:  { dot:'#60a5fa', badge:'法院判決', bg:'rgba(96,165,250,.06)', border:'rgba(96,165,250,.22)' },
+    warn:   { dot:'#fb923c', badge:'議會警告', bg:'rgba(251,146,60,.06)', border:'rgba(251,146,60,.22)' },
+    arrest: { dot:'#ef4444', badge:'偵查行動', bg:'rgba(239,68,68,.06)',  border:'rgba(239,68,68,.25)' },
+    verdict:{ dot:'#ef4444', badge:'一審判決', bg:'rgba(239,68,68,.10)',  border:'rgba(239,68,68,.45)' },
+    misuse: { dot:'#8b5cf6', badge:'侵占挪用', bg:'rgba(139,92,246,.07)', border:'rgba(139,92,246,.28)' },
+  };
+
+  const TL_DATA = [
+    {
+      id:0, label:'京華城案', color:'#f59e0b',
+      events:[
+        { date:'2020.02.20', title:'柯文哲與沈慶京密會', desc:'在市長室密會，法官認定雙方於此時達成賄賂默契，以容積率換取政治獻金。', type:'bribe' },
+        { date:'2020.03.10', title:'便當會裁示交都委會', desc:'柯文哲在市長便當會裁示，將京華城陳情案交給都委會「研議」，啟動違法容積審查程序。', type:'key' },
+        { date:'2020.03.24~26', title:'210萬行賄匯款', desc:'沈慶京指示7名員工以「政治獻金」名義，分批匯款共210萬元至民眾黨專戶作為賄賂前金。', type:'bribe' },
+        { date:'2020.07.16', title:'行政法院判決敗訴', desc:'台北高等行政法院認定市府無需回復京華城要求的樓地板面積，判決其敗訴。', type:'court' },
+        { date:'2020.10.27', title:'柯文哲違法核章', desc:'明知京華城不符都更條件且違背法令，仍親自核章，讓草案進入公告公開展覽程序。', type:'key' },
+        { date:'2021.11.01', title:'正式公告20%容積獎勵', desc:'台北市政府正式核定公告，違法給予京華城20%容積獎勵，法院認定圖利逾121億元。', type:'key' },
+        { date:'2021.11.11', title:'苗博雅議會預警', desc:'市議員苗博雅質詢警告，京華城容積案缺乏法律依據——神預言此案將成柯文哲卸任後的重大弊案。', type:'warn' },
+        { date:'2022.10.18~19', title:'動土典禮與賄款', desc:'京華城取得容積獎勵並舉行動土典禮（柯出席）。檢方指控沈慶京於此前後另交付1,500萬賄款，唯法院認定缺乏交付補強證據。', type:'bribe' },
+        { date:'2024.05.02', title:'北檢正式立案調查', desc:'臺北地檢署正式分案調查京華城容積弊案，展開全面偵查。', type:'arrest' },
+        { date:'2024.08.30', title:'搜索·羈押禁見', desc:'檢方搜索柯文哲住處並帶回偵訊，撕碎「晶華→orange出國」便條紙。法院於9月5日裁定羈押禁見。', type:'arrest' },
+        { date:'2026.03', title:'一審宣判：收賄13年', desc:'台北地方法院認定違背職務收受賄賂罪，判處有期徒刑13年，褫奪公權6年。合併四大罪案共17年以上。', type:'verdict' },
+      ]
+    },
+    {
+      id:1, label:'木可 · 眾望', color:'#8b5cf6',
+      events:[
+        { date:'2022.11.01', title:'簽立肖像授權協議', desc:'柯文哲與木可公司簽立肖像權獨家授權同意書，為後續侵占行為建立合法外衣。', type:'key' },
+        { date:'2022.12~2024.08', title:'挪用眾望基金會薪資', desc:'柯文哲與李文宗將競選人員掛名眾望基金會，按月挪用公款支付薪資4.5萬至12萬不等，累計827萬餘元。', type:'misuse' },
+        { date:'2023.06.15~09.15', title:'300萬捐款洗入木可', desc:'支持者原欲捐給民眾黨的300萬政治獻金，受指示分4次匯入木可公司，事後開立不實發票掩飾。', type:'misuse' },
+        { date:'2023.06.19~2024.01.19', title:'KP小物4,133萬入木可', desc:'利用販售「KP小物」名義，將應屬政治獻金的募款所得約4,133萬元匯入木可公司侵占入己。', type:'misuse' },
+        { date:'2023.07.29', title:'KP SHOW募款演唱會', desc:'舉辦KP SHOW募款演唱會，事後將盈餘約77萬元侵占並匯入木可公司。', type:'key' },
+        { date:'2023年度', title:'眾望薪資佔全年支出6成', desc:'經查核，支付黨務人員薪資竟高達眾望基金會2023年度總支出的60%，完全違背章程規定之公益目的。', type:'warn' },
+        { date:'2023.11.30~2024.01.10', title:'1,500萬肖像授權費', desc:'競總分4次從政治獻金專戶匯出1,500萬「肖像授權費」至木可；其中450萬轉入柯個人帳戶，部分更流入家人證券帳戶。', type:'misuse' },
+        { date:'2024.04.09', title:'挪用124萬支付木可薪資', desc:'挪用政治獻金專戶餘款約124萬元，匯至木可公司用來支付員工薪資。', type:'misuse' },
+        { date:'2026.03', title:'一審宣判：木可3年6月·眾望2年6月', desc:'法院認定共同公益侵占罪（木可案），判刑3年6月並沒收6,134萬餘元；共同背信罪（眾望案），判刑2年6月。', type:'verdict' },
+      ]
+    }
+  ];
+
+  const CARD_W = 224;
+  const GAP    = 20;
+  let currentCase = 0;
+  let currentIdx  = 0;
+
+  const track    = document.getElementById('tl-track');
+  const viewport = document.getElementById('tl-viewport');
+  const dotsWrap = document.getElementById('tl-dots');
+  const hline    = document.getElementById('tl-hline');
+  const btnPrev  = document.getElementById('tl-prev');
+  const btnNext  = document.getElementById('tl-next');
+
+  function getVisible() {
+    const vw = viewport ? viewport.offsetWidth : 800;
+    if (vw < 480)  return 1;
+    if (vw < 720)  return 2;
+    if (vw < 980)  return 3;
+    return 4;
+  }
+
+  function getMaxIdx() {
+    return Math.max(0, TL_DATA[currentCase].events.length - getVisible());
+  }
+
+  function setHLine(color) {
+    if (hline) hline.style.background = `linear-gradient(90deg,transparent,${color}33 5%,${color}33 95%,transparent)`;
+  }
+
+  function renderTrack(caseId) {
+    const c = TL_DATA[caseId];
+    track.innerHTML = '';
+    setHLine(c.color);
+    c.events.forEach(ev => {
+      const cfg = TYPE_CFG[ev.type] || TYPE_CFG.key;
+      const isVerdict = ev.type === 'verdict';
+      const item = document.createElement('div');
+      item.style.cssText = `flex:0 0 ${CARD_W}px;position:relative;padding-top:62px;`;
+      item.innerHTML = `
+        <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;z-index:2;width:100%;">
+          <div style="font-family:'Space Mono',monospace;font-size:.85rem;font-weight:700;color:#f59e0b;letter-spacing:.05em;margin-bottom:5px;white-space:nowrap;text-shadow:0 0 10px rgba(245,158,11,.45);">${ev.date}</div>
+          <div style="width:${isVerdict?'13':'10'}px;height:${isVerdict?'13':'10'}px;border-radius:50%;background:${isVerdict?cfg.dot:'#07070f'};border:2px solid ${cfg.dot};box-shadow:0 0 ${isVerdict?'10':'6'}px ${cfg.dot}55;flex-shrink:0;"></div>
+          <div style="width:1px;height:22px;background:linear-gradient(180deg,${cfg.dot}99,transparent);"></div>
+        </div>
+        <div class="tl-card" style="background:${cfg.bg};border:1px solid ${cfg.border};border-radius:10px;padding:12px 14px;box-sizing:border-box;">
+          <div style="font-family:'Space Mono',monospace;font-size:.52rem;color:${cfg.dot};letter-spacing:.08em;font-weight:700;margin-bottom:6px;">${cfg.badge}</div>
+          <div style="font-weight:700;color:#f3f4f6;font-size:.82rem;line-height:1.35;margin-bottom:6px;">${ev.title}</div>
+          <div style="font-size:.72rem;color:#6b7280;line-height:1.65;">${ev.desc}</div>
+        </div>`;
+      track.appendChild(item);
+    });
+    currentIdx = 0;
+    buildDots();
+    moveTo(0);
+  }
+
+  function moveTo(idx) {
+    const maxIdx = getMaxIdx();
+    currentIdx = Math.max(0, Math.min(idx, maxIdx));
+    track.style.transform = `translateX(-${currentIdx * (CARD_W + GAP)}px)`;
+    updateDots();
+    btnPrev.style.opacity = currentIdx === 0 ? '0.3' : '1';
+    btnNext.style.opacity = currentIdx === maxIdx ? '0.3' : '1';
+  }
+
+  function buildDots() {
+    const maxIdx = getMaxIdx();
+    dotsWrap.innerHTML = '';
+    for (let i = 0; i <= maxIdx; i++) {
+      const d = document.createElement('button');
+      d.style.cssText = 'width:7px;height:7px;border-radius:50%;border:none;cursor:pointer;transition:background .25s,transform .25s;background:rgba(255,255,255,.2);padding:0;flex-shrink:0;';
+      d.addEventListener('click', () => moveTo(i));
+      dotsWrap.appendChild(d);
+    }
+  }
+
+  function updateDots() {
+    const maxIdx = getMaxIdx();
+    if (dotsWrap.children.length !== maxIdx + 1) buildDots();
+    const c = TL_DATA[currentCase];
+    Array.from(dotsWrap.children).forEach((d, i) => {
+      d.style.background = i === currentIdx ? c.color : 'rgba(255,255,255,.2)';
+      d.style.transform  = i === currentIdx ? 'scale(1.4)' : 'scale(1)';
+    });
+  }
+
+  btnPrev.addEventListener('click', () => moveTo(currentIdx - 1));
+  btnNext.addEventListener('click', () => moveTo(currentIdx + 1));
+
+  // ── Hover 自動滑動（桌機限定，手機關閉）──
+  const TL_HOVER_DELAY  = 600;
+  const TL_HOVER_REPEAT = 900;
+  let tlHoverTimer = null;
+
+  function clearTlHoverTimer() {
+    clearTimeout(tlHoverTimer);
+    clearInterval(tlHoverTimer);
+    tlHoverTimer = null;
+  }
+  function startTlHoverAdvance(dir) {
+    if (!window.matchMedia('(hover: hover)').matches) return;
+    clearTlHoverTimer();
+    const btn = dir < 0 ? btnPrev : btnNext;
+    btn.style.borderColor = 'rgba(245,158,11,.85)';
+    btn.style.boxShadow   = '0 0 14px rgba(245,158,11,.35)';
+    tlHoverTimer = setTimeout(() => {
+      moveTo(currentIdx + dir);
+      tlHoverTimer = setInterval(() => moveTo(currentIdx + dir), TL_HOVER_REPEAT);
+    }, TL_HOVER_DELAY);
+  }
+  function stopTlHoverAdvance(btn) {
+    clearTlHoverTimer();
+    btn.style.borderColor = '';
+    btn.style.boxShadow   = '';
+  }
+  btnPrev.addEventListener('mouseenter', () => startTlHoverAdvance(-1));
+  btnPrev.addEventListener('mouseleave', () => stopTlHoverAdvance(btnPrev));
+  btnNext.addEventListener('mouseenter', () => startTlHoverAdvance(1));
+  btnNext.addEventListener('mouseleave', () => stopTlHoverAdvance(btnNext));
+
+  // 寬感應區：hover 整個左右欄位都觸發
+  const zoneL = document.getElementById('tl-zone-left');
+  const zoneR = document.getElementById('tl-zone-right');
+  if (zoneL) {
+    zoneL.addEventListener('mouseenter', () => { startTlHoverAdvance(-1); btnPrev.style.borderColor='rgba(245,158,11,.85)'; btnPrev.style.boxShadow='0 0 14px rgba(245,158,11,.35)'; });
+    zoneL.addEventListener('mouseleave', () => { stopTlHoverAdvance(btnPrev); });
+  }
+  if (zoneR) {
+    zoneR.addEventListener('mouseenter', () => { startTlHoverAdvance(1);  btnNext.style.borderColor='rgba(245,158,11,.85)'; btnNext.style.boxShadow='0 0 14px rgba(245,158,11,.35)'; });
+    zoneR.addEventListener('mouseleave', () => { stopTlHoverAdvance(btnNext); });
+  }
+
+  // Touch / pointer swipe
+  let startX = 0;
+  track.addEventListener('pointerdown', e => { startX = e.clientX; });
+  track.addEventListener('pointerup',   e => {
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 40) moveTo(currentIdx + (dx < 0 ? 1 : -1));
+  });
+
+  // Tab switching
+  document.querySelectorAll('.tl-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tl-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCase = parseInt(btn.dataset.tl);
+      renderTrack(currentCase);
+      // GSAP stagger on tab switch
+      gsap.fromTo('#tl-track > div', { opacity:0, y:16 }, { opacity:1, y:0, stagger:.05, duration:.35, ease:'power2.out' });
+    });
+  });
+
+  window.addEventListener('resize', () => { buildDots(); moveTo(currentIdx); });
+
+  // Init
+  renderTrack(0);
+
+  // GSAP entrance
+  ScrollTrigger.create({
+    trigger: '#timeline',
+    start: 'top 80%',
+    once: true,
+    onEnter: () => {
+      gsap.fromTo('#tl-track > div',
+        { opacity:0, y:20 },
+        { opacity:1, y:0, stagger:.06, duration:.45, ease:'power2.out' }
+      );
+    }
+  });
 })();
 
 // Init floating text after GSAP loads
